@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30406.217
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KanimExplorer", "KanimExplorer\KanimExplorer.csproj", "{0DC679A7-6D11-4B74-8D4B-01904F8F1E3D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0DC679A7-6D11-4B74-8D4B-01904F8F1E3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DC679A7-6D11-4B74-8D4B-01904F8F1E3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DC679A7-6D11-4B74-8D4B-01904F8F1E3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DC679A7-6D11-4B74-8D4B-01904F8F1E3D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D4CAA1A6-3637-4135-ADF7-9C9CC6837AC2}
+	EndGlobalSection
+EndGlobal
