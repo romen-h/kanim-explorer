@@ -41,7 +41,7 @@ namespace KanimalExplorer
 					Bitmap bmp = new Bitmap(fs);
 					atlas = (Bitmap)bmp.Clone();
 				}
-				UpdateAtlasView(atlas, RectangleF.Empty, PointF.Empty);
+				UpdateAtlasView(atlas);
 			}
 
 			if (currentBuildFile != null)
@@ -62,7 +62,7 @@ namespace KanimalExplorer
 			saveBuildFileToolStripMenuItem.Enabled = (buildData != null);
 		}
 
-		private void UpdateAtlasView(Bitmap img, RectangleF frameOutline, PointF pivot)
+		private void UpdateAtlasView(Bitmap img, RectangleF[] frames = null, PointF[] pivots = null)
 		{
 			if (img != null)
 			{
@@ -72,17 +72,29 @@ namespace KanimalExplorer
 					g.Clear(Color.FromArgb(128,128,128));
 					g.DrawImage(img, 0, 0, img.Width, img.Height);
 
-					if (frameOutline != RectangleF.Empty)
+					if (frames != null)
 					{
-						using (Pen pen = new Pen(Color.Red, 2f))
+						foreach (RectangleF frame in frames)
 						{
-							g.DrawRectangle(pen, frameOutline.Left, frameOutline.Top, frameOutline.Width, frameOutline.Height);
+							if (frame != RectangleF.Empty)
+							{
+								using (Pen pen = new Pen(Color.Red, 2f))
+								{
+									g.DrawRectangle(pen, frame.Left, frame.Top, frame.Width, frame.Height);
+								}
+							}
 						}
 					}
 
-					if (pivot != PointF.Empty)
+					if (pivots != null)
 					{
-						g.FillRectangle(Brushes.Red, pivot.X - 1f, pivot.Y - 1f, 3f, 3f);
+						foreach (PointF pivot in pivots)
+						{
+							if (pivot != PointF.Empty)
+							{
+								g.FillRectangle(Brushes.Red, pivot.X - 1f, pivot.Y - 1f, 3f, 3f);
+							}
+						}
 					}
 				}
 
@@ -230,8 +242,8 @@ namespace KanimalExplorer
 			TreeView tree = sender as TreeView;
 			if (tree == null) return;
 
-			RectangleF frameOutline = RectangleF.Empty;
-			PointF pivot = PointF.Empty;
+			List<RectangleF> frames = new List<RectangleF>();
+			List<PointF> pivots = new List<PointF>();
 
 			if (e.Node != null)
 			{
@@ -243,13 +255,21 @@ namespace KanimalExplorer
 						break;
 
 					case KSymbol symbol:
+						if (atlas != null)
+						{
+							foreach (KFrame frame in symbol.Frames)
+							{
+								frames.Add(frame.GetUVRectangle(atlas.Width, atlas.Height));
+								pivots.Add(frame.GetPivotPoint(atlas.Width, atlas.Height));
+							}
+						}
 						break;
 
 					case KFrame frame:
 						if (atlas != null)
 						{
-							frameOutline = frame.GetUVRectangle(atlas.Width, atlas.Height);
-							pivot = frame.GetPivotPoint(atlas.Width, atlas.Height);
+							frames.Add(frame.GetUVRectangle(atlas.Width, atlas.Height));
+							pivots.Add(frame.GetPivotPoint(atlas.Width, atlas.Height));
 						}
 						break;
 
@@ -260,7 +280,7 @@ namespace KanimalExplorer
 
 			if (atlas != null)
 			{
-				UpdateAtlasView(atlas, frameOutline, pivot);
+				UpdateAtlasView(atlas, frames.ToArray(), pivots.ToArray());
 			}
 		}
 
