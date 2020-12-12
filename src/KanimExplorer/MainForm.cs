@@ -57,8 +57,8 @@ namespace KanimalExplorer
 			UpdateBuildTree(buildData, animData);
 
 			closeToolStripMenuItem.Enabled = (atlas != null || buildData != null || animData != null);
-			convertSCMLToolStripMenuItem.Enabled = (atlas != null && buildData != null && animData != null);
-			exportFramesToolStripMenuItem.Enabled = (atlas != null && buildData != null);
+			convertToSCMLToolStripMenuItem.Enabled = (atlas != null && buildData != null && animData != null);
+			splitTextureAtlasToolStripMenuItem.Enabled = (atlas != null && buildData != null);
 			saveBuildFileToolStripMenuItem.Enabled = (buildData != null);
 		}
 
@@ -174,8 +174,8 @@ namespace KanimalExplorer
 			propertyGrid.SelectedObject = null;
 
 			closeToolStripMenuItem.Enabled = false;
-			convertSCMLToolStripMenuItem.Enabled = false;
-			exportFramesToolStripMenuItem.Enabled = false;
+			convertToSCMLToolStripMenuItem.Enabled = false;
+			splitTextureAtlasToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Enabled = false;
 		}
 
@@ -308,7 +308,28 @@ namespace KanimalExplorer
 			return false;
 		}
 
-		private void convertSCMLToolStripMenuItem_Click(object sender, EventArgs e)
+		private void saveBuildFileToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SaveFileDialog dlg = new SaveFileDialog();
+			if (dlg.ShowDialog() == DialogResult.OK)
+			{
+				if (KAnimUtils.WriteBuild(dlg.FileName, buildData))
+				{
+					MessageBox.Show(this, "Build file saved successfully.", "Save Success", MessageBoxButtons.OK);
+				}
+				else
+				{
+					MessageBox.Show(this, "Failed to save build file.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			}
+		}
+
+		private void saveAnimFileToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+
+		}
+
+		private void convertToSCMLToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (VerifyKanimalSEPath())
 			{
@@ -343,7 +364,7 @@ namespace KanimalExplorer
 			}
 		}
 
-		private void exportFramesToolStripMenuItem_Click(object sender, EventArgs e)
+		private void splitTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			FolderBrowserDialog dlg = new FolderBrowserDialog();
 			dlg.ShowNewFolderButton = true;
@@ -369,23 +390,18 @@ namespace KanimalExplorer
 			}
 		}
 
-		private void toolStripMenuItem1_Click(object sender, EventArgs e)
-		{
-
-		}
-
-		private void saveBuildFileToolStripMenuItem_Click(object sender, EventArgs e)
+		private void saveBlankAnimbytesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			SaveFileDialog dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				if (KAnimUtils.WriteBuild(dlg.FileName, buildData))
+				if (KAnimUtils.WriteAnim(dlg.FileName, KAnimUtils.CreateEmptyAnim()))
 				{
-					MessageBox.Show(this, "Build file saved successfully.", "Save Success", MessageBoxButtons.OK);
+					MessageBox.Show(this, "Blank anim file saved successfully.", "Save Success", MessageBoxButtons.OK);
 				}
 				else
 				{
-					MessageBox.Show(this, "Failed to save build file.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					MessageBox.Show(this, "Failed to save blank anim file.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
 		}

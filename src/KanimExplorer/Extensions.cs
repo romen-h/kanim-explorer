@@ -9,7 +9,7 @@ namespace KanimalExplorer
 {
 	public static class BinaryReaderExtensions
 	{
-        public static string ReadPString(this BinaryReader reader)
+        public static string ReadKString(this BinaryReader reader)
         {
             var i = reader.ReadInt32();
             if (i <= 0) return "";
@@ -32,7 +32,7 @@ namespace KanimalExplorer
 
     public static class BinaryWriterExtensions
 	{
-        public static void WritePString(this BinaryWriter writer, string str)
+        public static void WriteKString(this BinaryWriter writer, string str)
 		{
             byte[] bytes = Encoding.ASCII.GetBytes(str);
             writer.Write(bytes.Length);

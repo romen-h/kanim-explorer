@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Text;
 
 namespace KanimalExplorer
@@ -28,7 +29,7 @@ namespace KanimalExplorer
 				build.Version = reader.ReadInt32();
 				build.SymbolCount = reader.ReadInt32();
 				build.FrameCount = reader.ReadInt32();
-				build.Name = reader.ReadPString();
+				build.Name = reader.ReadKString();
 
 				for (int s=0; s<build.SymbolCount; s++)
 				{
@@ -68,7 +69,7 @@ namespace KanimalExplorer
 				for (int h=0; h<numHashes; h++)
 				{
 					int hash = reader.ReadInt32();
-					string str = reader.ReadPString();
+					string str = reader.ReadKString();
 					build.SymbolNames[hash] = str;
 				}
 
@@ -88,7 +89,7 @@ namespace KanimalExplorer
 					writer.Write(build.Version);
 					writer.Write(build.SymbolCount);
 					writer.Write(build.FrameCount);
-					writer.WritePString(build.Name);
+					writer.WriteKString(build.Name);
 
 					for (int s = 0; s < build.SymbolCount; s++)
 					{
@@ -123,7 +124,7 @@ namespace KanimalExplorer
 					foreach (KeyValuePair<int, string> kvp in build.SymbolNames)
 					{
 						writer.Write(kvp.Key);
-						writer.WritePString(kvp.Value);
+						writer.WriteKString(kvp.Value);
 					}
 				}
 
@@ -150,15 +151,15 @@ namespace KanimalExplorer
 				KAnim anim = new KAnim();
 
 				anim.Version = reader.ReadInt32();
-				anim.ElementCount = reader.ReadInt32();
 				anim.FrameCount = reader.ReadInt32();
+				anim.ElementCount = reader.ReadInt32();
 				anim.BankCount = reader.ReadInt32();
 
 				for (int a=0; a<anim.BankCount; a++)
 				{
 					KAnimBank bank = new KAnimBank(anim);
 
-					bank.Name = reader.ReadPString();
+					bank.Name = reader.ReadKString();
 					bank.Hash = reader.ReadInt32();
 					bank.Rate = reader.ReadSingle();
 					bank.FrameCount = reader.ReadInt32();
@@ -202,13 +203,105 @@ namespace KanimalExplorer
 					anim.Banks.Add(bank);
 				}
 
+				anim.MaxVisSymbols = reader.ReadInt32();
+
+				// Read Anim Hashes
+				int numHashes = reader.ReadInt32();
+				for (int h = 0; h < numHashes; h++)
+				{
+					int hash = reader.ReadInt32();
+					string str = reader.ReadKString();
+					anim.BankNames[hash] = str;
+				}
+
 				return anim;
 			}
 		}
 
-		public static void WriteAnim(string animFile, KAnim anim)
+		public static KAnim CreateEmptyAnim()
 		{
+			KAnim anim = new KAnim();
+			anim.Version = 5;
+			anim.FrameCount = 0;
+			anim.ElementCount = 0;
+			anim.BankCount = 0;
+			anim.MaxVisSymbols = 0;
+			return anim;
+		}
 
+		public static bool WriteAnim(string animFile, KAnim anim)
+		{
+			try
+			{
+				using (FileStream file = new FileStream(animFile, FileMode.Create))
+				using (BinaryWriter writer = new BinaryWriter(file))
+				{
+					writer.Write(Encoding.ASCII.GetBytes(ANIM_HEADER));
+
+					writer.Write(anim.Version);
+					writer.Write(anim.FrameCount);
+					writer.Write(anim.ElementCount);
+					writer.Write(anim.BankCount);
+
+					for (int b = 0; b < anim.BankCount; b++)
+					{
+						KAnimBank bank = anim.Banks[b];
+
+						writer.WriteKString(bank.Name);
+						writer.Write(bank.Hash);
+						writer.Write(bank.Rate);
+						writer.Write(bank.FrameCount);
+
+						for (int f=0; f < bank.FrameCount; f++)
+						{
+							KAnimFrame frame = bank.Frames[f];
+
+							writer.Write(frame.X);
+							writer.Write(frame.Y);
+							writer.Write(frame.Width);
+							writer.Write(frame.Height);
+							writer.Write(frame.ElementCount);
+
+							for (int e=0; e < frame.ElementCount; e++)
+							{
+								KAnimElement element = frame.Elements[e];
+
+								writer.Write(element.ImageHash);
+								writer.Write(element.Index);
+								writer.Write(element.Layer);
+								writer.Write(element.Flags);
+								writer.Write(element.Alpha);
+								writer.Write(element.Blue);
+								writer.Write(element.Green);
+								writer.Write(element.Red);
+								writer.Write(element.M1);
+								writer.Write(element.M2);
+								writer.Write(element.M3);
+								writer.Write(element.M4);
+								writer.Write(element.M5);
+								writer.Write(element.M6);
+								writer.Write(element.Order);
+							}
+						}
+					}
+
+					writer.Write(anim.MaxVisSymbols);
+
+					int numHashes = anim.BankNames.Count;
+					writer.Write(numHashes);
+					foreach (KeyValuePair<int, string> kvp in anim.BankNames)
+					{
+						writer.Write(kvp.Key);
+						writer.WriteKString(kvp.Value);
+					}
+				}
+
+				return true;
+			}
+			catch (Exception ex)
+			{
+				return false;
+			}
 		}
 	}
 }

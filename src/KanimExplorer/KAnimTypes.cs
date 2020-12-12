@@ -210,7 +210,13 @@ namespace KanimalExplorer
 		public int BankCount
 		{ get; set; }
 
+		[ReadOnly(true)]
+		public int MaxVisSymbols
+		{ get; set; }
+
 		public readonly List<KAnimBank> Banks = new List<KAnimBank>();
+
+		public readonly Dictionary<int, string> BankNames = new Dictionary<int, string>();
 	}
 
 	public class KAnimBank
