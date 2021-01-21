@@ -16,6 +16,8 @@ namespace KanimalExplorer
 {
 	public partial class MainForm : Form
 	{
+		private Font fnt = new Font(FontFamily.GenericSansSerif, 10f);
+
 		private string currentAtlasFile = null;
 		private Bitmap atlas = null;
 
@@ -30,6 +32,13 @@ namespace KanimalExplorer
 		public MainForm()
 		{
 			InitializeComponent();
+
+			closeToolStripMenuItem.Enabled = false;
+			convertToSCMLToolStripMenuItem.Enabled = false;
+			splitTextureAtlasToolStripMenuItem.Enabled = false;
+			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
+			saveTextureAtlasToolStripMenuItem.Enabled = false;
+			saveBuildFileToolStripMenuItem.Enabled = false;
 		}
 
 		private void OpenFiles()
@@ -59,6 +68,8 @@ namespace KanimalExplorer
 			closeToolStripMenuItem.Enabled = (atlas != null || buildData != null || animData != null);
 			convertToSCMLToolStripMenuItem.Enabled = (atlas != null && buildData != null && animData != null);
 			splitTextureAtlasToolStripMenuItem.Enabled = (atlas != null && buildData != null);
+			rebuildTextureAtlasToolStripMenuItem.Enabled = (atlas != null && buildData != null);
+			saveTextureAtlasToolStripMenuItem.Enabled = (atlas != null);
 			saveBuildFileToolStripMenuItem.Enabled = (buildData != null);
 		}
 
@@ -95,6 +106,11 @@ namespace KanimalExplorer
 								g.FillRectangle(Brushes.Red, pivot.X - 1f, pivot.Y - 1f, 3f, 3f);
 							}
 						}
+					}
+
+					if (buildData != null && buildData.NeedsRepack)
+					{
+						g.DrawString("Requires Rebuild", fnt, Brushes.Orange, 5, 5);
 					}
 				}
 
@@ -176,6 +192,8 @@ namespace KanimalExplorer
 			closeToolStripMenuItem.Enabled = false;
 			convertToSCMLToolStripMenuItem.Enabled = false;
 			splitTextureAtlasToolStripMenuItem.Enabled = false;
+			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
+			saveTextureAtlasToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Enabled = false;
 		}
 
@@ -284,6 +302,45 @@ namespace KanimalExplorer
 			}
 		}
 
+		private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+		{
+			List<RectangleF> frames = new List<RectangleF>();
+			List<PointF> pivots = new List<PointF>();
+
+			switch (propertyGrid.SelectedObject)
+			{
+				case KBuild build:
+					break;
+
+				case KSymbol symbol:
+					if (atlas != null)
+					{
+						foreach (KFrame frame in symbol.Frames)
+						{
+							frames.Add(frame.GetUVRectangle(atlas.Width, atlas.Height));
+							pivots.Add(frame.GetPivotPoint(atlas.Width, atlas.Height));
+						}
+					}
+					break;
+
+				case KFrame frame:
+					if (atlas != null)
+					{
+						frames.Add(frame.GetUVRectangle(atlas.Width, atlas.Height));
+						pivots.Add(frame.GetPivotPoint(atlas.Width, atlas.Height));
+					}
+					break;
+
+				default:
+					break;
+			}
+
+			if (atlas != null)
+			{
+				UpdateAtlasView(atlas, frames.ToArray(), pivots.ToArray());
+			}
+		}
+
 		private bool VerifyKanimalSEPath()
 		{
 			string kanimalPath = Settings.Default.KanimalCLIPath;
@@ -308,8 +365,32 @@ namespace KanimalExplorer
 			return false;
 		}
 
+		private void saveTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SaveFileDialog dlg = new SaveFileDialog();
+			if (dlg.ShowDialog() == DialogResult.OK)
+			{
+				try
+				{
+					atlas.Save(dlg.FileName, ImageFormat.Png);
+					MessageBox.Show(this, "Texture atlas saved successfully.", "Save Success", MessageBoxButtons.OK);
+				}
+				catch
+				{
+					MessageBox.Show(this, "Failed to save texture atlas.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			}
+		}
+
 		private void saveBuildFileToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			if (buildData.NeedsRepack)
+			{
+				MessageBox.Show("The texture atlas needs to be rebuilt first.");
+				// Repack
+				return;
+			}
+
 			SaveFileDialog dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
@@ -364,6 +445,51 @@ namespace KanimalExplorer
 			}
 		}
 
+		private void convertFromSCMLToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (VerifyKanimalSEPath())
+			{
+				OpenFileDialog scmlDlg = new OpenFileDialog();
+				scmlDlg.Filter = "Spriter Projects (*.scml)|*.scml";
+				scmlDlg.Title = "Select a Spriter Project...";
+				if (scmlDlg.ShowDialog() == DialogResult.OK)
+				{
+					DialogResult r = MessageBox.Show(this, "Do you want to interpolate frames for this conversion?", "Interpolate Frames?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+					if (r == DialogResult.Cancel) return;
+					bool interpolate = (r == DialogResult.Yes);
+
+					FolderBrowserDialog dlg = new FolderBrowserDialog();
+					dlg.ShowNewFolderButton = true;
+					dlg.Description = "Select a folder to save the converted files...";
+					if (dlg.ShowDialog() == DialogResult.OK)
+					{
+						string outPath = dlg.SelectedPath;
+
+						StringBuilder kanimalOutput = new StringBuilder();
+
+						Process kanimal = new Process();
+						ProcessStartInfo ps = new ProcessStartInfo();
+						ps.RedirectStandardOutput = true;
+						ps.FileName = Settings.Default.KanimalCLIPath;
+						ps.Arguments = $"kanim {scmlDlg.FileName} --output {outPath}" + (interpolate ? " --interpolate" : "");
+						ps.UseShellExecute = false;
+						kanimal.StartInfo = ps;
+						kanimal.OutputDataReceived += (p, a) =>
+						{
+							kanimalOutput.AppendLine(a.Data);
+						};
+						kanimal.Start();
+						kanimal.BeginOutputReadLine();
+						kanimal.WaitForExit();
+
+						Trace.Write(kanimalOutput.ToString());
+
+						Process.Start("explorer.exe", outPath);
+					}
+				}
+			}
+		}
+
 		private void splitTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			FolderBrowserDialog dlg = new FolderBrowserDialog();
@@ -372,20 +498,13 @@ namespace KanimalExplorer
 
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				foreach (KSymbol symbol in buildData.Symbols)
+				Sprite[] sprites = SpriteUtils.BuildSprites(atlas, buildData);
+				foreach (Sprite sprite in sprites)
 				{
-					foreach (KFrame frame in symbol.Frames)
-					{
-						string frameFileName = $"{symbol.Name}_{frame.Index}.png";
-
-						Bitmap croppedImg = atlas.Clone(frame.GetUVRectangle(atlas.Width, atlas.Height), atlas.PixelFormat);
-
-						string framePath = Path.Combine(dlg.SelectedPath, frameFileName);
-
-						croppedImg.Save(framePath, ImageFormat.Png);
-					}
+					string frameFileName = $"{sprite.SymbolData.Name}_{sprite.FrameData.Index}.png";
+					string framePath = Path.Combine(dlg.SelectedPath, frameFileName);
+					sprite.Image.Save(framePath, ImageFormat.Png);
 				}
-
 				Process.Start("explorer.exe", dlg.SelectedPath);
 			}
 		}
@@ -405,5 +524,33 @@ namespace KanimalExplorer
 				}
 			}
 		}
+
+		private void rebuildTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!buildData.NeedsRepack)
+			{
+				MessageBox.Show("The build data does not have any changes that require repacking.");
+			}
+			else
+			{
+				try
+				{
+					Sprite[] sprites = SpriteUtils.BuildSprites(atlas, buildData);
+					SpriteUtils.ResizeSprites(sprites);
+					atlas = SpriteUtils.RebuildAtlas(sprites);
+					foreach (var spr in sprites)
+					{
+						spr.FrameData.NeedsRepack = false;
+					}
+				}
+				catch
+				{ }
+
+				UpdateAtlasView(atlas);
+				propertyGrid.Refresh();
+			}
+		}
+
+		
 	}
 }

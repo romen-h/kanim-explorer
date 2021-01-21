@@ -25,6 +25,18 @@ namespace KanimalExplorer
 		public int FrameCount
 		{ get; set; }
 
+		internal bool NeedsRepack
+		{
+			get
+			{
+				foreach (var symbol in Symbols)
+				{
+					if (symbol.NeedsRepack) return true;
+				}
+				return false;
+			}
+		}
+
 		public readonly List<KSymbol> Symbols = new List<KSymbol>();
 
 		public readonly Dictionary<int, string> SymbolNames = new Dictionary<int, string>();
@@ -45,6 +57,18 @@ namespace KanimalExplorer
 		{
 			if (parent == null) throw new ArgumentNullException();
 			Parent = parent;
+		}
+
+		internal bool NeedsRepack
+		{
+			get
+			{
+				foreach (var frame in Frames)
+				{
+					if (frame.NeedsRepack) return true;
+				}
+				return false;
+			}
 		}
 
 		[Browsable(false)]
@@ -120,18 +144,54 @@ namespace KanimalExplorer
 			Parent = parent;
 		}
 
+		internal bool NeedsRepack = false;
+
+		/// <summary>
+		/// Gets the KSymbol that this KFrame belongs to.
+		/// </summary>
 		[Browsable(false)]
 		public KSymbol Parent
 		{ get; private set; }
 
+		[RefreshProperties(RefreshProperties.All)]
+		public int SpriteWidth
+		{
+			get => (int)(PivotWidth / 2);
+			set
+			{
+				PivotWidth = value * 2;
+				NeedsRepack = true;
+			}
+		}
+
+		[RefreshProperties(RefreshProperties.All)]
+		public int SpriteHeight
+		{
+			get => (int)(PivotHeight / 2);
+			set
+			{
+				PivotHeight = value * 2;
+				NeedsRepack = true;
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the index of the KFrame.
+		/// </summary>
 		[ReadOnly(true)]
 		public int Index
-		{ get; set; }
+		{ get; internal set; }
 
+		/// <summary>
+		/// Unknown
+		/// </summary>
 		[ReadOnly(true)]
 		public int Duration
 		{ get; set; }
 
+		/// <summary>
+		/// Unknown
+		/// </summary>
 		[ReadOnly(true)]
 		public int ImageIndex
 		{ get; set; }
@@ -175,6 +235,17 @@ namespace KanimalExplorer
 		public RectangleF GetUVRectangle(int width, int height)
 		{
 			return RectangleF.FromLTRB(UV_X1 * width, UV_Y1 * height, UV_X2 * width, UV_Y2 * height);
+		}
+
+		public void SetNewSize(Rectangle box, int atlasWidth, int atlasHeight)
+		{
+			PivotWidth = box.Width * 2;
+			PivotHeight = box.Height * 2;
+
+			UV_X1 = (float)box.Left / (float)atlasWidth;
+			UV_Y1 = (float)box.Top / (float)atlasHeight;
+			UV_X2 = (float)box.Right / (float)atlasWidth;
+			UV_Y2 = (float)box.Bottom / (float)atlasHeight;
 		}
 
 		public PointF GetPivotPoint(int width, int height)
