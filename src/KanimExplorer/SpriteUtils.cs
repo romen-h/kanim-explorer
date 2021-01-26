@@ -13,6 +13,11 @@ namespace KanimalExplorer
 {
 	public class SpriteUtils
 	{
+		//public static Sprite GenerateBuildingSprite(int width, int height)
+		//{
+
+		//}
+
 		public static Sprite[] BuildSprites(Bitmap atlas, KBuild buildData)
 		{
 			List<Sprite> sprites = new List<Sprite>();
