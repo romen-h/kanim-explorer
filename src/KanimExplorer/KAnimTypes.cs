@@ -196,11 +196,9 @@ namespace KanimalExplorer
 		public int ImageIndex
 		{ get; set; }
 
-		[ReadOnly(true)]
 		public float PivotX
 		{ get; set; }
 
-		[ReadOnly(true)]
 		public float PivotY
 		{ get; set; }
 

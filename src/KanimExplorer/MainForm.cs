@@ -117,7 +117,7 @@ namespace KanimalExplorer
 						{
 							if (pivot != PointF.Empty)
 							{
-								g.FillRectangle(Brushes.Red, pivot.X - 1f, pivot.Y - 1f, 3f, 3f);
+								g.FillRectangle(Brushes.Lime, pivot.X - 1f, pivot.Y - 1f, 3f, 3f);
 							}
 						}
 					}
