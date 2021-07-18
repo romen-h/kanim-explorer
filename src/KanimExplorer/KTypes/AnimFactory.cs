@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
 
-namespace KanimalExplorer
+using KanimExplorer.Sprites;
+
+namespace KanimExplorer
 {
 	public static class AnimFactory
 	{
@@ -117,11 +116,11 @@ namespace KanimalExplorer
 			Bitmap bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 			using (Graphics g = Graphics.FromImage(bmp))
 			{
-				g.Clear(Color.FromArgb(0,0,0,0));
+				g.Clear(Color.FromArgb(0, 0, 0, 0));
 				g.DrawRectangle(Pens.White, 0, 0, width, height);
-				g.DrawRectangle(Pens.White, 1, 1, width-2, height-2);
-				g.DrawRectangle(Pens.White, 2, 2, width-4, height-4);
-				g.DrawRectangle(Pens.White, 3, 3, width-6, height-6);
+				g.DrawRectangle(Pens.White, 1, 1, width - 2, height - 2);
+				g.DrawRectangle(Pens.White, 2, 2, width - 4, height - 4);
+				g.DrawRectangle(Pens.White, 3, 3, width - 6, height - 6);
 				g.DrawString(name, fnt, Brushes.White, 10, 10);
 			}
 
@@ -178,21 +177,21 @@ namespace KanimalExplorer
 		private static KAnimElement AddAnimElement(KAnimFrame parent, int hash)
 		{
 			KAnimElement element = new KAnimElement(parent);
-			element.ImageHash = hash;
-			element.Index = 0;
-			element.Layer = hash;
+			element.SymbolHash = hash;
+			element.FrameNumber = 0;
+			element.FolderHash = hash;
 			element.Flags = 0;
 			element.Alpha = 1.0f;
 			element.Red = 1.0f;
 			element.Green = 1.0f;
 			element.Blue = 1.0f;
-			element.M1 = 1f;
-			element.M2 = 0f;
-			element.M3 = 0f;
-			element.M4 = 1f;
-			element.M5 = 0f;
-			element.M6 = 0f;
-			element.Order = 0;
+			element.M00 = 1f;
+			element.M10 = 0f;
+			element.M01 = 0f;
+			element.M11 = 1f;
+			element.M02 = 0f;
+			element.M12 = 0f;
+			element.Unused = 0;
 
 			parent.Elements.Add(element);
 			return element;

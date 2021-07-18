@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 
-namespace KanimalExplorer
+namespace KanimExplorer
 {
 	public class KBuild
 	{
@@ -40,6 +38,35 @@ namespace KanimalExplorer
 		public readonly List<KSymbol> Symbols = new List<KSymbol>();
 
 		public readonly Dictionary<int, string> SymbolNames = new Dictionary<int, string>();
+
+		public string GetSymbolName(int hash)
+		{
+			if (SymbolNames.ContainsKey(hash))
+			{
+				return SymbolNames[hash];
+			}
+
+			return null;
+		}
+
+		public KFrame GetFrame(string name, int index)
+		{
+			if (string.IsNullOrEmpty(name)) throw new ArgumentException("name");
+			if (index < 0) throw new ArgumentOutOfRangeException("index");
+
+			foreach (var symbol in Symbols)
+			{
+				if (symbol.Name == name)
+				{
+					foreach (var frame in symbol.Frames)
+					{
+						if (frame.Index == index) return frame;
+					}
+				}
+			}
+
+			return null;
+		}
 	}
 
 	public class KSymbol
@@ -230,10 +257,9 @@ namespace KanimalExplorer
 		public int Time
 		{ get; set; }
 
-		public RectangleF GetUVRectangle(int width, int height)
-		{
-			return RectangleF.FromLTRB(UV_X1 * width, UV_Y1 * height, UV_X2 * width, UV_Y2 * height);
-		}
+		public RectangleF GetUVRectangle(int width, int height) => RectangleF.FromLTRB(UV_X1 * width, UV_Y1 * height, UV_X2 * width, UV_Y2 * height);
+
+		public RectangleF GetUVRectangle() => RectangleF.FromLTRB(UV_X1, UV_Y1, UV_X2, UV_Y2);
 
 		public void SetNewSize(Rectangle box, int atlasWidth, int atlasHeight)
 		{
@@ -246,9 +272,9 @@ namespace KanimalExplorer
 			UV_Y2 = (float)box.Bottom / (float)atlasHeight;
 		}
 
-		public PointF GetPivotPoint(int width, int height)
+		public PointF GetPivotPoint(float width, float height)
 		{
-			float pvtX = -(PivotX / PivotWidth) + 0.5f;
+			float pvtX = (PivotX / PivotWidth) + 0.5f;
 			float pvtY = (PivotY / PivotHeight) + 0.5f;
 
 			float uvWidth = (UV_X2 - UV_X1);
@@ -286,6 +312,16 @@ namespace KanimalExplorer
 		public readonly List<KAnimBank> Banks = new List<KAnimBank>();
 
 		public readonly Dictionary<int, string> BankNames = new Dictionary<int, string>();
+
+		public string GetBankName(int hash)
+		{
+			if (BankNames.ContainsKey(hash))
+			{
+				return BankNames[hash];
+			}
+
+			return null;
+		}
 	}
 
 	public class KAnimBank
@@ -317,6 +353,8 @@ namespace KanimalExplorer
 		{ get; set; }
 
 		public readonly List<KAnimFrame> Frames = new List<KAnimFrame>();
+
+		public override string ToString() => Name;
 	}
 
 	public class KAnimFrame
@@ -367,15 +405,15 @@ namespace KanimalExplorer
 		{ get; private set; }
 
 		[ReadOnly(true)]
-		public int ImageHash
+		public int SymbolHash
 		{ get; set; }
 
 		[ReadOnly(true)]
-		public int Index
+		public int FrameNumber
 		{ get; set; }
 
 		[ReadOnly(true)]
-		public int Layer
+		public int FolderHash
 		{ get; set; }
 
 		[ReadOnly(true)]
@@ -399,31 +437,31 @@ namespace KanimalExplorer
 		{ get; set; }
 
 		[ReadOnly(true)]
-		public float M1
+		public float M00
 		{ get; set; }
 
 		[ReadOnly(true)]
-		public float M2
+		public float M10
 		{ get; set; }
 
 		[ReadOnly(true)]
-		public float M3
+		public float M01
 		{ get; set; }
 
 		[ReadOnly(true)]
-		public float M4
+		public float M11
 		{ get; set; }
 
 		[ReadOnly(true)]
-		public float M5
+		public float M02
 		{ get; set; }
 
 		[ReadOnly(true)]
-		public float M6
+		public float M12
 		{ get; set; }
 
 		[ReadOnly(true)]
-		public float Order
+		public float Unused
 		{ get; set; }
 	}
 }

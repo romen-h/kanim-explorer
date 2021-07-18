@@ -1,5 +1,5 @@
 ﻿
-namespace KanimalExplorer
+namespace KanimExplorer.Forms
 {
 	partial class NewBuildingForm
 	{
