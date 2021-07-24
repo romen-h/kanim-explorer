@@ -6,6 +6,7 @@ A tool for viewing and modifying Oxygen Not Included's kanim files.
 ## Features
 
 - Supports opening a set of `.png`, `build.bytes`, and `anim.bytes` files to view their contents.
+- OpenGL based animation previews.
 - Outlines the section of the texture atlas used for a specific sprite in the animation.
 - Splits the texture atlas into individual image files.
 - Allows resizing individual sprites & rebuilding the texture atlas.
