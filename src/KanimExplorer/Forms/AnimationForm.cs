@@ -158,5 +158,10 @@ namespace KanimExplorer.Forms
 		{
 			playing = checkBoxPlay.Checked;
 		}
+
+		private void closeToolStripMenuItem_Click(object sender, System.EventArgs e)
+		{
+			Close();
+		}
 	}
 }

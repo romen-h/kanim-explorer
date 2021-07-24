@@ -144,7 +144,7 @@ namespace KanimExplorer.OpenGL
 				KFrame sprite = build.GetFrame(symbol, element.FrameNumber);
 				if (sprite == null) continue;
 
-				pivotMat = Matrix4.CreateTranslation(sprite.PivotX, -sprite.PivotY, 0);
+				pivotMat = Matrix4.CreateTranslation(sprite.PivotX, sprite.PivotY, 0);
 
 				transformMat = new Matrix4(
 					element.M00, -element.M10, 0, 0,
@@ -153,7 +153,7 @@ namespace KanimExplorer.OpenGL
 					element.M02, -element.M12, 0, 1
 				);
 
-				modelMat = halfScaleMat * transformMat * pivotMat;
+				modelMat = halfScaleMat * pivotMat * transformMat;
 
 				spriteShader.SetUniform("Model", ref modelMat);
 

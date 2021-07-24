@@ -38,10 +38,10 @@ namespace KanimExplorer.Forms
 			this.panelDisplayArea = new System.Windows.Forms.Panel();
 			this.panelProperties = new System.Windows.Forms.Panel();
 			this.panelTimeline = new System.Windows.Forms.Panel();
-			this.buttonPrevFrame = new System.Windows.Forms.Button();
-			this.buttonNextFrame = new System.Windows.Forms.Button();
-			this.textBoxFrameNumber = new System.Windows.Forms.TextBox();
 			this.checkBoxPlay = new System.Windows.Forms.CheckBox();
+			this.textBoxFrameNumber = new System.Windows.Forms.TextBox();
+			this.buttonNextFrame = new System.Windows.Forms.Button();
+			this.buttonPrevFrame = new System.Windows.Forms.Button();
 			this.panelExplorer.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
 			this.panelTimeline.SuspendLayout();
@@ -101,8 +101,9 @@ namespace KanimExplorer.Forms
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.closeToolStripMenuItem.Text = "Close";
+			this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
 			// 
 			// panelDisplayArea
 			// 
@@ -135,35 +136,6 @@ namespace KanimExplorer.Forms
 			this.panelTimeline.Size = new System.Drawing.Size(1312, 100);
 			this.panelTimeline.TabIndex = 0;
 			// 
-			// buttonPrevFrame
-			// 
-			this.buttonPrevFrame.Location = new System.Drawing.Point(12, 6);
-			this.buttonPrevFrame.Name = "buttonPrevFrame";
-			this.buttonPrevFrame.Size = new System.Drawing.Size(75, 23);
-			this.buttonPrevFrame.TabIndex = 0;
-			this.buttonPrevFrame.Text = "< <";
-			this.buttonPrevFrame.UseVisualStyleBackColor = true;
-			this.buttonPrevFrame.Click += new System.EventHandler(this.buttonPrevFrame_Click);
-			// 
-			// buttonNextFrame
-			// 
-			this.buttonNextFrame.Location = new System.Drawing.Point(199, 6);
-			this.buttonNextFrame.Name = "buttonNextFrame";
-			this.buttonNextFrame.Size = new System.Drawing.Size(75, 23);
-			this.buttonNextFrame.TabIndex = 1;
-			this.buttonNextFrame.Text = "> >";
-			this.buttonNextFrame.UseVisualStyleBackColor = true;
-			this.buttonNextFrame.Click += new System.EventHandler(this.buttonNextFrame_Click);
-			// 
-			// textBoxFrameNumber
-			// 
-			this.textBoxFrameNumber.Location = new System.Drawing.Point(93, 8);
-			this.textBoxFrameNumber.Name = "textBoxFrameNumber";
-			this.textBoxFrameNumber.ReadOnly = true;
-			this.textBoxFrameNumber.Size = new System.Drawing.Size(100, 20);
-			this.textBoxFrameNumber.TabIndex = 2;
-			this.textBoxFrameNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			// 
 			// checkBoxPlay
 			// 
 			this.checkBoxPlay.Appearance = System.Windows.Forms.Appearance.Button;
@@ -175,6 +147,35 @@ namespace KanimExplorer.Forms
 			this.checkBoxPlay.Text = "Play";
 			this.checkBoxPlay.UseVisualStyleBackColor = true;
 			this.checkBoxPlay.CheckedChanged += new System.EventHandler(this.checkBoxPlay_CheckedChanged);
+			// 
+			// textBoxFrameNumber
+			// 
+			this.textBoxFrameNumber.Location = new System.Drawing.Point(93, 8);
+			this.textBoxFrameNumber.Name = "textBoxFrameNumber";
+			this.textBoxFrameNumber.ReadOnly = true;
+			this.textBoxFrameNumber.Size = new System.Drawing.Size(100, 20);
+			this.textBoxFrameNumber.TabIndex = 2;
+			this.textBoxFrameNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// buttonNextFrame
+			// 
+			this.buttonNextFrame.Location = new System.Drawing.Point(199, 6);
+			this.buttonNextFrame.Name = "buttonNextFrame";
+			this.buttonNextFrame.Size = new System.Drawing.Size(75, 23);
+			this.buttonNextFrame.TabIndex = 1;
+			this.buttonNextFrame.Text = "> >";
+			this.buttonNextFrame.UseVisualStyleBackColor = true;
+			this.buttonNextFrame.Click += new System.EventHandler(this.buttonNextFrame_Click);
+			// 
+			// buttonPrevFrame
+			// 
+			this.buttonPrevFrame.Location = new System.Drawing.Point(12, 6);
+			this.buttonPrevFrame.Name = "buttonPrevFrame";
+			this.buttonPrevFrame.Size = new System.Drawing.Size(75, 23);
+			this.buttonPrevFrame.TabIndex = 0;
+			this.buttonPrevFrame.Text = "< <";
+			this.buttonPrevFrame.UseVisualStyleBackColor = true;
+			this.buttonPrevFrame.Click += new System.EventHandler(this.buttonPrevFrame_Click);
 			// 
 			// AnimationForm
 			// 
