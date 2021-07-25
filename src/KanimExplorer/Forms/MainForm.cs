@@ -9,7 +9,10 @@ using System.Text;
 using System.Windows.Forms;
 
 using KanimExplorer.Properties;
-using KanimExplorer.Sprites;
+using KanimExplorer.Wizard;
+
+using KanimLib;
+using KanimLib.Sprites;
 
 namespace KanimExplorer.Forms
 {
@@ -579,22 +582,6 @@ namespace KanimExplorer.Forms
 			}
 		}
 
-		private void newBuildingPlaceholderToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			NewBuildingForm dlg = new NewBuildingForm();
-			if (dlg.ShowDialog() == DialogResult.OK)
-			{
-				try
-				{
-					AnimFactory.MakePlaceholderBuilding(dlg.BuildingName, dlg.BuildingWidth, dlg.BuildingHeight, out Bitmap atlas, out KBuild build, out KAnim anim);
-					OpenData(atlas, build, anim);
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show(ex.ToString());
-				}
-			}
-		}
 
 		private void previewAnimToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -604,6 +591,12 @@ namespace KanimExplorer.Forms
 				animForm.SetData(data);
 				animForm.Show(this);
 			}
+		}
+
+		private void wizardToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			WizardForm f = new WizardForm();
+			f.ShowDialog(this);
 		}
 	}
 }

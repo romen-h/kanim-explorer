@@ -3,12 +3,34 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace KanimExplorer
+namespace KanimLib
 {
-	class KAnimUtils
+	public class KAnimUtils
 	{
-		const string BUILD_HEADER = "BILD";
+
 		const string ANIM_HEADER = "ANIM";
+
+		public static KAnimPackage OpenPackage(string textureFile, string buildFile, string animFile)
+		{
+			KAnimPackage pkg = new KAnimPackage();
+
+			if (File.Exists(textureFile))
+			{
+				pkg.Texture = new System.Drawing.Bitmap(textureFile);
+			}
+
+			if (File.Exists(buildFile))
+			{
+				pkg.Build = ReadBuild(buildFile);
+			}
+
+			if (File.Exists(animFile))
+			{
+				pkg.Anim = ReadAnim(animFile);
+			}
+
+			return pkg;
+		}
 
 		public static KBuild ReadBuild(string buildFile)
 		{
@@ -18,8 +40,8 @@ namespace KanimExplorer
 			using (BinaryReader reader = new BinaryReader(file))
 			{
 				// Verify header
-				string header = Encoding.ASCII.GetString(reader.ReadBytes(BUILD_HEADER.Length));
-				if (header != BUILD_HEADER) throw new Exception("Header is not valid.");
+				string header = Encoding.ASCII.GetString(reader.ReadBytes(KBuild.BUILD_HEADER.Length));
+				if (header != KBuild.BUILD_HEADER) throw new Exception("Header is not valid.");
 
 				// Parse Build, Symbols, Frames
 				KBuild build = new KBuild();
@@ -82,7 +104,7 @@ namespace KanimExplorer
 				using (FileStream file = new FileStream(buildFile, FileMode.Create))
 				using (BinaryWriter writer = new BinaryWriter(file))
 				{
-					writer.Write(Encoding.ASCII.GetBytes(BUILD_HEADER));
+					writer.Write(Encoding.ASCII.GetBytes(KBuild.BUILD_HEADER));
 
 					writer.Write(build.Version);
 					writer.Write(build.SymbolCount);

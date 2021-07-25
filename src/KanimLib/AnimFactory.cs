@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 
-using KanimExplorer.Sprites;
+using KanimLib.Sprites;
 
-namespace KanimExplorer
+namespace KanimLib
 {
 	public static class AnimFactory
 	{
@@ -22,7 +25,7 @@ namespace KanimExplorer
 
 			build = new KBuild();
 			build.Name = name;
-			build.Version = 10;
+			build.Version = KBuild.CURRENT_BUILD_VERSION;
 			build.SymbolCount = 4;
 			build.FrameCount = 4;
 
@@ -57,6 +60,89 @@ namespace KanimExplorer
 			KAnimBank placeAnim = AddBank(anim, "place", Math.Max(buildingWidth, buildingHeight));
 			KAnimBank onAnim = AddBank(anim, "on", Math.Max(buildingWidth, buildingHeight));
 			KAnimBank offAnim = AddBank(anim, "off", Math.Max(buildingWidth, buildingHeight));
+		}
+
+		public static void MakeSpritePack(string name, string spritesDir, out Bitmap atlas, out KBuild build, out KAnim anim)
+		{
+			build = new KBuild();
+			build.Name = name;
+			build.Version = KBuild.CURRENT_BUILD_VERSION;
+			build.SymbolCount = 0;
+			build.FrameCount = 0;
+
+			anim = KAnimUtils.CreateEmptyAnim();
+
+			string[] imageFiles = Directory.GetFiles(spritesDir, "*.png");
+			List<Sprite> sprites = new List<Sprite>();
+
+			foreach (string imageFile in imageFiles)
+			{
+				try
+				{
+					Bitmap img = new Bitmap(imageFile);
+
+					string fileName = Path.GetFileNameWithoutExtension(imageFile);
+
+					int lastUnderscore = fileName.LastIndexOf('_');
+					string symbolName = fileName.Substring(0, lastUnderscore);
+					string indexStr = fileName.Substring(lastUnderscore + 1);
+
+					int symbolHash = symbolName.KHash();
+					int index = int.Parse(indexStr);
+
+					KSymbol symbol = build.GetSymbol(symbolHash);
+					if (symbol == null)
+					{
+						symbol = new KSymbol(build);
+						symbol.Hash = symbolHash;
+						symbol.Path = symbolHash;
+						symbol.Color = Color.FromArgb(0);
+						symbol.Flags = 0;
+						symbol.FrameCount = 0;
+
+						build.Symbols.Add(symbol);
+						build.SymbolNames[symbolHash] = symbolName;
+						build.SymbolCount++;
+					}
+
+					KFrame frame = new KFrame(symbol);
+					frame.Index = index;
+					frame.Duration = 1;
+					frame.ImageIndex = 0;
+					frame.PivotX = 0;
+					frame.PivotY = -img.Height;
+					frame.PivotWidth = 2 * img.Width;
+					frame.PivotHeight = 2 * img.Height;
+					frame.UV_X1 = 0f;
+					frame.UV_Y1 = 0f;
+					frame.UV_X2 = 0f;
+					frame.UV_Y2 = 0f;
+					frame.Time = 0;
+
+					symbol.Frames.Add(frame);
+					symbol.FrameCount++;
+					build.FrameCount++;
+
+					Sprite spr = new Sprite(frame, img);
+					sprites.Add(spr);
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine("Failed to make sprite.");
+					Debug.WriteLine(ex.ToString());
+				}
+			}
+
+			try
+			{
+				atlas = SpriteUtils.RebuildAtlas(sprites.ToArray());
+			}
+			catch (Exception ex)
+			{
+				atlas = null;
+				Debug.WriteLine("Failed to pack atlas.");
+				Debug.WriteLine(ex.ToString());
+			}
 		}
 
 		private static KSymbol AddSymbol(KBuild parent, string name, float width, float height)

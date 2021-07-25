@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 
 using MaxRectsBinPack;
 
-namespace KanimExplorer.Sprites
+namespace KanimLib.Sprites
 {
 	public class SpriteUtils
 	{
@@ -69,7 +69,7 @@ namespace KanimExplorer.Sprites
 			return newAtlas;
 		}
 
-		private static PackedSprite[] Pack(Sprite[] sprites, out int sheetW, out int sheetH)
+		public static PackedSprite[] Pack(Sprite[] sprites, out int sheetW, out int sheetH)
 		{
 			// Brute force trial-and-error sprite packing.
 			// Double the smaller axis of the sheet each time it fails.

@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using KanimExplorer.OpenGL.Objects;
 using KanimExplorer.OpenGL.Shaders;
 
+using KanimLib;
+
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 

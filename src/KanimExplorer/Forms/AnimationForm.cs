@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 
 using KanimExplorer.OpenGL;
+using KanimLib;
 
 using OpenTK;
 using OpenTK.Graphics;

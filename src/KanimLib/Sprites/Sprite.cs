@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 
-namespace KanimExplorer.Sprites
+namespace KanimLib.Sprites
 {
 	public class Sprite
 	{

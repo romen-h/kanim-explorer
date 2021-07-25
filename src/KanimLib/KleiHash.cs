@@ -1,4 +1,4 @@
-﻿namespace KanimExplorer
+﻿namespace KanimLib
 {
 	public static class KleiUtil
 	{

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace KanimExplorer
+namespace KanimLib
 {
 	public static class BinaryReaderExtensions
 	{
@@ -20,10 +20,10 @@ namespace KanimExplorer
 			return Color.FromArgb(i);
 		}
 
-		public static KSymbol.SymbolFlags ReadKSymbolFlags(this BinaryReader reader)
+		public static SymbolFlags ReadKSymbolFlags(this BinaryReader reader)
 		{
 			int i = reader.ReadInt32();
-			return (KSymbol.SymbolFlags)i;
+			return (SymbolFlags)i;
 		}
 	}
 
@@ -42,28 +42,10 @@ namespace KanimExplorer
 			writer.Write(i);
 		}
 
-		public static void Write(this BinaryWriter writer, KSymbol.SymbolFlags flags)
+		public static void Write(this BinaryWriter writer, SymbolFlags flags)
 		{
 			int i = (int)flags;
 			writer.Write(i);
-		}
-	}
-
-	public static class SymbolFlagsExtensions
-	{
-		public static KSymbol.SymbolFlags SetFlag(this KSymbol.SymbolFlags flags, KSymbol.SymbolFlags flag, bool value)
-		{
-			int flagsInt = (int)flags;
-			int flagInt = (int)flag;
-			if (value)
-			{
-				flagsInt |= flagInt;
-			}
-			else
-			{
-				flagsInt &= ~flagInt;
-			}
-			return (KSymbol.SymbolFlags)flagsInt;
 		}
 	}
 }

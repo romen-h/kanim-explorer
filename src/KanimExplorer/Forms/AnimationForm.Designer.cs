@@ -101,7 +101,7 @@ namespace KanimExplorer.Forms
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
 			this.closeToolStripMenuItem.Text = "Close";
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
 			// 
@@ -189,7 +189,7 @@ namespace KanimExplorer.Forms
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
 			this.Name = "AnimationForm";
-			this.Text = "AnimationForm";
+			this.Text = "Animation Viewer";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AnimationForm_FormClosing);
 			this.Load += new System.EventHandler(this.AnimationForm_Load);
 			this.panelExplorer.ResumeLayout(false);

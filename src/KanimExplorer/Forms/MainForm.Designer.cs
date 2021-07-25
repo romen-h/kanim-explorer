@@ -30,7 +30,6 @@
 		{
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.newBuildingPlaceholderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveBuildFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +46,8 @@
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.splitTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.rebuildTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.wizardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.previewAnimToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this.buildTreeView = new System.Windows.Forms.TreeView();
@@ -54,7 +55,6 @@
 			this.propertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.label2 = new System.Windows.Forms.Label();
 			this.atlasView = new System.Windows.Forms.PictureBox();
-			this.previewAnimToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -73,6 +73,7 @@
 			this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.toolsToolStripMenuItem,
+            this.wizardToolStripMenuItem,
             this.previewAnimToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
@@ -84,7 +85,6 @@
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newBuildingPlaceholderToolStripMenuItem,
             this.openToolStripMenuItem,
             this.saveTextureAtlasToolStripMenuItem,
             this.saveBuildFileToolStripMenuItem,
@@ -97,17 +97,10 @@
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 22);
 			this.fileToolStripMenuItem.Text = "File";
 			// 
-			// newBuildingPlaceholderToolStripMenuItem
-			// 
-			this.newBuildingPlaceholderToolStripMenuItem.Name = "newBuildingPlaceholderToolStripMenuItem";
-			this.newBuildingPlaceholderToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-			this.newBuildingPlaceholderToolStripMenuItem.Text = "New Building Placeholder";
-			this.newBuildingPlaceholderToolStripMenuItem.Click += new System.EventHandler(this.newBuildingPlaceholderToolStripMenuItem_Click);
-			// 
 			// openToolStripMenuItem
 			// 
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.openToolStripMenuItem.Text = "Open";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
 			// 
@@ -115,7 +108,7 @@
 			// 
 			this.saveTextureAtlasToolStripMenuItem.Enabled = false;
 			this.saveTextureAtlasToolStripMenuItem.Name = "saveTextureAtlasToolStripMenuItem";
-			this.saveTextureAtlasToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.saveTextureAtlasToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.saveTextureAtlasToolStripMenuItem.Text = "Save Texture Atlas...";
 			this.saveTextureAtlasToolStripMenuItem.Click += new System.EventHandler(this.saveTextureAtlasToolStripMenuItem_Click);
 			// 
@@ -123,7 +116,7 @@
 			// 
 			this.saveBuildFileToolStripMenuItem.Enabled = false;
 			this.saveBuildFileToolStripMenuItem.Name = "saveBuildFileToolStripMenuItem";
-			this.saveBuildFileToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.saveBuildFileToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.saveBuildFileToolStripMenuItem.Text = "Save Build File...";
 			this.saveBuildFileToolStripMenuItem.Click += new System.EventHandler(this.saveBuildFileToolStripMenuItem_Click);
 			// 
@@ -131,32 +124,32 @@
 			// 
 			this.saveAnimFileToolStripMenuItem.Enabled = false;
 			this.saveAnimFileToolStripMenuItem.Name = "saveAnimFileToolStripMenuItem";
-			this.saveAnimFileToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.saveAnimFileToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.saveAnimFileToolStripMenuItem.Text = "Save Anim File...";
 			this.saveAnimFileToolStripMenuItem.Click += new System.EventHandler(this.saveAnimFileToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(207, 6);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(174, 6);
 			// 
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Enabled = false;
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.closeToolStripMenuItem.Text = "Close";
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(207, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(174, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -219,11 +212,26 @@
 			this.rebuildTextureAtlasToolStripMenuItem.Text = "Rebuild Texture Atlas";
 			this.rebuildTextureAtlasToolStripMenuItem.Click += new System.EventHandler(this.rebuildTextureAtlasToolStripMenuItem_Click);
 			// 
+			// wizardToolStripMenuItem
+			// 
+			this.wizardToolStripMenuItem.Name = "wizardToolStripMenuItem";
+			this.wizardToolStripMenuItem.Size = new System.Drawing.Size(55, 22);
+			this.wizardToolStripMenuItem.Text = "Wizard";
+			this.wizardToolStripMenuItem.Click += new System.EventHandler(this.wizardToolStripMenuItem_Click);
+			// 
+			// previewAnimToolStripMenuItem
+			// 
+			this.previewAnimToolStripMenuItem.Enabled = false;
+			this.previewAnimToolStripMenuItem.Name = "previewAnimToolStripMenuItem";
+			this.previewAnimToolStripMenuItem.Size = new System.Drawing.Size(113, 22);
+			this.previewAnimToolStripMenuItem.Text = "Animation Viewer";
+			this.previewAnimToolStripMenuItem.Click += new System.EventHandler(this.previewAnimToolStripMenuItem_Click);
+			// 
 			// splitContainer1
 			// 
 			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.splitContainer1.Location = new System.Drawing.Point(0, 24);
-			this.splitContainer1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.splitContainer1.Margin = new System.Windows.Forms.Padding(2);
 			this.splitContainer1.Name = "splitContainer1";
 			// 
 			// splitContainer1.Panel1
@@ -242,7 +250,7 @@
 			// 
 			this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-			this.splitContainer2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.splitContainer2.Margin = new System.Windows.Forms.Padding(2);
 			this.splitContainer2.Name = "splitContainer2";
 			this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
 			// 
@@ -265,7 +273,7 @@
 			// 
 			this.buildTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.buildTreeView.Location = new System.Drawing.Point(0, 26);
-			this.buildTreeView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.buildTreeView.Margin = new System.Windows.Forms.Padding(2);
 			this.buildTreeView.Name = "buildTreeView";
 			this.buildTreeView.Size = new System.Drawing.Size(190, 174);
 			this.buildTreeView.TabIndex = 1;
@@ -277,7 +285,7 @@
 			this.label1.Location = new System.Drawing.Point(0, 0);
 			this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label1.Name = "label1";
-			this.label1.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.label1.Padding = new System.Windows.Forms.Padding(3);
 			this.label1.Size = new System.Drawing.Size(190, 26);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Symbol Tree:";
@@ -288,7 +296,7 @@
 			this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.propertyGrid.HelpVisible = false;
 			this.propertyGrid.Location = new System.Drawing.Point(0, 26);
-			this.propertyGrid.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.propertyGrid.Margin = new System.Windows.Forms.Padding(2);
 			this.propertyGrid.Name = "propertyGrid";
 			this.propertyGrid.PropertySort = System.Windows.Forms.PropertySort.NoSort;
 			this.propertyGrid.Size = new System.Drawing.Size(190, 315);
@@ -302,7 +310,7 @@
 			this.label2.Location = new System.Drawing.Point(0, 0);
 			this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label2.Name = "label2";
-			this.label2.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+			this.label2.Padding = new System.Windows.Forms.Padding(3);
 			this.label2.Size = new System.Drawing.Size(190, 26);
 			this.label2.TabIndex = 3;
 			this.label2.Text = "Symbol Inspector:";
@@ -314,20 +322,12 @@
 			this.atlasView.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			this.atlasView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.atlasView.Location = new System.Drawing.Point(0, 0);
-			this.atlasView.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.atlasView.Margin = new System.Windows.Forms.Padding(2);
 			this.atlasView.Name = "atlasView";
 			this.atlasView.Size = new System.Drawing.Size(380, 544);
 			this.atlasView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.atlasView.TabIndex = 0;
 			this.atlasView.TabStop = false;
-			// 
-			// previewAnimToolStripMenuItem
-			// 
-			this.previewAnimToolStripMenuItem.Enabled = false;
-			this.previewAnimToolStripMenuItem.Name = "previewAnimToolStripMenuItem";
-			this.previewAnimToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
-			this.previewAnimToolStripMenuItem.Text = "Preview Anim";
-			this.previewAnimToolStripMenuItem.Click += new System.EventHandler(this.previewAnimToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -337,7 +337,7 @@
 			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
-			this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "MainForm";
 			this.Text = "Kanim Explorer";
 			this.menuStrip1.ResumeLayout(false);
@@ -383,8 +383,8 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 		private System.Windows.Forms.ToolStripMenuItem saveTextureAtlasToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem newBuildingPlaceholderToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem previewAnimToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem wizardToolStripMenuItem;
 	}
 }
 
