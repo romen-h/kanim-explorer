@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Text;
+using System.IO;
 
-namespace KanimalExplorer
+using KanimLib.Sprites;
+
+namespace KanimLib
 {
 	public static class AnimFactory
 	{
@@ -23,7 +25,7 @@ namespace KanimalExplorer
 
 			build = new KBuild();
 			build.Name = name;
-			build.Version = 10;
+			build.Version = KBuild.CURRENT_BUILD_VERSION;
 			build.SymbolCount = 4;
 			build.FrameCount = 4;
 
@@ -58,6 +60,89 @@ namespace KanimalExplorer
 			KAnimBank placeAnim = AddBank(anim, "place", Math.Max(buildingWidth, buildingHeight));
 			KAnimBank onAnim = AddBank(anim, "on", Math.Max(buildingWidth, buildingHeight));
 			KAnimBank offAnim = AddBank(anim, "off", Math.Max(buildingWidth, buildingHeight));
+		}
+
+		public static void MakeSpritePack(string name, string spritesDir, out Bitmap atlas, out KBuild build, out KAnim anim)
+		{
+			build = new KBuild();
+			build.Name = name;
+			build.Version = KBuild.CURRENT_BUILD_VERSION;
+			build.SymbolCount = 0;
+			build.FrameCount = 0;
+
+			anim = KAnimUtils.CreateEmptyAnim();
+
+			string[] imageFiles = Directory.GetFiles(spritesDir, "*.png");
+			List<Sprite> sprites = new List<Sprite>();
+
+			foreach (string imageFile in imageFiles)
+			{
+				try
+				{
+					Bitmap img = new Bitmap(imageFile);
+
+					string fileName = Path.GetFileNameWithoutExtension(imageFile);
+
+					int lastUnderscore = fileName.LastIndexOf('_');
+					string symbolName = fileName.Substring(0, lastUnderscore);
+					string indexStr = fileName.Substring(lastUnderscore + 1);
+
+					int symbolHash = symbolName.KHash();
+					int index = int.Parse(indexStr);
+
+					KSymbol symbol = build.GetSymbol(symbolHash);
+					if (symbol == null)
+					{
+						symbol = new KSymbol(build);
+						symbol.Hash = symbolHash;
+						symbol.Path = symbolHash;
+						symbol.Color = Color.FromArgb(0);
+						symbol.Flags = 0;
+						symbol.FrameCount = 0;
+
+						build.Symbols.Add(symbol);
+						build.SymbolNames[symbolHash] = symbolName;
+						build.SymbolCount++;
+					}
+
+					KFrame frame = new KFrame(symbol);
+					frame.Index = index;
+					frame.Duration = 1;
+					frame.ImageIndex = 0;
+					frame.PivotX = 0;
+					frame.PivotY = -img.Height;
+					frame.PivotWidth = 2 * img.Width;
+					frame.PivotHeight = 2 * img.Height;
+					frame.UV_X1 = 0f;
+					frame.UV_Y1 = 0f;
+					frame.UV_X2 = 0f;
+					frame.UV_Y2 = 0f;
+					frame.Time = 0;
+
+					symbol.Frames.Add(frame);
+					symbol.FrameCount++;
+					build.FrameCount++;
+
+					Sprite spr = new Sprite(frame, img);
+					sprites.Add(spr);
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine("Failed to make sprite.");
+					Debug.WriteLine(ex.ToString());
+				}
+			}
+
+			try
+			{
+				atlas = SpriteUtils.RebuildAtlas(sprites.ToArray());
+			}
+			catch (Exception ex)
+			{
+				atlas = null;
+				Debug.WriteLine("Failed to pack atlas.");
+				Debug.WriteLine(ex.ToString());
+			}
 		}
 
 		private static KSymbol AddSymbol(KBuild parent, string name, float width, float height)
@@ -117,11 +202,11 @@ namespace KanimalExplorer
 			Bitmap bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb);
 			using (Graphics g = Graphics.FromImage(bmp))
 			{
-				g.Clear(Color.FromArgb(0,0,0,0));
+				g.Clear(Color.FromArgb(0, 0, 0, 0));
 				g.DrawRectangle(Pens.White, 0, 0, width, height);
-				g.DrawRectangle(Pens.White, 1, 1, width-2, height-2);
-				g.DrawRectangle(Pens.White, 2, 2, width-4, height-4);
-				g.DrawRectangle(Pens.White, 3, 3, width-6, height-6);
+				g.DrawRectangle(Pens.White, 1, 1, width - 2, height - 2);
+				g.DrawRectangle(Pens.White, 2, 2, width - 4, height - 4);
+				g.DrawRectangle(Pens.White, 3, 3, width - 6, height - 6);
 				g.DrawString(name, fnt, Brushes.White, 10, 10);
 			}
 
@@ -178,21 +263,21 @@ namespace KanimalExplorer
 		private static KAnimElement AddAnimElement(KAnimFrame parent, int hash)
 		{
 			KAnimElement element = new KAnimElement(parent);
-			element.ImageHash = hash;
-			element.Index = 0;
-			element.Layer = hash;
+			element.SymbolHash = hash;
+			element.FrameNumber = 0;
+			element.FolderHash = hash;
 			element.Flags = 0;
 			element.Alpha = 1.0f;
 			element.Red = 1.0f;
 			element.Green = 1.0f;
 			element.Blue = 1.0f;
-			element.M1 = 1f;
-			element.M2 = 0f;
-			element.M3 = 0f;
-			element.M4 = 1f;
-			element.M5 = 0f;
-			element.M6 = 0f;
-			element.Order = 0;
+			element.M00 = 1f;
+			element.M10 = 0f;
+			element.M01 = 0f;
+			element.M11 = 1f;
+			element.M02 = 0f;
+			element.M12 = 0f;
+			element.Unused = 0;
 
 			parent.Elements.Add(element);
 			return element;

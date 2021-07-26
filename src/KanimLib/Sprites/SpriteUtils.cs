@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
-using System.Linq;
-using System.Text;
 
 using MaxRectsBinPack;
 
-namespace KanimalExplorer
+namespace KanimLib.Sprites
 {
 	public class SpriteUtils
 	{
@@ -73,7 +69,7 @@ namespace KanimalExplorer
 			return newAtlas;
 		}
 
-		private static PackedSprite[] Pack(Sprite[] sprites, out int sheetW, out int sheetH)
+		public static PackedSprite[] Pack(Sprite[] sprites, out int sheetW, out int sheetH)
 		{
 			// Brute force trial-and-error sprite packing.
 			// Double the smaller axis of the sheet each time it fails.

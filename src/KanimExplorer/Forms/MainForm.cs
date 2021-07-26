@@ -1,33 +1,31 @@
-﻿using KanimalExplorer.Properties;
-
+﻿
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace KanimalExplorer
+using KanimExplorer.Properties;
+using KanimExplorer.Wizard;
+
+using KanimLib;
+using KanimLib.Sprites;
+
+namespace KanimExplorer.Forms
 {
 	public partial class MainForm : Form
 	{
 		private Font fnt = new Font(FontFamily.GenericSansSerif, 10f);
 
 		private string currentAtlasFile = null;
-		private Bitmap atlasData = null;
-
 		private string currentBuildFile = null;
-		private KBuild buildData = null;
-
 		private string currentAnimFile = null;
-		private KAnim animData = null;
+		private KAnimPackage data;
 
-		public bool FilesAreOpen => (atlasData != null || buildData != null || animData != null);
+		public bool FilesAreOpen => data?.HasAnyData ?? false;
 
 		public MainForm()
 		{
@@ -71,20 +69,22 @@ namespace KanimalExplorer
 
 		private void OpenData(Bitmap atlas, KBuild build, KAnim anim)
 		{
-			atlasData = atlas;
-			UpdateAtlasView(atlasData);
+			data = new KAnimPackage(); 
+			data.Texture = atlas;
+			UpdateAtlasView(data.Texture);
 
-			buildData = build;
-			animData = anim;
-			UpdateBuildTree(buildData, animData);
+			data.Build = build;
+			data.Anim = anim;
+			UpdateBuildTree(data);
 
-			closeToolStripMenuItem.Enabled = (atlasData != null || buildData != null || animData != null);
-			convertToSCMLToolStripMenuItem.Enabled = (atlasData != null && buildData != null && animData != null);
-			splitTextureAtlasToolStripMenuItem.Enabled = (atlasData != null && buildData != null);
-			rebuildTextureAtlasToolStripMenuItem.Enabled = (atlasData != null && buildData != null);
-			saveTextureAtlasToolStripMenuItem.Enabled = (atlasData != null);
-			saveBuildFileToolStripMenuItem.Enabled = (buildData != null);
-			saveAnimFileToolStripMenuItem.Enabled = (animData != null);
+			closeToolStripMenuItem.Enabled = FilesAreOpen;
+			convertToSCMLToolStripMenuItem.Enabled = data.IsComplete;
+			splitTextureAtlasToolStripMenuItem.Enabled = data.IsValidAtlas;
+			rebuildTextureAtlasToolStripMenuItem.Enabled = data.IsValidAtlas;
+			saveTextureAtlasToolStripMenuItem.Enabled = data.HasTexture;
+			saveBuildFileToolStripMenuItem.Enabled = data.HasBuild;
+			saveAnimFileToolStripMenuItem.Enabled = data.HasAnim;
+			previewAnimToolStripMenuItem.Enabled = data.IsComplete;
 		}
 
 		private void UpdateAtlasView(Bitmap img, RectangleF[] frames = null, PointF[] pivots = null)
@@ -94,7 +94,7 @@ namespace KanimalExplorer
 				Bitmap bmp = new Bitmap(img.Width, img.Height);
 				using (Graphics g = Graphics.FromImage(bmp))
 				{
-					g.Clear(Color.FromArgb(128,128,128));
+					g.Clear(Color.FromArgb(128, 128, 128));
 					g.DrawImage(img, 0, 0, img.Width, img.Height);
 
 					if (frames != null)
@@ -122,7 +122,7 @@ namespace KanimalExplorer
 						}
 					}
 
-					if (buildData != null && buildData.NeedsRepack)
+					if (data.Build != null && data.Build.NeedsRepack)
 					{
 						g.DrawString("Requires Rebuild", fnt, Brushes.Orange, 5, 5);
 					}
@@ -136,16 +136,18 @@ namespace KanimalExplorer
 			}
 		}
 
-		private void UpdateBuildTree(KBuild build, KAnim anim)
+		private void UpdateBuildTree(KAnimPackage data)
 		{
 			buildTreeView.Nodes.Clear();
 
-			if (build != null)
-			{
-				TreeNode buildNode = new TreeNode(build.Name);
-				buildNode.Tag = build;
+			if (data == null) return;
 
-				foreach (KSymbol symbol in build.Symbols)
+			if (data.Build != null)
+			{
+				TreeNode buildNode = new TreeNode(data.Build.ToString());
+				buildNode.Tag = data.Build;
+
+				foreach (KSymbol symbol in data.Build.Symbols)
 				{
 					TreeNode symbolNode = new TreeNode(symbol.Name);
 					symbolNode.Tag = symbol;
@@ -164,12 +166,12 @@ namespace KanimalExplorer
 				buildTreeView.Nodes.Add(buildNode);
 			}
 
-			if (anim != null)
+			if (data.Anim != null)
 			{
 				TreeNode animNode = new TreeNode("Animations");
-				animNode.Tag = anim;
+				animNode.Tag = data.Anim;
 
-				foreach (KAnimBank bank in anim.Banks)
+				foreach (KAnimBank bank in data.Anim.Banks)
 				{
 					TreeNode bankNode = new TreeNode(bank.Name);
 					bankNode.Tag = bank;
@@ -179,27 +181,29 @@ namespace KanimalExplorer
 
 				buildTreeView.Nodes.Add(animNode);
 			}
-			
+
 			//buildTreeView.ExpandAll();
 		}
 
 		private void CloseFiles()
 		{
 			currentAtlasFile = null;
-			if (atlasData != null)
+			if (data.Texture != null)
 			{
-				atlasData.Dispose();
-				atlasData = null;
+				data.Texture.Dispose();
+				data.Texture = null;
 			}
 			atlasView.Image = null;
 
 			currentBuildFile = null;
-			buildData = null;
-			
-			currentAnimFile = null;
-			animData = null;
+			data.Build = null;
 
-			UpdateBuildTree(null, null);
+			currentAnimFile = null;
+			data.Anim = null;
+
+			data = null;
+
+			UpdateBuildTree(null);
 
 			propertyGrid.SelectedObject = null;
 
@@ -209,6 +213,7 @@ namespace KanimalExplorer
 			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
 			saveTextureAtlasToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Enabled = false;
+			previewAnimToolStripMenuItem.Enabled = false;
 		}
 
 		private void openToolStripMenuItem_Click(object sender, EventArgs e)
@@ -284,24 +289,25 @@ namespace KanimalExplorer
 				switch (e.Node.Tag)
 				{
 					case KBuild build:
+					case KAnim anim:
 						break;
 
 					case KSymbol symbol:
-						if (atlasData != null)
+						if (data.Texture != null)
 						{
 							foreach (KFrame frame in symbol.Frames)
 							{
-								frames.Add(frame.GetUVRectangle(atlasData.Width, atlasData.Height));
-								pivots.Add(frame.GetPivotPoint(atlasData.Width, atlasData.Height));
+								frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+								pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 							}
 						}
 						break;
 
 					case KFrame frame:
-						if (atlasData != null)
+						if (data.Texture != null)
 						{
-							frames.Add(frame.GetUVRectangle(atlasData.Width, atlasData.Height));
-							pivots.Add(frame.GetPivotPoint(atlasData.Width, atlasData.Height));
+							frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+							pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 						}
 						break;
 
@@ -310,9 +316,9 @@ namespace KanimalExplorer
 				}
 			}
 
-			if (atlasData != null)
+			if (data.Texture != null)
 			{
-				UpdateAtlasView(atlasData, frames.ToArray(), pivots.ToArray());
+				UpdateAtlasView(data.Texture, frames.ToArray(), pivots.ToArray());
 			}
 		}
 
@@ -327,21 +333,21 @@ namespace KanimalExplorer
 					break;
 
 				case KSymbol symbol:
-					if (atlasData != null)
+					if (data.Texture != null)
 					{
 						foreach (KFrame frame in symbol.Frames)
 						{
-							frames.Add(frame.GetUVRectangle(atlasData.Width, atlasData.Height));
-							pivots.Add(frame.GetPivotPoint(atlasData.Width, atlasData.Height));
+							frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+							pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 						}
 					}
 					break;
 
 				case KFrame frame:
-					if (atlasData != null)
+					if (data.Texture != null)
 					{
-						frames.Add(frame.GetUVRectangle(atlasData.Width, atlasData.Height));
-						pivots.Add(frame.GetPivotPoint(atlasData.Width, atlasData.Height));
+						frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+						pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 					}
 					break;
 
@@ -349,9 +355,9 @@ namespace KanimalExplorer
 					break;
 			}
 
-			if (atlasData != null)
+			if (data.Texture != null)
 			{
-				UpdateAtlasView(atlasData, frames.ToArray(), pivots.ToArray());
+				UpdateAtlasView(data.Texture, frames.ToArray(), pivots.ToArray());
 			}
 		}
 
@@ -386,7 +392,7 @@ namespace KanimalExplorer
 			{
 				try
 				{
-					atlasData.Save(dlg.FileName, ImageFormat.Png);
+					data.Texture.Save(dlg.FileName, ImageFormat.Png);
 					MessageBox.Show(this, "Texture atlas saved successfully.", "Save Success", MessageBoxButtons.OK);
 				}
 				catch
@@ -398,7 +404,7 @@ namespace KanimalExplorer
 
 		private void saveBuildFileToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (buildData.NeedsRepack)
+			if (data.Build.NeedsRepack)
 			{
 				MessageBox.Show("The texture atlas needs to be rebuilt first.");
 				// Repack
@@ -408,7 +414,7 @@ namespace KanimalExplorer
 			SaveFileDialog dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				if (KAnimUtils.WriteBuild(dlg.FileName, buildData))
+				if (KAnimUtils.WriteBuild(dlg.FileName, data.Build))
 				{
 					MessageBox.Show(this, "Build file saved successfully.", "Save Success", MessageBoxButtons.OK);
 				}
@@ -424,7 +430,7 @@ namespace KanimalExplorer
 			SaveFileDialog dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				if (KAnimUtils.WriteAnim(dlg.FileName, animData))
+				if (KAnimUtils.WriteAnim(dlg.FileName, data.Anim))
 				{
 					MessageBox.Show(this, "Anim file saved successfully.", "Save Success", MessageBoxButtons.OK);
 				}
@@ -523,7 +529,7 @@ namespace KanimalExplorer
 
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				Sprite[] sprites = SpriteUtils.BuildSprites(atlasData, buildData);
+				Sprite[] sprites = SpriteUtils.BuildSprites(data.Texture, data.Build);
 				foreach (Sprite sprite in sprites)
 				{
 					string frameFileName = $"{sprite.SymbolData.Name}_{sprite.FrameData.Index}.png";
@@ -552,7 +558,7 @@ namespace KanimalExplorer
 
 		private void rebuildTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (!buildData.NeedsRepack)
+			if (!data.Build.NeedsRepack)
 			{
 				MessageBox.Show("The build data does not have any changes that require repacking.");
 			}
@@ -560,9 +566,9 @@ namespace KanimalExplorer
 			{
 				try
 				{
-					Sprite[] sprites = SpriteUtils.BuildSprites(atlasData, buildData);
+					Sprite[] sprites = SpriteUtils.BuildSprites(data.Texture, data.Build);
 					SpriteUtils.ResizeSprites(sprites);
-					atlasData = SpriteUtils.RebuildAtlas(sprites);
+					data.Texture = SpriteUtils.RebuildAtlas(sprites);
 					foreach (var spr in sprites)
 					{
 						spr.FrameData.NeedsRepack = false;
@@ -571,30 +577,26 @@ namespace KanimalExplorer
 				catch
 				{ }
 
-				UpdateAtlasView(atlasData);
+				UpdateAtlasView(data.Texture);
 				propertyGrid.Refresh();
 			}
 		}
 
-		private void newBuildingPlaceholderToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			string name = "test";
-			int width = 4;
-			int height = 3;
 
-			NewBuildingForm dlg = new NewBuildingForm();
-			if (dlg.ShowDialog() == DialogResult.OK)
+		private void previewAnimToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (data != null && data.IsComplete)
 			{
-				try
-				{
-					AnimFactory.MakePlaceholderBuilding(dlg.BuildingName, dlg.BuildingWidth, dlg.BuildingHeight, out Bitmap atlas, out KBuild build, out KAnim anim);
-					OpenData(atlas, build, anim);
-				}
-				catch (Exception ex)
-				{
-					MessageBox.Show(ex.ToString());
-				}
+				AnimationForm animForm = new AnimationForm();
+				animForm.SetData(data);
+				animForm.Show(this);
 			}
+		}
+
+		private void wizardToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			WizardForm f = new WizardForm();
+			f.ShowDialog(this);
 		}
 	}
 }

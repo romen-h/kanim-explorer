@@ -1,16 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters;
 using System.Text;
 
-namespace KanimalExplorer
+namespace KanimLib
 {
-	class KAnimUtils
+	public class KAnimUtils
 	{
-		const string BUILD_HEADER = "BILD";
+
 		const string ANIM_HEADER = "ANIM";
+
+		public static KAnimPackage OpenPackage(string textureFile, string buildFile, string animFile)
+		{
+			KAnimPackage pkg = new KAnimPackage();
+
+			if (File.Exists(textureFile))
+			{
+				pkg.Texture = new System.Drawing.Bitmap(textureFile);
+			}
+
+			if (File.Exists(buildFile))
+			{
+				pkg.Build = ReadBuild(buildFile);
+			}
+
+			if (File.Exists(animFile))
+			{
+				pkg.Anim = ReadAnim(animFile);
+			}
+
+			return pkg;
+		}
 
 		public static KBuild ReadBuild(string buildFile)
 		{
@@ -20,8 +40,8 @@ namespace KanimalExplorer
 			using (BinaryReader reader = new BinaryReader(file))
 			{
 				// Verify header
-				string header = Encoding.ASCII.GetString(reader.ReadBytes(BUILD_HEADER.Length));
-				if (header != BUILD_HEADER) throw new Exception("Header is not valid.");
+				string header = Encoding.ASCII.GetString(reader.ReadBytes(KBuild.BUILD_HEADER.Length));
+				if (header != KBuild.BUILD_HEADER) throw new Exception("Header is not valid.");
 
 				// Parse Build, Symbols, Frames
 				KBuild build = new KBuild();
@@ -31,7 +51,7 @@ namespace KanimalExplorer
 				build.FrameCount = reader.ReadInt32();
 				build.Name = reader.ReadKString();
 
-				for (int s=0; s<build.SymbolCount; s++)
+				for (int s = 0; s < build.SymbolCount; s++)
 				{
 					KSymbol symbol = new KSymbol(build);
 					symbol.Hash = reader.ReadInt32();
@@ -41,7 +61,7 @@ namespace KanimalExplorer
 					symbol.FrameCount = reader.ReadInt32();
 
 					int time = 0;
-					for (int f=0; f<symbol.FrameCount; f++)
+					for (int f = 0; f < symbol.FrameCount; f++)
 					{
 						KFrame frame = new KFrame(symbol);
 						frame.Index = reader.ReadInt32();
@@ -66,7 +86,7 @@ namespace KanimalExplorer
 
 				// Read Symbol Hashes
 				int numHashes = reader.ReadInt32();
-				for (int h=0; h<numHashes; h++)
+				for (int h = 0; h < numHashes; h++)
 				{
 					int hash = reader.ReadInt32();
 					string str = reader.ReadKString();
@@ -84,7 +104,7 @@ namespace KanimalExplorer
 				using (FileStream file = new FileStream(buildFile, FileMode.Create))
 				using (BinaryWriter writer = new BinaryWriter(file))
 				{
-					writer.Write(Encoding.ASCII.GetBytes(BUILD_HEADER));
+					writer.Write(Encoding.ASCII.GetBytes(KBuild.BUILD_HEADER));
 
 					writer.Write(build.Version);
 					writer.Write(build.SymbolCount);
@@ -155,7 +175,7 @@ namespace KanimalExplorer
 				anim.ElementCount = reader.ReadInt32();
 				anim.BankCount = reader.ReadInt32();
 
-				for (int a=0; a<anim.BankCount; a++)
+				for (int a = 0; a < anim.BankCount; a++)
 				{
 					KAnimBank bank = new KAnimBank(anim);
 
@@ -164,7 +184,7 @@ namespace KanimalExplorer
 					bank.Rate = reader.ReadSingle();
 					bank.FrameCount = reader.ReadInt32();
 
-					for (int f=0; f<bank.FrameCount; f++)
+					for (int f = 0; f < bank.FrameCount; f++)
 					{
 						KAnimFrame frame = new KAnimFrame(bank);
 
@@ -174,25 +194,25 @@ namespace KanimalExplorer
 						frame.Height = reader.ReadSingle();
 						frame.ElementCount = reader.ReadInt32();
 
-						for (int e=0; e<frame.ElementCount; e++)
+						for (int e = 0; e < frame.ElementCount; e++)
 						{
 							KAnimElement element = new KAnimElement(frame);
 
-							element.ImageHash = reader.ReadInt32();
-							element.Index = reader.ReadInt32();
-							element.Layer = reader.ReadInt32();
+							element.SymbolHash = reader.ReadInt32();
+							element.FrameNumber = reader.ReadInt32();
+							element.FolderHash = reader.ReadInt32();
 							element.Flags = reader.ReadInt32();
 							element.Alpha = reader.ReadSingle();
 							element.Blue = reader.ReadSingle();
 							element.Green = reader.ReadSingle();
 							element.Red = reader.ReadSingle();
-							element.M1 = reader.ReadSingle();
-							element.M2 = reader.ReadSingle();
-							element.M3 = reader.ReadSingle();
-							element.M4 = reader.ReadSingle();
-							element.M5 = reader.ReadSingle();
-							element.M6 = reader.ReadSingle();
-							element.Order = reader.ReadSingle();
+							element.M00 = reader.ReadSingle();
+							element.M10 = reader.ReadSingle();
+							element.M01 = reader.ReadSingle();
+							element.M11 = reader.ReadSingle();
+							element.M02 = reader.ReadSingle();
+							element.M12 = reader.ReadSingle();
+							element.Unused = reader.ReadSingle();
 
 							frame.Elements.Add(element);
 						}
@@ -252,7 +272,7 @@ namespace KanimalExplorer
 						writer.Write(bank.Rate);
 						writer.Write(bank.FrameCount);
 
-						for (int f=0; f < bank.FrameCount; f++)
+						for (int f = 0; f < bank.FrameCount; f++)
 						{
 							KAnimFrame frame = bank.Frames[f];
 
@@ -262,25 +282,25 @@ namespace KanimalExplorer
 							writer.Write(frame.Height);
 							writer.Write(frame.ElementCount);
 
-							for (int e=0; e < frame.ElementCount; e++)
+							for (int e = 0; e < frame.ElementCount; e++)
 							{
 								KAnimElement element = frame.Elements[e];
 
-								writer.Write(element.ImageHash);
-								writer.Write(element.Index);
-								writer.Write(element.Layer);
+								writer.Write(element.SymbolHash);
+								writer.Write(element.FrameNumber);
+								writer.Write(element.FolderHash);
 								writer.Write(element.Flags);
 								writer.Write(element.Alpha);
 								writer.Write(element.Blue);
 								writer.Write(element.Green);
 								writer.Write(element.Red);
-								writer.Write(element.M1);
-								writer.Write(element.M2);
-								writer.Write(element.M3);
-								writer.Write(element.M4);
-								writer.Write(element.M5);
-								writer.Write(element.M6);
-								writer.Write(element.Order);
+								writer.Write(element.M00);
+								writer.Write(element.M10);
+								writer.Write(element.M01);
+								writer.Write(element.M11);
+								writer.Write(element.M02);
+								writer.Write(element.M12);
+								writer.Write(element.Unused);
 							}
 						}
 					}
