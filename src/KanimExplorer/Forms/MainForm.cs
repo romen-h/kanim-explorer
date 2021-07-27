@@ -8,7 +8,6 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
-using KanimExplorer.Properties;
 using KanimExplorer.Wizard;
 
 using KanimLib;

@@ -32,7 +32,7 @@ namespace KanimExplorer.Wizard
 			this.label1 = new System.Windows.Forms.Label();
 			this.radioButtonBuildingPlaceholder = new System.Windows.Forms.RadioButton();
 			this.radioButtonPackSprites = new System.Windows.Forms.RadioButton();
-			this.radioButton3 = new System.Windows.Forms.RadioButton();
+			this.radioButtonTileGenerator = new System.Windows.Forms.RadioButton();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
@@ -74,19 +74,18 @@ namespace KanimExplorer.Wizard
 			this.radioButtonPackSprites.Text = "Pack Sprites";
 			this.radioButtonPackSprites.UseVisualStyleBackColor = true;
 			// 
-			// radioButton3
+			// radioButtonTileGenerator
 			// 
-			this.radioButton3.AutoSize = true;
-			this.radioButton3.Enabled = false;
-			this.radioButton3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.radioButton3.Location = new System.Drawing.Point(17, 184);
-			this.radioButton3.Margin = new System.Windows.Forms.Padding(4);
-			this.radioButton3.Name = "radioButton3";
-			this.radioButton3.Size = new System.Drawing.Size(52, 20);
-			this.radioButton3.TabIndex = 3;
-			this.radioButton3.TabStop = true;
-			this.radioButton3.Text = "N/A";
-			this.radioButton3.UseVisualStyleBackColor = true;
+			this.radioButtonTileGenerator.AutoSize = true;
+			this.radioButtonTileGenerator.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.radioButtonTileGenerator.Location = new System.Drawing.Point(17, 184);
+			this.radioButtonTileGenerator.Margin = new System.Windows.Forms.Padding(4);
+			this.radioButtonTileGenerator.Name = "radioButtonTileGenerator";
+			this.radioButtonTileGenerator.Size = new System.Drawing.Size(126, 20);
+			this.radioButtonTileGenerator.TabIndex = 3;
+			this.radioButtonTileGenerator.TabStop = true;
+			this.radioButtonTileGenerator.Text = "Tile Generator";
+			this.radioButtonTileGenerator.UseVisualStyleBackColor = true;
 			// 
 			// label2
 			// 
@@ -112,7 +111,7 @@ namespace KanimExplorer.Wizard
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this.label2);
-			this.Controls.Add(this.radioButton3);
+			this.Controls.Add(this.radioButtonTileGenerator);
 			this.Controls.Add(this.radioButtonPackSprites);
 			this.Controls.Add(this.radioButtonBuildingPlaceholder);
 			this.Controls.Add(this.label1);
@@ -130,7 +129,7 @@ namespace KanimExplorer.Wizard
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.RadioButton radioButtonBuildingPlaceholder;
 		private System.Windows.Forms.RadioButton radioButtonPackSprites;
-		private System.Windows.Forms.RadioButton radioButton3;
+		private System.Windows.Forms.RadioButton radioButtonTileGenerator;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 	}

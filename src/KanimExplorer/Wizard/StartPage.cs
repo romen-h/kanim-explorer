@@ -22,6 +22,10 @@ namespace KanimExplorer.Wizard
 			{
 				return new SpritePackerPage();
 			}
+			else if (radioButtonTileGenerator.Checked)
+			{
+				return new TileAtlasGeneratorPage();
+			}
 
 			return null;
 		}
