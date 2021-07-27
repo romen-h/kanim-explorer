@@ -16,7 +16,7 @@ Kanim Explorer implements an OpenGL based renderer that lets you actually play t
 *No more loading the game to find your mistakes!*
 
 ### Wizards
-Generate all sorts of use files from a couple easy prompts:
+Generate all sorts of useful files from a couple easy prompts:
 - Placeholder graphics for buildings
 - Packing a folder of sprites into a kanim build.bytes & texture atlas
 - Custom tile textures
