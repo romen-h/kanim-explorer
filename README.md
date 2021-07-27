@@ -8,7 +8,7 @@ A tool for viewing and modifying Oxygen Not Included's kanim files.
 ### Inspecting build.bytes and anim.bytes file content
 - Supports opening any/all of the `.png`, `build.bytes`, and `anim.bytes` files for a kanim
 - Outlines the section(s) of the texture atlas used for a specific object in the build.bytes file.
-- Allows flags for Bloom, "OnLight", "SnapTo", and Foreground to be toggled for each sprite.  
+- Allows flags for Bloom, OnLight, SnapTo, and Foreground to be toggled for each sprite.  
   *Make those sprites glow!*
 
 ### Animation Previews
