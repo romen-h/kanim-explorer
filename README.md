@@ -18,7 +18,8 @@ Kanim Explorer implements an OpenGL based renderer that lets you actually play t
 ### Wizards
 Generate all sorts of useful files from a couple easy prompts:
 - Placeholder graphics for buildings
-- Packing a folder of sprites into a kanim build.bytes & texture atlas
+- Packing a folder of sprites into a kanim build.bytes & texture atlas  
+  *Just need to get a basic sprite into the game with 1-frame animations? This is very useful for Asteroids & Entities!
 - Custom tile textures
 
 ### Kanimal-SE Integration
