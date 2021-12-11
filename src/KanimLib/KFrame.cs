@@ -70,27 +70,21 @@ namespace KanimLib
 		public float PivotY
 		{ get; set; }
 
-		[ReadOnly(true)]
 		public float PivotWidth
 		{ get; set; }
 
-		[ReadOnly(true)]
 		public float PivotHeight
 		{ get; set; }
 
-		[ReadOnly(true)]
 		public float UV_X1
 		{ get; set; }
 
-		[ReadOnly(true)]
 		public float UV_Y1
 		{ get; set; }
 
-		[ReadOnly(true)]
 		public float UV_X2
 		{ get; set; }
 
-		[ReadOnly(true)]
 		public float UV_Y2
 		{ get; set; }
 
