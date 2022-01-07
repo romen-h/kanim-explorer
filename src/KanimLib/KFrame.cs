@@ -70,6 +70,10 @@ namespace KanimLib
 		public float PivotY
 		{ get; set; }
 
+		public float SpriterPivotX => 1f - ((PivotX / PivotWidth) + 0.5f);
+
+		public float SpriterPivotY => 1f - ((PivotY / PivotHeight) + 0.5f);
+
 		public float PivotWidth
 		{ get; set; }
 
