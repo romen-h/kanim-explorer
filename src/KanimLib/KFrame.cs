@@ -64,12 +64,15 @@ namespace KanimLib
 		public int ImageIndex
 		{ get; set; }
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float PivotX
 		{ get; set; }
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float PivotY
 		{ get; set; }
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float SpriterPivotX
 		{
 			get => 1f - ((PivotX / PivotWidth) + 0.5f);
@@ -80,6 +83,7 @@ namespace KanimLib
 			}
 		}
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float SpriterPivotY
 		{
 			get => 1f - ((PivotY / PivotHeight) + 0.5f);
@@ -90,9 +94,11 @@ namespace KanimLib
 			}
 		}
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float PivotWidth
 		{ get; set; }
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float PivotHeight
 		{ get; set; }
 
