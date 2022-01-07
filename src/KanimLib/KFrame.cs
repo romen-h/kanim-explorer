@@ -70,9 +70,25 @@ namespace KanimLib
 		public float PivotY
 		{ get; set; }
 
-		public float SpriterPivotX => 1f - ((PivotX / PivotWidth) + 0.5f);
+		public float SpriterPivotX
+		{
+			get => 1f - ((PivotX / PivotWidth) + 0.5f);
+			set
+			{
+				float clamped = Math.Max(0f, Math.Min(1f, value));
+				PivotX = (0.5f - clamped) * PivotWidth;
+			}
+		}
 
-		public float SpriterPivotY => 1f - ((PivotY / PivotHeight) + 0.5f);
+		public float SpriterPivotY
+		{
+			get => 1f - ((PivotY / PivotHeight) + 0.5f);
+			set
+			{
+				float clamped = Math.Max(0f, Math.Min(1f, value));
+				PivotY = (0.5f - clamped) * PivotHeight;
+			}
+		}
 
 		public float PivotWidth
 		{ get; set; }
