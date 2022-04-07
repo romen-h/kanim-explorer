@@ -221,7 +221,7 @@ namespace KanimExplorer.Forms
 
 			OpenFileDialog dlg = new OpenFileDialog();
 			dlg.Multiselect = true;
-			dlg.Filter = "Kanim files|*.png;*.bytes";
+			dlg.Filter = "Kanim files|*.png;*.bytes;*.txt";
 
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
@@ -239,11 +239,11 @@ namespace KanimExplorer.Forms
 					{
 						currentAtlasFile = file;
 					}
-					else if (file.EndsWith("build.bytes"))
+					else if (file.EndsWith("build.bytes") || file.EndsWith("build.txt"))
 					{
 						currentBuildFile = file;
 					}
-					else if (file.EndsWith("anim.bytes"))
+					else if (file.EndsWith("anim.bytes") || file.EndsWith("anim.txt"))
 					{
 						currentAnimFile = file;
 					}
