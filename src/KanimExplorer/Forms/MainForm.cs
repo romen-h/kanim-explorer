@@ -440,6 +440,19 @@ namespace KanimExplorer.Forms
 			}
 		}
 
+		private void locateKanimalCLIToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog dlg = new OpenFileDialog();
+			dlg.Filter = "Kanimal-SE Executable|kanimal-cli.exe";
+
+			if (dlg.ShowDialog() == DialogResult.OK)
+			{
+				string kanimalPath = dlg.FileName;
+				Settings.Default.KanimalCLIPath = kanimalPath;
+				Settings.Default.Save();
+			}
+		}
+
 		private void convertToSCMLToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (VerifyKanimalSEPath())
@@ -457,7 +470,7 @@ namespace KanimExplorer.Forms
 					ProcessStartInfo ps = new ProcessStartInfo();
 					ps.RedirectStandardOutput = true;
 					ps.FileName = Settings.Default.KanimalCLIPath;
-					ps.Arguments = $"scml --output {outPath} {currentAtlasFile} {currentBuildFile} {currentAnimFile}";
+					ps.Arguments = $"scml --output \"{outPath}\" \"{currentAtlasFile}\" \"{currentBuildFile}\" \"{currentAnimFile}\"";
 					ps.UseShellExecute = false;
 					kanimal.StartInfo = ps;
 					kanimal.OutputDataReceived += (p, a) =>
@@ -501,7 +514,7 @@ namespace KanimExplorer.Forms
 						ProcessStartInfo ps = new ProcessStartInfo();
 						ps.RedirectStandardOutput = true;
 						ps.FileName = Settings.Default.KanimalCLIPath;
-						ps.Arguments = $"kanim {scmlDlg.FileName} --output {outPath}" + (interpolate ? " --interpolate" : "");
+						ps.Arguments = $"kanim \"{scmlDlg.FileName}\" --output \"{outPath}\"" + (interpolate ? " --interpolate" : "");
 						ps.UseShellExecute = false;
 						kanimal.StartInfo = ps;
 						kanimal.OutputDataReceived += (p, a) =>
@@ -597,5 +610,7 @@ namespace KanimExplorer.Forms
 			WizardForm f = new WizardForm();
 			f.ShowDialog(this);
 		}
+
+		
 	}
 }

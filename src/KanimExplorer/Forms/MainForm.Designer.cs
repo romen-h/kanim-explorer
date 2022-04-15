@@ -55,6 +55,7 @@
 			this.propertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.label2 = new System.Windows.Forms.Label();
 			this.atlasView = new System.Windows.Forms.PictureBox();
+			this.locateKanimalCLIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -158,6 +159,7 @@
 			this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveBlankAnimbytesToolStripMenuItem,
             this.toolStripSeparator4,
+            this.locateKanimalCLIToolStripMenuItem,
             this.convertToSCMLToolStripMenuItem,
             this.convertFromSCMLToolStripMenuItem,
             this.toolStripSeparator3,
@@ -329,6 +331,13 @@
 			this.atlasView.TabIndex = 0;
 			this.atlasView.TabStop = false;
 			// 
+			// locateKanimalCLIToolStripMenuItem
+			// 
+			this.locateKanimalCLIToolStripMenuItem.Name = "locateKanimalCLIToolStripMenuItem";
+			this.locateKanimalCLIToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			this.locateKanimalCLIToolStripMenuItem.Text = "Locate Kanimal-CLI";
+			this.locateKanimalCLIToolStripMenuItem.Click += new System.EventHandler(this.locateKanimalCLIToolStripMenuItem_Click);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -385,6 +394,7 @@
 		private System.Windows.Forms.ToolStripMenuItem saveTextureAtlasToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem previewAnimToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem wizardToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem locateKanimalCLIToolStripMenuItem;
 	}
 }
 
