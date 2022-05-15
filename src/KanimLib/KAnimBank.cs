@@ -24,7 +24,7 @@ namespace KanimLib
 		public int Hash
 		{ get; set; }
 
-		[ReadOnly(true)]
+		[RefreshProperties(RefreshProperties.All)]
 		public float Rate
 		{ get; set; }
 
