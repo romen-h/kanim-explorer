@@ -345,7 +345,7 @@ namespace SpriterDotNet
         protected virtual SpriterSpatial GetBoneInfo(SpriterRef spriterRef, SpriterAnimation animation, float targetTime)
         {
             SpriterTimelineKey[] keys = animation.Timelines[spriterRef.TimelineId].Keys;
-            SpriterTimelineKey keyA = keys[spriterRef.KeyId];
+            SpriterTimelineKey keyA = Array.Find(keys, r => r.Id == spriterRef.KeyId);
             SpriterTimelineKey keyB = keys.GetNextKey(keyA, animation.Looping);
 
             if (keyB == null) return Copy(keyA.BoneInfo);
@@ -357,7 +357,7 @@ namespace SpriterDotNet
         protected virtual SpriterObject GetObjectInfo(SpriterRef spriterRef, SpriterAnimation animation, float targetTime)
         {
             SpriterTimelineKey[] keys = animation.Timelines[spriterRef.TimelineId].Keys;
-            SpriterTimelineKey keyA = keys[spriterRef.KeyId];
+            SpriterTimelineKey keyA = Array.Find(keys, r => r.Id == spriterRef.KeyId);
             SpriterTimelineKey keyB = keys.GetNextKey(keyA, animation.Looping);
 
             if (keyB == null) return Copy(keyA.ObjectInfo);

@@ -85,7 +85,7 @@ namespace KanimLib.Converters
 				frame.SpriteHeight = file.Height;
 				frame.SpriterPivotX = file.PivotX;
 				frame.SpriterPivotY = 1.0f - file.PivotY;
-				frame.NeedsRepack = true;
+				//frame.NeedsRepack = true;
 
 				symbol.AddFrame(frame);
 				framesById[file.Id] = frame;
