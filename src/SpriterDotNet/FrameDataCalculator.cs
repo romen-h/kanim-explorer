@@ -117,6 +117,8 @@ namespace SpriterDotNet
                 return FrameData;
             }
 
+            Array.Sort(keyA.ObjectRefs, (a, b) => b.ZIndex.CompareTo(a.ZIndex));
+
             for (int i = 0; i < keyA.ObjectRefs.Length; ++i)
             {
                 SpriterObjectRef objectRef = keyA.ObjectRefs[i];

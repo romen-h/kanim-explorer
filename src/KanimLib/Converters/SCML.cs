@@ -130,7 +130,7 @@ namespace KanimLib.Converters
 					float minY = float.MaxValue;
 					float maxY = float.MinValue;
 
-					foreach (var spriteData in f.SpriteData.Reverse<SpriterObject>())
+					foreach (var spriteData in f.SpriteData)
 					{
 						Debug.Assert(spriteData.FolderId == 0);
 
