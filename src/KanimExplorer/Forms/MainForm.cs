@@ -37,6 +37,7 @@ namespace KanimExplorer.Forms
 			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
 			saveTextureAtlasToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Enabled = false;
+			saveAllToolStripMenuItem.Enabled = false;
 		}
 
 		private void OpenFiles()
@@ -84,6 +85,7 @@ namespace KanimExplorer.Forms
 			saveTextureAtlasToolStripMenuItem.Enabled = data.HasTexture;
 			saveBuildFileToolStripMenuItem.Enabled = data.HasBuild;
 			saveAnimFileToolStripMenuItem.Enabled = data.HasAnim;
+			saveAllToolStripMenuItem.Enabled = data.HasTexture || data.HasBuild || data.HasAnim;
 			previewAnimToolStripMenuItem.Enabled = data.IsComplete;
 		}
 
@@ -215,6 +217,7 @@ namespace KanimExplorer.Forms
 			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
 			saveTextureAtlasToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Enabled = false;
+			saveAllToolStripMenuItem.Enabled = false;
 			previewAnimToolStripMenuItem.Enabled = false;
 		}
 
@@ -456,6 +459,48 @@ namespace KanimExplorer.Forms
 				else
 				{
 					MessageBox.Show(this, "Failed to save anim file.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
+			}
+		}
+
+		private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			FolderBrowserDialog dlg = new FolderBrowserDialog();
+			if (dlg.ShowDialog() == DialogResult.OK)
+			{
+				string exportName = "name";
+
+				if (data.HasBuild)
+				{
+					exportName = data.Build.Name;
+				}
+
+				string textureFile = Path.Combine(dlg.SelectedPath, $"{exportName}_0.png");
+				string buildFile = Path.Combine(dlg.SelectedPath, $"{exportName}_build.bytes");
+				string animFile = Path.Combine(dlg.SelectedPath, $"{exportName}_anim.bytes");
+
+				try
+				{
+					if (data.HasTexture)
+					{
+						data.Texture.Save(textureFile, ImageFormat.Png);
+					}
+					if (data.HasBuild)
+					{
+						if (!KAnimUtils.WriteBuild(buildFile, data.Build)) throw new Exception();
+					}
+					if (data.HasAnim)
+					{
+						if (!KAnimUtils.WriteAnim(animFile, data.Anim)) throw new Exception();
+					}
+
+					MessageBox.Show(this, "Kanim files saved successfully.", "Save Success", MessageBoxButtons.OK);
+
+					Process.Start("explorer.exe", dlg.SelectedPath);
+				}
+				catch
+				{
+					MessageBox.Show(this, "Failed to save kanim files.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
 		}

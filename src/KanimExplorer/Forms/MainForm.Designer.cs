@@ -31,6 +31,7 @@
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.openSCMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveBuildFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveAnimFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,7 +57,7 @@
 			this.propertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.label2 = new System.Windows.Forms.Label();
 			this.atlasView = new System.Windows.Forms.PictureBox();
-			this.openSCMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -92,6 +93,7 @@
             this.saveTextureAtlasToolStripMenuItem,
             this.saveBuildFileToolStripMenuItem,
             this.saveAnimFileToolStripMenuItem,
+            this.saveAllToolStripMenuItem,
             this.toolStripSeparator2,
             this.closeToolStripMenuItem,
             this.toolStripSeparator1,
@@ -106,6 +108,13 @@
 			this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
 			this.openToolStripMenuItem.Text = "Open";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+			// 
+			// openSCMLToolStripMenuItem
+			// 
+			this.openSCMLToolStripMenuItem.Name = "openSCMLToolStripMenuItem";
+			this.openSCMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.openSCMLToolStripMenuItem.Text = "Open SCML...";
+			this.openSCMLToolStripMenuItem.Click += new System.EventHandler(this.openSCMLToolStripMenuItem_Click);
 			// 
 			// saveTextureAtlasToolStripMenuItem
 			// 
@@ -340,12 +349,12 @@
 			this.atlasView.TabIndex = 0;
 			this.atlasView.TabStop = false;
 			// 
-			// openSCMLToolStripMenuItem
+			// saveAllToolStripMenuItem
 			// 
-			this.openSCMLToolStripMenuItem.Name = "openSCMLToolStripMenuItem";
-			this.openSCMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.openSCMLToolStripMenuItem.Text = "Open SCML...";
-			this.openSCMLToolStripMenuItem.Click += new System.EventHandler(this.openSCMLToolStripMenuItem_Click);
+			this.saveAllToolStripMenuItem.Name = "saveAllToolStripMenuItem";
+			this.saveAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.saveAllToolStripMenuItem.Text = "Save All...";
+			this.saveAllToolStripMenuItem.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -405,6 +414,7 @@
 		private System.Windows.Forms.ToolStripMenuItem wizardToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem locateKanimalCLIToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem openSCMLToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem saveAllToolStripMenuItem;
 	}
 }
 
