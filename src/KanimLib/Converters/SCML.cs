@@ -155,9 +155,9 @@ namespace KanimLib.Converters
 
 						Matrix mat = new Matrix();
 
-						//mat.Scale(spriteData.ScaleX, spriteData.ScaleY);
 						mat.Translate(2*spriteData.X, -2*spriteData.Y);
 						mat.RotateAt(360 - spriteData.Angle, pivot);
+						mat.Scale(spriteData.ScaleX, spriteData.ScaleY);
 
 
 						float m00 = mat.Elements[0];

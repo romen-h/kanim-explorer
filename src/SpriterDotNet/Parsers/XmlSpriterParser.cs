@@ -11,7 +11,7 @@ namespace SpriterDotNet.Parsers
 {
     public class XmlSpriterParser : ISpriterParser
     {
-        private static readonly string XmlStart = "<?xml";
+        private static readonly string XmlStart = "<";
 
         public virtual Spriter Parse(string data)
         {
