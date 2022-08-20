@@ -142,12 +142,14 @@ namespace KanimLib.Converters
 						KFrame symbolFrame = framesById[spriteData.FileId];
 						element.FrameNumber = symbolFrame.Index;
 
-						PointF pivot = new PointF(symbolFrame.SpriterPivotX, symbolFrame.SpriterPivotY);
+						PointF pivot = new PointF(spriteData.PivotX, spriteData.PivotY);
 
 						Matrix mat = new Matrix();
 
+						float unwoundAngle = (spriteData.Angle + 360f) % 360f;
+
 						mat.Translate(2*spriteData.X, -2*spriteData.Y);
-						mat.RotateAt(360 - spriteData.Angle, pivot);
+						mat.RotateAt(360 - unwoundAngle, pivot);
 						mat.Scale(spriteData.ScaleX, spriteData.ScaleY);
 
 
