@@ -22,21 +22,12 @@ namespace KanimLib.Converters
 		{
 			if (!File.Exists(scmlPath)) throw new Exception("Could not find scml file.");
 
-			try
-			{
-				string directory = Path.GetDirectoryName(scmlPath);
+			string directory = Path.GetDirectoryName(scmlPath);
 
-				string fileContent = File.ReadAllText(scmlPath);
+			string fileContent = File.ReadAllText(scmlPath);
 
-				Spriter spriterData = SpriterReader.Default.Read(fileContent);
-				return Convert(directory, spriterData);
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine(ex.ToString());
-			}
-
-			return null;
+			Spriter spriterData = SpriterReader.Default.Read(fileContent);
+			return Convert(directory, spriterData);
 		}
 
 		private static KAnimPackage Convert(string directory, Spriter spriterData)
@@ -81,9 +72,9 @@ namespace KanimLib.Converters
 				{
 					symbol = new KSymbol(symbolName);
 					symbols[symbolName] = symbol;
-					symbolsById[file.Id] = symbol;
 					build.AddSymbol(symbol);
 				}
+				symbolsById[file.Id] = symbol;
 
 				KFrame frame = new KFrame();
 				frame.Index = frameIndex;
