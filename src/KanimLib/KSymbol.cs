@@ -7,8 +7,12 @@ namespace KanimLib
 {
 	public class KSymbol
 	{
-		public KSymbol()
-		{ }
+		internal KSymbol(string name)
+		{
+			this.name = name;
+			this.Hash = name.KHash();
+			this.Path = this.Hash;
+		}
 
 		public KSymbol(KBuild parent)
 		{
@@ -18,18 +22,40 @@ namespace KanimLib
 
 		[Browsable(false)]
 		public KBuild Parent
-		{ get; private set; }
+		{ get; internal set; }
 
+		private string name = null;
+
+		[ReadOnly(true)]
 		public string Name
 		{
 			get
 			{
+				if (name != null) return name;
+
 				if (Parent != null && Parent.SymbolNames.ContainsKey(Hash))
 				{
 					return Parent.SymbolNames[Hash];
 				}
 
 				return $"Hash: {Hash}";
+			}
+			set
+			{
+				name = value;
+
+				if (Parent != null && Parent.SymbolNames.ContainsKey(Hash))
+				{
+					Parent.SymbolNames.Remove(Hash);
+				}
+
+				Hash = value.KHash();
+				Path = value.KHash();
+
+				if (Parent != null)
+				{
+					Parent.SymbolNames[Hash] = value;
+				}
 			}
 		}
 
@@ -41,11 +67,11 @@ namespace KanimLib
 		{ get; set; }
 
 		public Color Color
-		{ get; set; }
+		{ get; set; } = Color.FromArgb(0);
 
 		[ReadOnly(true)]
 		public SymbolFlags Flags
-		{ get; set; }
+		{ get; set; } = 0;
 
 		[RefreshProperties(RefreshProperties.All)]
 		public bool Bloom
@@ -77,7 +103,7 @@ namespace KanimLib
 
 		[ReadOnly(true)]
 		public int FrameCount
-		{ get; set; }
+		{ get; set; } = 0;
 
 		public readonly List<KFrame> Frames = new List<KFrame>();
 
@@ -107,5 +133,12 @@ namespace KanimLib
 			}
 		}
 #endif
+
+		internal void AddFrame(KFrame frame)
+		{
+			frame.Parent = this;
+			Frames.Add(frame);
+			FrameCount = Frames.Count;
+		}
 	}
 }

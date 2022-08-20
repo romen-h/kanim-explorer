@@ -5,6 +5,9 @@ namespace KanimLib
 {
 	public class KAnimElement
 	{
+		internal KAnimElement()
+		{ }
+
 		public KAnimElement(KAnimFrame parent)
 		{
 			if (parent == null) throw new ArgumentNullException();
@@ -13,7 +16,7 @@ namespace KanimLib
 
 		[Browsable(false)]
 		public KAnimFrame Parent
-		{ get; private set; }
+		{ get; internal set; }
 
 		[ReadOnly(true)]
 		public int SymbolHash
@@ -29,47 +32,47 @@ namespace KanimLib
 
 		[ReadOnly(true)]
 		public int Flags
-		{ get; set; }
+		{ get; set; } = 0;
 
 		[ReadOnly(true)]
 		public float Alpha
-		{ get; set; }
+		{ get; set; } = 1.0f;
 
 		[ReadOnly(true)]
 		public float Red
-		{ get; set; }
+		{ get; set; } = 1.0f;
 
 		[ReadOnly(true)]
 		public float Green
-		{ get; set; }
+		{ get; set; } = 1.0f;
 
 		[ReadOnly(true)]
 		public float Blue
-		{ get; set; }
+		{ get; set; } = 1.0f;
 
 		[ReadOnly(true)]
 		public float M00
-		{ get; set; }
+		{ get; set; } = 1;
 
 		[ReadOnly(true)]
 		public float M10
-		{ get; set; }
+		{ get; set; } = 0;
 
 		[ReadOnly(true)]
 		public float M01
-		{ get; set; }
+		{ get; set; } = 0;
 
 		[ReadOnly(true)]
 		public float M11
-		{ get; set; }
+		{ get; set; } = 1;
 
 		[ReadOnly(true)]
 		public float M02
-		{ get; set; }
+		{ get; set; } = 0;
 
 		[ReadOnly(true)]
 		public float M12
-		{ get; set; }
+		{ get; set; } = 0;
 
 		[ReadOnly(true)]
 		public float Unused

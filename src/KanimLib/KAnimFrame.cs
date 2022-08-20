@@ -6,6 +6,9 @@ namespace KanimLib
 {
 	public class KAnimFrame
 	{
+		internal KAnimFrame()
+		{ }
+
 		public KAnimFrame(KAnimBank parent)
 		{
 			if (parent == null) throw new ArgumentNullException();
@@ -14,7 +17,7 @@ namespace KanimLib
 
 		[Browsable(false)]
 		public KAnimBank Parent
-		{ get; private set; }
+		{ get; internal set; }
 
 		[ReadOnly(true)]
 		public float X
@@ -37,5 +40,12 @@ namespace KanimLib
 		{ get; set; }
 
 		public readonly List<KAnimElement> Elements = new List<KAnimElement>();
+
+		internal void AddElement(KAnimElement element)
+		{
+			element.Parent = this;
+			Elements.Add(element);
+			ElementCount = Elements.Count;
+		}
 	}
 }

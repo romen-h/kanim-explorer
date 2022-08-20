@@ -30,10 +30,14 @@ namespace KanimExplorer.Forms
 		private void InitializeComponent()
 		{
 			this.panelExplorer = new System.Windows.Forms.Panel();
+			this.listBoxDupeBanks = new System.Windows.Forms.ListBox();
+			this.label2 = new System.Windows.Forms.Label();
 			this.listBoxBanks = new System.Windows.Forms.ListBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.menuStrip1 = new System.Windows.Forms.MenuStrip();
 			this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.openInteractKanimToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelDisplayArea = new System.Windows.Forms.Panel();
 			this.panelProperties = new System.Windows.Forms.Panel();
@@ -49,13 +53,38 @@ namespace KanimExplorer.Forms
 			// 
 			// panelExplorer
 			// 
+			this.panelExplorer.Controls.Add(this.listBoxDupeBanks);
+			this.panelExplorer.Controls.Add(this.label2);
 			this.panelExplorer.Controls.Add(this.listBoxBanks);
 			this.panelExplorer.Controls.Add(this.label1);
 			this.panelExplorer.Dock = System.Windows.Forms.DockStyle.Left;
+			this.panelExplorer.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.panelExplorer.Location = new System.Drawing.Point(0, 24);
 			this.panelExplorer.Name = "panelExplorer";
 			this.panelExplorer.Size = new System.Drawing.Size(200, 642);
 			this.panelExplorer.TabIndex = 0;
+			// 
+			// listBoxDupeBanks
+			// 
+			this.listBoxDupeBanks.Dock = System.Windows.Forms.DockStyle.Top;
+			this.listBoxDupeBanks.Enabled = false;
+			this.listBoxDupeBanks.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.listBoxDupeBanks.FormattingEnabled = true;
+			this.listBoxDupeBanks.ItemHeight = 16;
+			this.listBoxDupeBanks.Location = new System.Drawing.Point(0, 208);
+			this.listBoxDupeBanks.Name = "listBoxDupeBanks";
+			this.listBoxDupeBanks.Size = new System.Drawing.Size(200, 164);
+			this.listBoxDupeBanks.TabIndex = 3;
+			this.listBoxDupeBanks.SelectedIndexChanged += new System.EventHandler(this.listBoxDupeBanks_SelectedIndexChanged);
+			// 
+			// label2
+			// 
+			this.label2.Dock = System.Windows.Forms.DockStyle.Top;
+			this.label2.Location = new System.Drawing.Point(0, 178);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(200, 30);
+			this.label2.TabIndex = 2;
+			this.label2.Text = "Dupe Animations:";
 			// 
 			// listBoxBanks
 			// 
@@ -65,7 +94,7 @@ namespace KanimExplorer.Forms
 			this.listBoxBanks.ItemHeight = 16;
 			this.listBoxBanks.Location = new System.Drawing.Point(0, 30);
 			this.listBoxBanks.Name = "listBoxBanks";
-			this.listBoxBanks.Size = new System.Drawing.Size(200, 388);
+			this.listBoxBanks.Size = new System.Drawing.Size(200, 148);
 			this.listBoxBanks.TabIndex = 1;
 			this.listBoxBanks.SelectedIndexChanged += new System.EventHandler(this.listBoxBanks_SelectedIndexChanged);
 			// 
@@ -93,15 +122,29 @@ namespace KanimExplorer.Forms
 			// fileToolStripMenuItem
 			// 
 			this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openInteractKanimToolStripMenuItem,
+            this.toolStripSeparator1,
             this.closeToolStripMenuItem});
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
 			this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
 			this.fileToolStripMenuItem.Text = "File";
 			// 
+			// openInteractKanimToolStripMenuItem
+			// 
+			this.openInteractKanimToolStripMenuItem.Name = "openInteractKanimToolStripMenuItem";
+			this.openInteractKanimToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
+			this.openInteractKanimToolStripMenuItem.Text = "Open Interact Kanim";
+			this.openInteractKanimToolStripMenuItem.Click += new System.EventHandler(this.openInteractKanimToolStripMenuItem_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(180, 6);
+			// 
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(103, 22);
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
 			this.closeToolStripMenuItem.Text = "Close";
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
 			// 
@@ -217,5 +260,9 @@ namespace KanimExplorer.Forms
 		private System.Windows.Forms.Button buttonNextFrame;
 		private System.Windows.Forms.Button buttonPrevFrame;
 		private System.Windows.Forms.CheckBox checkBoxPlay;
+		private System.Windows.Forms.ListBox listBoxDupeBanks;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.ToolStripMenuItem openInteractKanimToolStripMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 	}
 }

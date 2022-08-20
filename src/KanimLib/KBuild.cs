@@ -137,5 +137,14 @@ namespace KanimLib
 
 			return null;
 		}
+
+		internal void AddSymbol(KSymbol symbol)
+		{
+			symbol.Parent = this;
+			Symbols.Add(symbol);
+			int hash = symbol.Name.KHash();
+			SymbolNames[hash] = symbol.Name;
+			SymbolCount = Symbols.Count;
+		}
 	}
 }

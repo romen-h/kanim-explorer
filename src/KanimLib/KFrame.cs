@@ -6,6 +6,9 @@ namespace KanimLib
 {
 	public class KFrame
 	{
+		internal KFrame()
+		{ }
+
 		public KFrame(KSymbol parent)
 		{
 			if (parent == null) throw new ArgumentNullException();
@@ -19,7 +22,7 @@ namespace KanimLib
 		/// </summary>
 		[Browsable(false)]
 		public KSymbol Parent
-		{ get; private set; }
+		{ get; internal set; }
 
 		[RefreshProperties(RefreshProperties.All)]
 		public int SpriteWidth

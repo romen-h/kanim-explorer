@@ -6,6 +6,12 @@ namespace KanimLib
 {
 	public class KAnimBank
 	{
+		internal KAnimBank(string name)
+		{
+			this.Name = name;
+			this.Hash = name.KHash();
+		}
+
 		public KAnimBank(KAnim parent)
 		{
 			if (parent == null) throw new ArgumentNullException();
@@ -14,7 +20,7 @@ namespace KanimLib
 
 		[Browsable(false)]
 		public KAnim Parent
-		{ get; private set; }
+		{ get; internal set; }
 
 		[ReadOnly(true)]
 		public string Name
@@ -26,14 +32,21 @@ namespace KanimLib
 
 		[RefreshProperties(RefreshProperties.All)]
 		public float Rate
-		{ get; set; }
+		{ get; set; } = 30;
 
 		[ReadOnly(true)]
 		public int FrameCount
-		{ get; set; }
+		{ get; set; } = 0;
 
 		public readonly List<KAnimFrame> Frames = new List<KAnimFrame>();
 
 		public override string ToString() => Name;
+
+		internal void AddFrame(KAnimFrame frame)
+		{
+			frame.Parent = this;
+			Frames.Add(frame);
+			FrameCount = Frames.Count;
+		}
 	}
 }

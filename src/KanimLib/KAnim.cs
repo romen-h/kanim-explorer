@@ -38,5 +38,14 @@ namespace KanimLib
 
 			return null;
 		}
+
+		internal void AddBank(KAnimBank bank)
+		{
+			bank.Parent = this;
+			Banks.Add(bank);
+			int hash = bank.Name.KHash();
+			BankNames[hash] = bank.Name;
+			BankCount = Banks.Count;
+		}
 	}
 }

@@ -85,7 +85,7 @@ namespace KanimExplorer.OpenGL
 
 		public void SetViewport(int width, int height)
 		{
-			float margin = 200f;
+			float margin = 400f;
 			projMat = Matrix4.CreateOrthographicOffCenter(-width, width, -margin, 2*height-margin, 10f, -10f);
 			viewMat = Matrix4.LookAt(new Vector3(0, 0, 10f), Vector3.Zero, new Vector3(0, 1f, 0));
 

@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using KanimExplorer.Wizard;
 
 using KanimLib;
+using KanimLib.Converters;
 using KanimLib.Sprites;
 
 namespace KanimExplorer.Forms
@@ -186,6 +187,8 @@ namespace KanimExplorer.Forms
 
 		private void CloseFiles()
 		{
+			if (data == null) return;
+
 			currentAtlasFile = null;
 			if (data.Texture != null)
 			{
@@ -259,6 +262,23 @@ namespace KanimExplorer.Forms
 				}
 
 				OpenFiles();
+			}
+		}
+
+		private void openSCMLToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (FilesAreOpen) CloseFiles();
+
+			OpenFileDialog scmlDlg = new OpenFileDialog();
+			scmlDlg.Filter = "Spriter Projects (*.scml)|*.scml";
+			scmlDlg.Title = "Select a Spriter Project...";
+			if (scmlDlg.ShowDialog() == DialogResult.OK)
+			{
+				var pkg = SCMLImporter.Convert(scmlDlg.FileName);
+				if (pkg != null)
+				{
+					OpenData(pkg.Texture, pkg.Build, pkg.Anim);
+				}
 			}
 		}
 

@@ -44,9 +44,6 @@ namespace KanimLib
 						int x0 = cx * CELL_SIZE;
 						int y0 = cy * CELL_SIZE;
 
-						// Blit fill texture
-						g.DrawImage(fill, x0 + CELL_MARGIN, y0 + CELL_MARGIN);
-
 						int i = cy * 4 + cx;
 
 						bool up = ((i & 0x08) > 0);
@@ -54,92 +51,101 @@ namespace KanimLib
 						bool right = ((i & 0x02) > 0);
 						bool down = ((i & 0x01) > 0);
 
-						// Draw fills
+						if (fill != null)
+						{
+							// Blit fill texture
+							g.DrawImage(fill, x0 + CELL_MARGIN, y0 + CELL_MARGIN, SEAMLESS_SIZE, SEAMLESS_SIZE);
 
-						if (up)
-						{
-							// Draw bottom of seamless in top
-							g.DrawImage(fill, x0 + CELL_MARGIN, y0, GetSeamlessPatch(HorizontalSide.Middle, VerticalSide.Bottom), GraphicsUnit.Pixel);
-						}
-						if (left)
-						{
-							// Draw right of seamless in left
-							g.DrawImage(fill, x0, y0 + CELL_MARGIN, GetSeamlessPatch(HorizontalSide.Right, VerticalSide.Middle), GraphicsUnit.Pixel);
-						}
-						if (right)
-						{
-							// Draw left of seamless in right
-							g.DrawImage(fill, x0 + CELL_SIZE - CELL_MARGIN, y0 + CELL_MARGIN, GetSeamlessPatch(HorizontalSide.Left, VerticalSide.Middle), GraphicsUnit.Pixel);
-						}
-						if (down)
-						{
-							// Draw top of seamless in bottom
-							g.DrawImage(fill, x0 + CELL_MARGIN, y0 + CELL_SIZE - CELL_MARGIN, GetSeamlessPatch(HorizontalSide.Middle, VerticalSide.Top), GraphicsUnit.Pixel);
-						}
+							// Draw fills
 
-						if (up&&left)
-						{
-							// Draw bottom-right of seamless in top-left
-							g.DrawImage(fill, x0, y0, GetSeamlessPatch(HorizontalSide.Right, VerticalSide.Bottom), GraphicsUnit.Pixel);
-						}
-						if (up&&right)
-						{
-							// Draw bottom-left of seamless in top-right
-							g.DrawImage(fill, x0 + CELL_SIZE - CELL_MARGIN, y0, GetSeamlessPatch(HorizontalSide.Left, VerticalSide.Bottom), GraphicsUnit.Pixel);
-						}
-						if (down&&left)
-						{
-							// Draw top-right of seamless in bottom-left
-							g.DrawImage(fill, x0, y0 + CELL_SIZE - CELL_MARGIN, GetSeamlessPatch(HorizontalSide.Right, VerticalSide.Top), GraphicsUnit.Pixel);
-						}
-						if (down&&right)
-						{
-							// Draw top-left of seamless in bottom-right
-							g.DrawImage(fill, x0 + CELL_SIZE - CELL_MARGIN, y0 + CELL_SIZE - CELL_MARGIN, GetSeamlessPatch(HorizontalSide.Left, VerticalSide.Top), GraphicsUnit.Pixel);
+							if (up)
+							{
+								// Draw bottom of seamless in top
+								g.DrawImage(fill, new Rectangle(x0 + CELL_MARGIN, y0, SEAMLESS_SIZE, CELL_MARGIN), GetSeamlessPatch(HorizontalSide.Middle, VerticalSide.Bottom), GraphicsUnit.Pixel);
+							}
+							if (left)
+							{
+								// Draw right of seamless in left
+								g.DrawImage(fill, new Rectangle(x0, y0 + CELL_MARGIN, CELL_MARGIN, SEAMLESS_SIZE), GetSeamlessPatch(HorizontalSide.Right, VerticalSide.Middle), GraphicsUnit.Pixel);
+							}
+							if (right)
+							{
+								// Draw left of seamless in right
+								g.DrawImage(fill, new Rectangle(x0 + CELL_SIZE - CELL_MARGIN, y0 + CELL_MARGIN, CELL_MARGIN, SEAMLESS_SIZE), GetSeamlessPatch(HorizontalSide.Left, VerticalSide.Middle), GraphicsUnit.Pixel);
+							}
+							if (down)
+							{
+								// Draw top of seamless in bottom
+								g.DrawImage(fill, new Rectangle(x0 + CELL_MARGIN, y0 + CELL_SIZE - CELL_MARGIN, SEAMLESS_SIZE, CELL_MARGIN), GetSeamlessPatch(HorizontalSide.Middle, VerticalSide.Top), GraphicsUnit.Pixel);
+							}
+
+							if (up && left)
+							{
+								// Draw bottom-right of seamless in top-left
+								g.DrawImage(fill, new Rectangle(x0, y0, CELL_MARGIN, CELL_MARGIN), GetSeamlessPatch(HorizontalSide.Right, VerticalSide.Bottom), GraphicsUnit.Pixel);
+							}
+							if (up && right)
+							{
+								// Draw bottom-left of seamless in top-right
+								g.DrawImage(fill, new Rectangle(x0 + CELL_SIZE - CELL_MARGIN, y0, CELL_MARGIN, CELL_MARGIN), GetSeamlessPatch(HorizontalSide.Left, VerticalSide.Bottom), GraphicsUnit.Pixel);
+							}
+							if (down && left)
+							{
+								// Draw top-right of seamless in bottom-left
+								g.DrawImage(fill, new Rectangle(x0, y0 + CELL_SIZE - CELL_MARGIN, CELL_MARGIN, CELL_MARGIN), GetSeamlessPatch(HorizontalSide.Right, VerticalSide.Top), GraphicsUnit.Pixel);
+							}
+							if (down && right)
+							{
+								// Draw top-left of seamless in bottom-right
+								g.DrawImage(fill, new Rectangle(x0 + CELL_SIZE - CELL_MARGIN, y0 + CELL_SIZE - CELL_MARGIN, CELL_MARGIN, CELL_MARGIN), GetSeamlessPatch(HorizontalSide.Left, VerticalSide.Top), GraphicsUnit.Pixel);
+							}
 						}
 
 						// Draw borders
 
-						if (!up)
+						if (border != null)
 						{
-							// Draw top of border in top
-							g.DrawImage(border, x0 + CELL_MARGIN, y0, GetBorderPatch(HorizontalSide.Middle, VerticalSide.Top), GraphicsUnit.Pixel);
-						}
-						if (!left)
-						{
-							// Draw left of border in left
-							g.DrawImage(border, x0, y0 + CELL_MARGIN, GetBorderPatch(HorizontalSide.Left, VerticalSide.Middle), GraphicsUnit.Pixel);
-						}
-						if (!right)
-						{
-							// Draw right of border in right
-							g.DrawImage(border, x0 + CELL_SIZE - BORDER_SIZE, y0 + CELL_MARGIN, GetBorderPatch(HorizontalSide.Right, VerticalSide.Middle), GraphicsUnit.Pixel);
-						}
-						if (!down)
-						{
-							// Draw bottom of border in bottom
-							g.DrawImage(border, x0 + CELL_MARGIN, y0 + CELL_SIZE - BORDER_SIZE, GetBorderPatch(HorizontalSide.Middle, VerticalSide.Bottom), GraphicsUnit.Pixel);
-						}
+							if (!up)
+							{
+								// Draw top of border in top
+								g.DrawImage(border, x0 + CELL_MARGIN, y0, GetBorderPatch(HorizontalSide.Middle, VerticalSide.Top), GraphicsUnit.Pixel);
+							}
+							if (!left)
+							{
+								// Draw left of border in left
+								g.DrawImage(border, x0, y0 + CELL_MARGIN, GetBorderPatch(HorizontalSide.Left, VerticalSide.Middle), GraphicsUnit.Pixel);
+							}
+							if (!right)
+							{
+								// Draw right of border in right
+								g.DrawImage(border, x0 + CELL_SIZE - BORDER_SIZE, y0 + CELL_MARGIN, GetBorderPatch(HorizontalSide.Right, VerticalSide.Middle), GraphicsUnit.Pixel);
+							}
+							if (!down)
+							{
+								// Draw bottom of border in bottom
+								g.DrawImage(border, x0 + CELL_MARGIN, y0 + CELL_SIZE - BORDER_SIZE, GetBorderPatch(HorizontalSide.Middle, VerticalSide.Bottom), GraphicsUnit.Pixel);
+							}
 
-						if (!up&&!left)
-						{
-							// Draw top-left of border in top-left
-							g.DrawImage(border, x0, y0, GetBorderPatch(HorizontalSide.Left, VerticalSide.Top), GraphicsUnit.Pixel);
-						}
-						if (!up&&!right)
-						{
-							// Draw top-right of border in top-right
-							g.DrawImage(border, x0 + CELL_SIZE - BORDER_SIZE, y0, GetBorderPatch(HorizontalSide.Right, VerticalSide.Top), GraphicsUnit.Pixel);
-						}
-						if (!down&&!left)
-						{
-							// Draw bottom-left of border in bottom-left
-							g.DrawImage(border, x0, y0 + CELL_SIZE - BORDER_SIZE, GetBorderPatch(HorizontalSide.Left, VerticalSide.Bottom), GraphicsUnit.Pixel);
-						}
-						if (!down&&!right)
-						{
-							// Draw bottom-right of border in bottom-right
-							g.DrawImage(border, x0 + CELL_SIZE - BORDER_SIZE, y0 + CELL_SIZE - BORDER_SIZE, GetBorderPatch(HorizontalSide.Right, VerticalSide.Bottom), GraphicsUnit.Pixel);
+							if (!up && !left)
+							{
+								// Draw top-left of border in top-left
+								g.DrawImage(border, x0, y0, GetBorderPatch(HorizontalSide.Left, VerticalSide.Top), GraphicsUnit.Pixel);
+							}
+							if (!up && !right)
+							{
+								// Draw top-right of border in top-right
+								g.DrawImage(border, x0 + CELL_SIZE - BORDER_SIZE, y0, GetBorderPatch(HorizontalSide.Right, VerticalSide.Top), GraphicsUnit.Pixel);
+							}
+							if (!down && !left)
+							{
+								// Draw bottom-left of border in bottom-left
+								g.DrawImage(border, x0, y0 + CELL_SIZE - BORDER_SIZE, GetBorderPatch(HorizontalSide.Left, VerticalSide.Bottom), GraphicsUnit.Pixel);
+							}
+							if (!down && !right)
+							{
+								// Draw bottom-right of border in bottom-right
+								g.DrawImage(border, x0 + CELL_SIZE - BORDER_SIZE, y0 + CELL_SIZE - BORDER_SIZE, GetBorderPatch(HorizontalSide.Right, VerticalSide.Bottom), GraphicsUnit.Pixel);
+							}
 						}
 					}
 				}

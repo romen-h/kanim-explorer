@@ -14,11 +14,17 @@ namespace KanimExplorer.Forms
 	{
 		KAnimPackage data;
 
+		KAnimPackage dupeData;
+
 		KAnimBank SelectedBank;
+
+		KAnimBank SelectedDupeBank;
 
 		GLControl display;
 
 		AnimationRenderer renderer;
+
+		AnimationRenderer dupeRenderer;
 
 		int currentFrame = 0;
 
@@ -34,8 +40,8 @@ namespace KanimExplorer.Forms
 			playbackTimer.Interval = 33;
 			playbackTimer.Tick += PlaybackTimer_Tick;
 			
-
 			renderer = new AnimationRenderer();
+			dupeRenderer = new AnimationRenderer();
 			InitGL();
 		}
 
@@ -44,7 +50,10 @@ namespace KanimExplorer.Forms
 			if (SelectedBank == null || !playing) return;
 
 			currentFrame++;
-			if (currentFrame >= SelectedBank.FrameCount) currentFrame = 0;
+			if (currentFrame >= SelectedBank.FrameCount)
+			{
+				currentFrame = 0;
+			}
 			textBoxFrameNumber.Text = currentFrame.ToString();
 
 			display.Invalidate();
@@ -68,6 +77,7 @@ namespace KanimExplorer.Forms
 			display.MakeCurrent();
 
 			renderer.Initialize();
+			dupeRenderer.Initialize();
 
 			panelDisplayArea.Controls.Add(display);
 		}
@@ -77,6 +87,7 @@ namespace KanimExplorer.Forms
 			display.MakeCurrent();
 			GL.Viewport(0, 0, display.Width, display.Height);
 			renderer.SetViewport(display.Width, display.Height);
+			dupeRenderer.SetViewport(display.Width, display.Height);
 			display.Invalidate();
 		}
 
@@ -89,6 +100,11 @@ namespace KanimExplorer.Forms
 			if (SelectedBank != null)
 			{
 				renderer.Render(data.Build, SelectedBank, currentFrame);
+			}
+
+			if (SelectedDupeBank != null)
+			{
+				dupeRenderer.Render(dupeData.Build, SelectedDupeBank, currentFrame);
 			}
 
 			display.SwapBuffers();
@@ -125,10 +141,25 @@ namespace KanimExplorer.Forms
 			display.Invalidate();
 		}
 
+		private void listBoxDupeBanks_SelectedIndexChanged(object sender, System.EventArgs e)
+		{
+			if (listBoxDupeBanks.SelectedIndex < 0)
+			{
+				SelectedDupeBank = null;
+			}
+			else
+			{
+				SelectedDupeBank = listBoxDupeBanks.SelectedItem as KAnimBank;
+			}
+
+			display.Invalidate();
+		}
+
 		private void AnimationForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			playbackTimer.Stop();
 			renderer.Release();
+			dupeRenderer.Release();
 		}
 
 		private void buttonPrevFrame_Click(object sender, System.EventArgs e)
@@ -164,5 +195,28 @@ namespace KanimExplorer.Forms
 		{
 			Close();
 		}
+
+		private void openInteractKanimToolStripMenuItem_Click(object sender, System.EventArgs e)
+		{
+			dupeData = KanimLoader.BrowseForKanimFiles();
+
+			listBoxDupeBanks.Items.Clear();
+
+			if (dupeData != null && dupeData.HasTexture && dupeData.HasAnim)
+			{
+				listBoxDupeBanks.Enabled = true;
+				foreach (KAnimBank bank in dupeData.Anim.Banks)
+				{
+					listBoxDupeBanks.Items.Add(bank);
+				}
+				dupeRenderer.SetTexture(dupeData.Texture);
+			}
+			else
+			{
+				listBoxDupeBanks.Enabled = false;
+			}
+		}
+
+		
 	}
 }

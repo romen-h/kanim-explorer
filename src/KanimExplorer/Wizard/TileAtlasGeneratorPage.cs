@@ -24,17 +24,17 @@ namespace KanimExplorer.Wizard
 			string outDir = textBoxOutput.Text;
 
 			if (string.IsNullOrWhiteSpace(name)) throw new Exception("Name must not be empty.");
-			if (string.IsNullOrWhiteSpace(borderFile) || !File.Exists(borderFile)) throw new Exception("Invalid border file.");
-			if (string.IsNullOrWhiteSpace(fillFile) || !File.Exists(fillFile)) throw new Exception("Invalid fill file.");
+			//if (string.IsNullOrWhiteSpace(borderFile) || !File.Exists(borderFile)) throw new Exception("Invalid border file.");
+			//if (string.IsNullOrWhiteSpace(fillFile) || !File.Exists(fillFile)) throw new Exception("Invalid fill file.");
 			if (string.IsNullOrWhiteSpace(outDir) || !Directory.Exists(outDir)) throw new Exception("Invalid output directory.");
 
 			string atlasFile = Path.Combine(outDir, $"tiles_{name}.png");
 
-			using (Bitmap border = new Bitmap(borderFile))
-			using (Bitmap fill = new Bitmap(fillFile))
+			using (Bitmap border = (!string.IsNullOrWhiteSpace(borderFile)) ? new Bitmap(borderFile) : null)
+			using (Bitmap fill = (!string.IsNullOrWhiteSpace(fillFile)) ? new Bitmap(fillFile) : null)
 			{
-				if (border.Width != TileFactory.BORDER_IMG_SIZE || border.Height != TileFactory.BORDER_IMG_SIZE) throw new Exception("Border texture must be 256x256.");
-				if (fill.Width != TileFactory.SEAMLESS_SIZE || fill.Height != TileFactory.SEAMLESS_SIZE) throw new Exception("Fill texture must be 128x128.");
+				if (border != null && (border.Width != TileFactory.BORDER_IMG_SIZE || border.Height != TileFactory.BORDER_IMG_SIZE)) throw new Exception("Border texture must be 336x336.");
+				if (fill != null && (fill.Width != TileFactory.SEAMLESS_SIZE || fill.Height != TileFactory.SEAMLESS_SIZE)) throw new Exception("Fill texture must be 128x128.");
 
 				try
 				{
