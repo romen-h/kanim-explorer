@@ -89,6 +89,7 @@ namespace KanimLib.Converters
 
 				symbol.AddFrame(frame);
 				framesById[file.Id] = frame;
+				build.FrameCount++;
 
 				Bitmap bmp = (Bitmap)Bitmap.FromFile(spriteFile);
 
@@ -120,22 +121,23 @@ namespace KanimLib.Converters
 				KAnimBank bank = new KAnimBank(bankName);
 				anim.AddBank(bank);
 
-				foreach (var f in kvp.Value)
+				foreach (var frameData in kvp.Value)
 				{
 					KAnimFrame frame = new KAnimFrame();
 					bank.AddFrame(frame);
+					//frame.X = -100f;
+					//frame.Y = -100f;
+					//frame.Width = 200f;
+					//frame.Height = 200f;
 
-					float minX = float.MaxValue;
-					float maxX = float.MinValue;
-					float minY = float.MaxValue;
-					float maxY = float.MinValue;
-
-					foreach (var spriteData in f.SpriteData)
+					foreach (var spriteData in frameData.SpriteData)
 					{
 						Debug.Assert(spriteData.FolderId == 0);
 
 						KAnimElement element = new KAnimElement();
 						frame.AddElement(element);
+						anim.ElementCount++;
+						anim.MaxVisSymbols++;
 
 						element.SymbolHash = symbolsById[spriteData.FileId].Hash;
 						element.FolderHash = element.SymbolHash;

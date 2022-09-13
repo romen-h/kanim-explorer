@@ -11,15 +11,15 @@ namespace KanimLib
 
 		[ReadOnly(true)]
 		public int ElementCount
-		{ get; set; }
+		{ get; set; } = 0;
 
 		[ReadOnly(true)]
 		public int FrameCount
-		{ get; set; }
+		{ get; set; } = 0;
 
 		[ReadOnly(true)]
 		public int BankCount
-		{ get; set; }
+		{ get; set; } = 0;
 
 		[ReadOnly(true)]
 		public int MaxVisSymbols

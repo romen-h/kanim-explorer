@@ -21,23 +21,23 @@ namespace KanimLib
 
 		[ReadOnly(true)]
 		public float X
-		{ get; set; }
+		{ get; set; } = float.NaN;
 
 		[ReadOnly(true)]
 		public float Y
-		{ get; set; }
+		{ get; set; } = float.NaN;
 
 		[ReadOnly(true)]
 		public float Width
-		{ get; set; }
+		{ get; set; } = float.NaN;
 
 		[ReadOnly(true)]
 		public float Height
-		{ get; set; }
+		{ get; set; } = float.NaN;
 
 		[ReadOnly(true)]
 		public int ElementCount
-		{ get; set; }
+		{ get; set; } = 0;
 
 		public readonly List<KAnimElement> Elements = new List<KAnimElement>();
 
