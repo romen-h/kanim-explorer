@@ -10,6 +10,11 @@ A tool for viewing and modifying Oxygen Not Included's kanim files.
 - Outlines the section(s) of the texture atlas used for a specific object in the build.bytes file.
 - Allows flags for Bloom, OnLight, SnapTo, and Foreground to be toggled for each sprite.  
   *Make those sprites glow!*
+  
+### Importing SCML Files [Alpha]
+- Supports opening a Spriter `.scml` file directly to convert it to the equivalent Kanim.
+- Supports bones and curves!
+- **NOTICE:** This feature currently generates invalid kanim files that do not load in the game. It is still in development.
 
 ### Animation Previews
 Kanim Explorer implements an OpenGL based renderer that lets you actually play the animations and inspect them frame by frame.  
