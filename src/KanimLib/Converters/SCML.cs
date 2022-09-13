@@ -104,6 +104,8 @@ namespace KanimLib.Converters
 			KAnim anim = KAnimUtils.CreateEmptyAnim();
 			pkg.Anim = anim;
 
+			int maxElements = 0;
+
 			Config cfg = new Config()
 			{
 				EventsEnabled = false,
@@ -130,6 +132,8 @@ namespace KanimLib.Converters
 					//frame.Width = 200f;
 					//frame.Height = 200f;
 
+					maxElements = Math.Max(maxElements, frameData.SpriteData.Count);
+
 					foreach (var spriteData in frameData.SpriteData)
 					{
 						Debug.Assert(spriteData.FolderId == 0);
@@ -137,7 +141,6 @@ namespace KanimLib.Converters
 						KAnimElement element = new KAnimElement();
 						frame.AddElement(element);
 						anim.ElementCount++;
-						anim.MaxVisSymbols++;
 
 						element.SymbolHash = symbolsById[spriteData.FileId].Hash;
 						element.FolderHash = element.SymbolHash;
@@ -173,6 +176,8 @@ namespace KanimLib.Converters
 					}
 				}
 			}
+
+			anim.MaxVisSymbols = maxElements;
 
 			return pkg;
 		}
