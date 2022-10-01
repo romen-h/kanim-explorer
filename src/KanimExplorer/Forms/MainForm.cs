@@ -35,6 +35,7 @@ namespace KanimExplorer.Forms
 			convertToSCMLToolStripMenuItem.Enabled = false;
 			splitTextureAtlasToolStripMenuItem.Enabled = false;
 			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
+			exportAtlasBoxesToolStripMenuItem.Enabled = false;
 			saveTextureAtlasToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Enabled = false;
 			saveAllToolStripMenuItem.Enabled = false;
@@ -83,6 +84,7 @@ namespace KanimExplorer.Forms
 			splitTextureAtlasToolStripMenuItem.Enabled = data.IsValidAtlas;
 			rebuildTextureAtlasToolStripMenuItem.Enabled = data.IsValidAtlas;
 			saveTextureAtlasToolStripMenuItem.Enabled = data.HasTexture;
+			exportAtlasBoxesToolStripMenuItem.Enabled = data.HasTexture && data.HasBuild;
 			saveBuildFileToolStripMenuItem.Enabled = data.HasBuild;
 			saveAnimFileToolStripMenuItem.Enabled = data.HasAnim;
 			saveAllToolStripMenuItem.Enabled = data.HasTexture || data.HasBuild || data.HasAnim;
@@ -216,6 +218,7 @@ namespace KanimExplorer.Forms
 			splitTextureAtlasToolStripMenuItem.Enabled = false;
 			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
 			saveTextureAtlasToolStripMenuItem.Enabled = false;
+			exportAtlasBoxesToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Enabled = false;
 			saveAllToolStripMenuItem.Enabled = false;
 			previewAnimToolStripMenuItem.Enabled = false;
