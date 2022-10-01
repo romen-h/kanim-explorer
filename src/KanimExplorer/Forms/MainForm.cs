@@ -180,6 +180,24 @@ namespace KanimExplorer.Forms
 					TreeNode bankNode = new TreeNode(bank.Name);
 					bankNode.Tag = bank;
 
+					for (int i=0; i<bank.Frames.Count; i++)
+					{
+						KAnimFrame frame = bank.Frames[i];
+						TreeNode frameNode = new TreeNode($"Frame {i}");
+						frameNode.Tag = frame;
+
+						for (int j = 0; j < frame.Elements.Count; j++)
+						{
+							KAnimElement element = frame.Elements[j];
+							TreeNode elementNode = new TreeNode($"Element {j}");
+							elementNode.Tag = element;
+
+							frameNode.Nodes.Add(elementNode);
+						}
+
+						bankNode.Nodes.Add(frameNode);
+					}
+
 					animNode.Nodes.Add(bankNode);
 				}
 
@@ -333,6 +351,41 @@ namespace KanimExplorer.Forms
 						{
 							frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
 							pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
+						}
+						break;
+
+					case KAnimFrame animFrame:
+						if (data.Texture != null && data.Build != null)
+						{
+							foreach (KAnimElement element in animFrame.Elements)
+							{
+								KSymbol symbol = data.Build.GetSymbol(element.SymbolHash);
+								if (symbol != null)
+								{
+									if (symbol.FrameCount > element.FrameNumber)
+									{
+										KFrame frame = symbol.Frames[element.FrameNumber];
+										frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+										pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
+									}
+								}
+							}
+						}
+						break;
+
+					case KAnimElement element:
+						if (data.Texture != null && data.Build != null)
+						{
+							KSymbol symbol = data.Build.GetSymbol(element.SymbolHash);
+							if (symbol != null)
+							{
+								if (symbol.FrameCount > element.FrameNumber)
+								{
+									KFrame frame = symbol.Frames[element.FrameNumber];
+									frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+									pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
+								}
+							}
 						}
 						break;
 
