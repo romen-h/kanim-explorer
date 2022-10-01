@@ -69,6 +69,66 @@ namespace KanimLib.Sprites
 			return newAtlas;
 		}
 
+		public static Bitmap GetHelperImage(int width, int height, KBuild build, bool boundingBoxes, bool pivots)
+		{
+			Bitmap bmp = new Bitmap(width, height);
+			using (Graphics g = Graphics.FromImage(bmp))
+			{
+				g.Clear(Color.Transparent);
+
+				foreach (var symbol in build.Symbols)
+				{
+					foreach (var frame in symbol.Frames)
+					{
+						int left = (int)(frame.UV_X1 * width);
+						int top = (int)(frame.UV_Y1 * height);
+						int right = (int)(frame.UV_X2 * width) - 1;
+						int bottom = (int)(frame.UV_Y2 * height) - 1;
+
+						if (boundingBoxes)
+						{
+							g.DrawLine(Pens.Red, left, top, right, top);
+							g.DrawLine(Pens.Magenta, right, top, right, bottom);
+							g.DrawLine(Pens.Blue, left, bottom, right, bottom);
+							g.DrawLine(Pens.Lime, left, top + 1, left, bottom);
+						}
+
+						if (pivots)
+						{
+							int spriteWidth = right - left;
+							int spriteHeight = bottom - top;
+							int x = left + (int)(spriteWidth * frame.SpriterPivotX);
+							int y = top + (int)(spriteHeight * frame.SpriterPivotY);
+
+							g.FillRectangle(Brushes.Red, x - 1, y - 1, 3, 3);
+							g.FillRectangle(Brushes.Black, x, y, 1, 1);
+						}
+					}
+				}
+			}
+			return bmp;
+		}
+
+		public static Bitmap GetPivots(int width, int height, KBuild build)
+		{
+			Bitmap bmp = new Bitmap(width, height);
+			using (Graphics g = Graphics.FromImage(bmp))
+			{
+				g.Clear(Color.Transparent);
+
+				foreach (var symbol in build.Symbols)
+				{
+					foreach (var frame in symbol.Frames)
+					{
+						int left = (int)(frame.UV_X1 * width);
+						int top = (int)(frame.UV_Y1 * height);
+						int x = left + (int)(frame.PivotX / 2f);
+					}
+				}
+			}
+			return bmp;
+		}
+
 		public static PackedSprite[] Pack(Sprite[] sprites, out int sheetW, out int sheetH)
 		{
 			// Brute force trial-and-error sprite packing.

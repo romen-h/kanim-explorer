@@ -35,6 +35,7 @@
 			this.saveTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveBuildFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveAnimFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -48,6 +49,7 @@
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.splitTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.rebuildTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.exportAtlasBoxesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.wizardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.previewAnimToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -57,7 +59,6 @@
 			this.propertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.label2 = new System.Windows.Forms.Label();
 			this.atlasView = new System.Windows.Forms.PictureBox();
-			this.saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -105,14 +106,14 @@
 			// openToolStripMenuItem
 			// 
 			this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-			this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.openToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.openToolStripMenuItem.Text = "Open";
 			this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
 			// 
 			// openSCMLToolStripMenuItem
 			// 
 			this.openSCMLToolStripMenuItem.Name = "openSCMLToolStripMenuItem";
-			this.openSCMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.openSCMLToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.openSCMLToolStripMenuItem.Text = "Open SCML...";
 			this.openSCMLToolStripMenuItem.Click += new System.EventHandler(this.openSCMLToolStripMenuItem_Click);
 			// 
@@ -120,7 +121,7 @@
 			// 
 			this.saveTextureAtlasToolStripMenuItem.Enabled = false;
 			this.saveTextureAtlasToolStripMenuItem.Name = "saveTextureAtlasToolStripMenuItem";
-			this.saveTextureAtlasToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.saveTextureAtlasToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.saveTextureAtlasToolStripMenuItem.Text = "Save Texture Atlas...";
 			this.saveTextureAtlasToolStripMenuItem.Click += new System.EventHandler(this.saveTextureAtlasToolStripMenuItem_Click);
 			// 
@@ -128,7 +129,7 @@
 			// 
 			this.saveBuildFileToolStripMenuItem.Enabled = false;
 			this.saveBuildFileToolStripMenuItem.Name = "saveBuildFileToolStripMenuItem";
-			this.saveBuildFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.saveBuildFileToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.saveBuildFileToolStripMenuItem.Text = "Save Build File...";
 			this.saveBuildFileToolStripMenuItem.Click += new System.EventHandler(this.saveBuildFileToolStripMenuItem_Click);
 			// 
@@ -136,32 +137,39 @@
 			// 
 			this.saveAnimFileToolStripMenuItem.Enabled = false;
 			this.saveAnimFileToolStripMenuItem.Name = "saveAnimFileToolStripMenuItem";
-			this.saveAnimFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.saveAnimFileToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.saveAnimFileToolStripMenuItem.Text = "Save Anim File...";
 			this.saveAnimFileToolStripMenuItem.Click += new System.EventHandler(this.saveAnimFileToolStripMenuItem_Click);
+			// 
+			// saveAllToolStripMenuItem
+			// 
+			this.saveAllToolStripMenuItem.Name = "saveAllToolStripMenuItem";
+			this.saveAllToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+			this.saveAllToolStripMenuItem.Text = "Save All...";
+			this.saveAllToolStripMenuItem.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(174, 6);
 			// 
 			// closeToolStripMenuItem
 			// 
 			this.closeToolStripMenuItem.Enabled = false;
 			this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			this.closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.closeToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.closeToolStripMenuItem.Text = "Close";
 			this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(174, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.exitToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			this.exitToolStripMenuItem.Text = "Exit";
 			this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
 			// 
@@ -175,7 +183,8 @@
             this.convertFromSCMLToolStripMenuItem,
             this.toolStripSeparator3,
             this.splitTextureAtlasToolStripMenuItem,
-            this.rebuildTextureAtlasToolStripMenuItem});
+            this.rebuildTextureAtlasToolStripMenuItem,
+            this.exportAtlasBoxesToolStripMenuItem});
 			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 22);
 			this.toolsToolStripMenuItem.Text = "Tools";
@@ -231,6 +240,13 @@
 			this.rebuildTextureAtlasToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
 			this.rebuildTextureAtlasToolStripMenuItem.Text = "Rebuild Texture Atlas";
 			this.rebuildTextureAtlasToolStripMenuItem.Click += new System.EventHandler(this.rebuildTextureAtlasToolStripMenuItem_Click);
+			// 
+			// exportAtlasBoxesToolStripMenuItem
+			// 
+			this.exportAtlasBoxesToolStripMenuItem.Name = "exportAtlasBoxesToolStripMenuItem";
+			this.exportAtlasBoxesToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			this.exportAtlasBoxesToolStripMenuItem.Text = "Export Atlas Boxes";
+			this.exportAtlasBoxesToolStripMenuItem.Click += new System.EventHandler(this.exportAtlasBoxesToolStripMenuItem_Click);
 			// 
 			// wizardToolStripMenuItem
 			// 
@@ -349,13 +365,6 @@
 			this.atlasView.TabIndex = 0;
 			this.atlasView.TabStop = false;
 			// 
-			// saveAllToolStripMenuItem
-			// 
-			this.saveAllToolStripMenuItem.Name = "saveAllToolStripMenuItem";
-			this.saveAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.saveAllToolStripMenuItem.Text = "Save All...";
-			this.saveAllToolStripMenuItem.Click += new System.EventHandler(this.saveAllToolStripMenuItem_Click);
-			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -415,6 +424,7 @@
 		private System.Windows.Forms.ToolStripMenuItem locateKanimalCLIToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem openSCMLToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem saveAllToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem exportAtlasBoxesToolStripMenuItem;
 	}
 }
 

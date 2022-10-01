@@ -619,7 +619,11 @@ namespace KanimExplorer.Forms
 
 		private void saveBlankAnimbytesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			SaveFileDialog dlg = new SaveFileDialog();
+			SaveFileDialog dlg = new SaveFileDialog()
+			{
+				Filter = "*.bytes|*.bytes"
+			};
+
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
 				if (KAnimUtils.WriteAnim(dlg.FileName, KAnimUtils.CreateEmptyAnim()))
@@ -630,6 +634,20 @@ namespace KanimExplorer.Forms
 				{
 					MessageBox.Show(this, "Failed to save blank anim file.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
+			}
+		}
+
+		private void exportAtlasBoxesToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SaveFileDialog dlg = new SaveFileDialog()
+			{
+				Filter = "*.png|*.png"
+			};
+
+			if (dlg.ShowDialog() == DialogResult.OK)
+			{
+				Bitmap boxes = SpriteUtils.GetHelperImage(data.Texture.Width, data.Texture.Height, data.Build, true, true);
+				boxes.Save(dlg.FileName);
 			}
 		}
 
