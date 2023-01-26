@@ -36,3 +36,7 @@ You must download kanimal-cli.exe separately.
   *You can make more space for editing the base game textures!*
 - Save an empty anim.bytes file to stick in a kanim folder that doesn't have one.  
   *The game needs a file there to load, even if it has no animations.*
+ 
+ ## Credits
+ 
+ Thanks to loodakrawa for the C# [SpriterDotNet](https://github.com/loodakrawa/SpriterDotNet) library.
