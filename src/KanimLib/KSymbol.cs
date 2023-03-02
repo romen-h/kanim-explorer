@@ -120,6 +120,13 @@ namespace KanimLib
 				}
 				return false;
 			}
+			set
+			{
+				foreach (var frame in Frames)
+				{
+					frame.NeedsRepack = value;
+				}
+			}
 		}
 
 #if false

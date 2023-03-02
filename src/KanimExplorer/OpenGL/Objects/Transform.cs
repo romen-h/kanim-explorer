@@ -1,6 +1,7 @@
 ﻿using System;
 
 using OpenTK;
+using OpenTK.Mathematics;
 
 namespace KanimExplorer.OpenGL.Objects
 {
@@ -26,11 +27,11 @@ namespace KanimExplorer.OpenGL.Objects
 			}
 		}
 
-		private OpenTK.Vector3 pos;
+		private Vector3 pos;
 		/// <summary>
 		/// Gets or sets the position.
 		/// </summary>
-		public OpenTK.Vector3 Position
+		public Vector3 Position
 		{
 			get { return pos; }
 			set
@@ -40,11 +41,11 @@ namespace KanimExplorer.OpenGL.Objects
 			}
 		}
 
-		private OpenTK.Quaternion rot;
+		private Quaternion rot;
 		/// <summary>
 		/// Gets or sets the rotation.
 		/// </summary>
-		public OpenTK.Quaternion Rotation
+		public Quaternion Rotation
 		{
 			get { return rot; }
 			set
@@ -54,11 +55,11 @@ namespace KanimExplorer.OpenGL.Objects
 			}
 		}
 
-		private OpenTK.Vector3 scale;
+		private Vector3 scale;
 		/// <summary>
 		/// Gets or sets the scale.
 		/// </summary>
-		public OpenTK.Vector3 Scale
+		public Vector3 Scale
 		{
 			get { return scale; }
 			set
@@ -70,9 +71,9 @@ namespace KanimExplorer.OpenGL.Objects
 
 		public Transform()
 		{
-			pos = OpenTK.Vector3.Zero;
-			rot = OpenTK.Quaternion.Identity;
-			scale = OpenTK.Vector3.One;
+			pos = Vector3.Zero;
+			rot = Quaternion.Identity;
+			scale = Vector3.One;
 		}
 	}
 }

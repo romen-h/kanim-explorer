@@ -74,6 +74,13 @@ namespace KanimLib
 				}
 				return false;
 			}
+			set
+			{
+				foreach (var symbol in Symbols)
+				{
+					symbol.NeedsRepack = value;
+				}
+			}
 		}
 
 		/// <summary>

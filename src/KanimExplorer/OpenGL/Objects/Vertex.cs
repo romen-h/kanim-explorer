@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Mathematics;
 
 namespace KanimExplorer.OpenGL.Objects
 {
@@ -45,6 +46,22 @@ namespace KanimExplorer.OpenGL.Objects
 			NX = nx; NY = ny; NZ = nz;
 			R = r; G = g; B = b; A = a;
 			U = u; V = v;
+		}
+
+		public Vertex(Vector3 pos, Vector3 normal, Color4 color, Vector2 uv)
+		{
+			X = pos.X;
+			Y = pos.Y;
+			Z = pos.Z;
+			NX = normal.X;
+			NY = normal.Y;
+			NZ = normal.Z;
+			R = color.R;
+			G = color.G;
+			B = color.B;
+			A = color.A;
+			U = uv.X;
+			V = uv.Y;
 		}
 	}
 }

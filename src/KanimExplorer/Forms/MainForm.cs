@@ -85,6 +85,7 @@ namespace KanimExplorer.Forms
 			rebuildTextureAtlasToolStripMenuItem.Enabled = data.IsValidAtlas;
 			saveTextureAtlasToolStripMenuItem.Enabled = data.HasTexture;
 			exportAtlasBoxesToolStripMenuItem.Enabled = data.HasTexture && data.HasBuild;
+			autoFlagToolStripMenuItem.Enabled = data.HasBuild;
 			saveBuildFileToolStripMenuItem.Enabled = data.HasBuild;
 			saveAnimFileToolStripMenuItem.Enabled = data.HasAnim;
 			saveAllToolStripMenuItem.Enabled = data.HasTexture || data.HasBuild || data.HasAnim;
@@ -237,6 +238,7 @@ namespace KanimExplorer.Forms
 			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
 			saveTextureAtlasToolStripMenuItem.Enabled = false;
 			exportAtlasBoxesToolStripMenuItem.Enabled = false;
+			autoFlagToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Enabled = false;
 			saveAllToolStripMenuItem.Enabled = false;
 			previewAnimToolStripMenuItem.Enabled = false;
@@ -733,13 +735,31 @@ namespace KanimExplorer.Forms
 			}
 		}
 
+		private void autoFlagToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (data != null && data.HasBuild)
+			{
+				foreach (var symbol in data.Build.Symbols)
+				{
+					string lowerName = symbol.Name.ToLowerInvariant();
+					if (lowerName.Contains("_bloom"))
+					{
+						symbol.Flags.SetFlag(SymbolFlags.Bloom, true);
+					}
+
+					if (lowerName.Contains("_fg"))
+					{
+						symbol.Flags.SetFlag(SymbolFlags.Foreground, true);
+					}
+				}
+			}
+		}
 
 		private void previewAnimToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (data != null && data.IsComplete)
 			{
-				AnimationForm animForm = new AnimationForm();
-				animForm.SetData(data);
+				AnimationForm animForm = new AnimationForm(data);
 				animForm.Show(this);
 			}
 		}

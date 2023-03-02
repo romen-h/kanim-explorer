@@ -85,7 +85,7 @@ namespace KanimLib.Converters
 				frame.SpriteHeight = file.Height;
 				frame.SpriterPivotX = file.PivotX;
 				frame.SpriterPivotY = 1.0f - file.PivotY;
-				//frame.NeedsRepack = true;
+				frame.NeedsRepack = true;
 
 				symbol.AddFrame(frame);
 				framesById[file.Id] = frame;
@@ -98,6 +98,7 @@ namespace KanimLib.Converters
 			}
 
 			pkg.Texture = SpriteUtils.RebuildAtlas(sprites.Values.ToArray());
+			pkg.Build.NeedsRepack = false;
 
 			// Anim File
 
@@ -136,7 +137,7 @@ namespace KanimLib.Converters
 
 					foreach (var spriteData in frameData.SpriteData)
 					{
-						Debug.Assert(spriteData.FolderId == 0);
+						//Debug.Assert(spriteData.FolderId == 0);
 
 						KAnimElement element = new KAnimElement();
 						frame.AddElement(element);

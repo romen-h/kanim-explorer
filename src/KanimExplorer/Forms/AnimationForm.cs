@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Drawing;
 using System.Windows.Forms;
 
 using KanimExplorer.OpenGL;
@@ -7,20 +8,21 @@ using KanimLib;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.WinForms;
 
 namespace KanimExplorer.Forms
 {
 	public partial class AnimationForm : Form
 	{
-		KAnimPackage data;
+		KAnimPackage _data;
 
-		KAnimPackage dupeData;
+		KAnimPackage _dupeData;
 
 		KAnimBank SelectedBank;
 
 		KAnimBank SelectedDupeBank;
 
-		GLControl display;
+		//GLControl display;
 
 		AnimationRenderer renderer;
 
@@ -32,7 +34,10 @@ namespace KanimExplorer.Forms
 
 		Timer playbackTimer;
 
-		public AnimationForm()
+		PointF _viewPos = new PointF(0,-100);
+		float _viewScale = 1f;
+
+		public AnimationForm(KAnimPackage data)
 		{
 			InitializeComponent();
 
@@ -42,7 +47,8 @@ namespace KanimExplorer.Forms
 			
 			renderer = new AnimationRenderer();
 			dupeRenderer = new AnimationRenderer();
-			InitGL();
+
+			_data = data;
 		}
 
 		private void PlaybackTimer_Tick(object sender, System.EventArgs e)
@@ -61,34 +67,40 @@ namespace KanimExplorer.Forms
 
 		private void AnimationForm_Load(object sender, System.EventArgs e)
 		{
+			InitGL();
 			textBoxFrameNumber.Text = currentFrame.ToString();
 			playbackTimer.Start();
 		}
 
 		private void InitGL()
 		{
-			GraphicsMode mode = new GraphicsMode(32, 24, 8, 8);
+#if false
+			display = new GLControl(new GLControlSettings()
+			{
+				API = OpenTK.Windowing.Common.ContextAPI.OpenGL,
+				APIVersion = new System.Version(3,3,0,0),
+				Flags = OpenTK.Windowing.Common.ContextFlags.Default | OpenTK.Windowing.Common.ContextFlags.ForwardCompatible
+			});
 
-			display = new GLControl(mode, 3, 3, GraphicsContextFlags.Default);
-			display.Dock = DockStyle.Fill;
-			display.SizeChanged += Display_SizeChanged;
-			display.Paint += Display_Paint;
+			//display.Dock = DockStyle.Fill;
+			//display.SizeChanged += Display_SizeChanged;
+			//display.Paint += Display_Paint;
+#endif
 
 			display.MakeCurrent();
 
 			renderer.Initialize();
 			dupeRenderer.Initialize();
 
-			panelDisplayArea.Controls.Add(display);
+			SetData(_data);
+			UpdateView();
 		}
 
-		private void Display_SizeChanged(object sender, System.EventArgs e)
+		private void Display_Resize(object sender, System.EventArgs e)
 		{
 			display.MakeCurrent();
 			GL.Viewport(0, 0, display.Width, display.Height);
-			renderer.SetViewport(display.Width, display.Height);
-			dupeRenderer.SetViewport(display.Width, display.Height);
-			display.Invalidate();
+			UpdateView();
 		}
 
 		private void Display_Paint(object sender, PaintEventArgs e)
@@ -99,26 +111,36 @@ namespace KanimExplorer.Forms
 
 			if (SelectedBank != null)
 			{
-				renderer.Render(data.Build, SelectedBank, currentFrame);
+				renderer.Render(_data.Build, SelectedBank, currentFrame);
 			}
 
 			if (SelectedDupeBank != null)
 			{
-				dupeRenderer.Render(dupeData.Build, SelectedDupeBank, currentFrame);
+				dupeRenderer.Render(_dupeData.Build, SelectedDupeBank, currentFrame);
 			}
 
 			display.SwapBuffers();
 		}
 
-		public void SetData(KAnimPackage pkg)
+		private void UpdateView()
+		{
+			display.MakeCurrent();
+			
+			renderer.SetViewport(_viewPos, _viewScale, display.Width, display.Height);
+			dupeRenderer.SetViewport(_viewPos, _viewScale, display.Width, display.Height);
+
+			display.Invalidate();
+		}
+
+		private void SetData(KAnimPackage pkg)
 		{
 			Debug.Assert(pkg.IsComplete);
 
-			data = pkg;
+			_data = pkg;
 
-			renderer.SetTexture(data.Texture);
+			renderer.SetTexture(_data.Texture);
 
-			foreach (KAnimBank bank in data.Anim.Banks)
+			foreach (KAnimBank bank in _data.Anim.Banks)
 			{
 				listBoxBanks.Items.Add(bank);
 			}
@@ -198,18 +220,18 @@ namespace KanimExplorer.Forms
 
 		private void openInteractKanimToolStripMenuItem_Click(object sender, System.EventArgs e)
 		{
-			dupeData = KanimLoader.BrowseForKanimFiles();
+			_dupeData = KanimLoader.BrowseForKanimFiles();
 
 			listBoxDupeBanks.Items.Clear();
 
-			if (dupeData != null && dupeData.HasTexture && dupeData.HasAnim)
+			if (_dupeData != null && _dupeData.HasTexture && _dupeData.HasAnim)
 			{
 				listBoxDupeBanks.Enabled = true;
-				foreach (KAnimBank bank in dupeData.Anim.Banks)
+				foreach (KAnimBank bank in _dupeData.Anim.Banks)
 				{
 					listBoxDupeBanks.Items.Add(bank);
 				}
-				dupeRenderer.SetTexture(dupeData.Texture);
+				dupeRenderer.SetTexture(_dupeData.Texture);
 			}
 			else
 			{
@@ -217,6 +239,61 @@ namespace KanimExplorer.Forms
 			}
 		}
 
-		
+		private bool _leftDragging = false;
+		private PointF _lastPos = PointF.Empty;
+
+		private void Display_MouseDown(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				_leftDragging = true;
+				_lastPos = e.Location;
+			}
+		}
+
+		private void Display_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (_leftDragging)
+			{
+				float dx = ((float)e.Location.X - _lastPos.X) * (_viewScale);
+				float dy = ((float)e.Location.Y - _lastPos.Y) * (_viewScale);
+				_viewPos = new PointF(_viewPos.X - dx, _viewPos.Y + dy);
+				_lastPos = e.Location;
+				UpdateView();
+			}
+		}
+
+		private void Display_MouseUp(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				_leftDragging = false;
+				_lastPos = PointF.Empty;
+			}
+		}
+
+		private void Display_MouseLeave(object sender, System.EventArgs e)
+		{
+			_leftDragging = false;
+			_lastPos = PointF.Empty;
+		}
+
+		private void Display_MouseWheel(object sender, MouseEventArgs e)
+		{
+			if (e.Delta < 0)
+			{
+				// Down
+				_viewScale *= 1.1f;
+				if (_viewScale > 10f) _viewScale = 10f;
+				UpdateView();
+			}
+			else if (e.Delta > 0)
+			{
+				// Up
+				_viewScale /= 1.1f;
+				if (_viewScale < 0.1f) _viewScale = 0.1f;
+				UpdateView();
+			}
+		}
 	}
 }

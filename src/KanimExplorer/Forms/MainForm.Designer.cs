@@ -59,6 +59,7 @@
 			this.propertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.label2 = new System.Windows.Forms.Label();
 			this.atlasView = new System.Windows.Forms.PictureBox();
+			this.autoFlagToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -81,8 +82,8 @@
             this.previewAnimToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Padding = new System.Windows.Forms.Padding(4, 1, 0, 1);
-			this.menuStrip1.Size = new System.Drawing.Size(573, 24);
+			this.menuStrip1.Padding = new System.Windows.Forms.Padding(5, 1, 0, 1);
+			this.menuStrip1.Size = new System.Drawing.Size(668, 24);
 			this.menuStrip1.TabIndex = 0;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -184,7 +185,8 @@
             this.toolStripSeparator3,
             this.splitTextureAtlasToolStripMenuItem,
             this.rebuildTextureAtlasToolStripMenuItem,
-            this.exportAtlasBoxesToolStripMenuItem});
+            this.exportAtlasBoxesToolStripMenuItem,
+            this.autoFlagToolStripMenuItem});
 			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 22);
 			this.toolsToolStripMenuItem.Text = "Tools";
@@ -277,9 +279,8 @@
 			// splitContainer1.Panel2
 			// 
 			this.splitContainer1.Panel2.Controls.Add(this.atlasView);
-			this.splitContainer1.Size = new System.Drawing.Size(573, 544);
-			this.splitContainer1.SplitterDistance = 190;
-			this.splitContainer1.SplitterWidth = 3;
+			this.splitContainer1.Size = new System.Drawing.Size(668, 631);
+			this.splitContainer1.SplitterDistance = 221;
 			this.splitContainer1.TabIndex = 1;
 			// 
 			// splitContainer2
@@ -300,18 +301,18 @@
 			// 
 			this.splitContainer2.Panel2.Controls.Add(this.propertyGrid);
 			this.splitContainer2.Panel2.Controls.Add(this.label2);
-			this.splitContainer2.Size = new System.Drawing.Size(190, 544);
-			this.splitContainer2.SplitterDistance = 200;
+			this.splitContainer2.Size = new System.Drawing.Size(221, 631);
+			this.splitContainer2.SplitterDistance = 231;
 			this.splitContainer2.SplitterWidth = 3;
 			this.splitContainer2.TabIndex = 4;
 			// 
 			// buildTreeView
 			// 
 			this.buildTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.buildTreeView.Location = new System.Drawing.Point(0, 26);
+			this.buildTreeView.Location = new System.Drawing.Point(0, 30);
 			this.buildTreeView.Margin = new System.Windows.Forms.Padding(2);
 			this.buildTreeView.Name = "buildTreeView";
-			this.buildTreeView.Size = new System.Drawing.Size(190, 174);
+			this.buildTreeView.Size = new System.Drawing.Size(221, 201);
 			this.buildTreeView.TabIndex = 1;
 			this.buildTreeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.buildTreeView_AfterSelect);
 			// 
@@ -321,8 +322,8 @@
 			this.label1.Location = new System.Drawing.Point(0, 0);
 			this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label1.Name = "label1";
-			this.label1.Padding = new System.Windows.Forms.Padding(3);
-			this.label1.Size = new System.Drawing.Size(190, 26);
+			this.label1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			this.label1.Size = new System.Drawing.Size(221, 30);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Symbol Tree:";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -331,11 +332,11 @@
 			// 
 			this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.propertyGrid.HelpVisible = false;
-			this.propertyGrid.Location = new System.Drawing.Point(0, 26);
+			this.propertyGrid.Location = new System.Drawing.Point(0, 30);
 			this.propertyGrid.Margin = new System.Windows.Forms.Padding(2);
 			this.propertyGrid.Name = "propertyGrid";
 			this.propertyGrid.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-			this.propertyGrid.Size = new System.Drawing.Size(190, 315);
+			this.propertyGrid.Size = new System.Drawing.Size(221, 367);
 			this.propertyGrid.TabIndex = 2;
 			this.propertyGrid.ToolbarVisible = false;
 			this.propertyGrid.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGrid_PropertyValueChanged);
@@ -346,8 +347,8 @@
 			this.label2.Location = new System.Drawing.Point(0, 0);
 			this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label2.Name = "label2";
-			this.label2.Padding = new System.Windows.Forms.Padding(3);
-			this.label2.Size = new System.Drawing.Size(190, 26);
+			this.label2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+			this.label2.Size = new System.Drawing.Size(221, 30);
 			this.label2.TabIndex = 3;
 			this.label2.Text = "Symbol Inspector:";
 			this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -360,16 +361,23 @@
 			this.atlasView.Location = new System.Drawing.Point(0, 0);
 			this.atlasView.Margin = new System.Windows.Forms.Padding(2);
 			this.atlasView.Name = "atlasView";
-			this.atlasView.Size = new System.Drawing.Size(380, 544);
+			this.atlasView.Size = new System.Drawing.Size(443, 631);
 			this.atlasView.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
 			this.atlasView.TabIndex = 0;
 			this.atlasView.TabStop = false;
 			// 
+			// autoFlagToolStripMenuItem
+			// 
+			this.autoFlagToolStripMenuItem.Name = "autoFlagToolStripMenuItem";
+			this.autoFlagToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			this.autoFlagToolStripMenuItem.Text = "Auto Flag";
+			this.autoFlagToolStripMenuItem.Click += new System.EventHandler(this.autoFlagToolStripMenuItem_Click);
+			// 
 			// MainForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(573, 568);
+			this.ClientSize = new System.Drawing.Size(668, 655);
 			this.Controls.Add(this.splitContainer1);
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
@@ -425,6 +433,7 @@
 		private System.Windows.Forms.ToolStripMenuItem openSCMLToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem saveAllToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportAtlasBoxesToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem autoFlagToolStripMenuItem;
 	}
 }
 

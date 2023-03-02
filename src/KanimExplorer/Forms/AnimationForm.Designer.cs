@@ -40,6 +40,7 @@ namespace KanimExplorer.Forms
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.panelDisplayArea = new System.Windows.Forms.Panel();
+			this.display = new OpenTK.WinForms.GLControl();
 			this.panelProperties = new System.Windows.Forms.Panel();
 			this.panelTimeline = new System.Windows.Forms.Panel();
 			this.checkBoxPlay = new System.Windows.Forms.CheckBox();
@@ -48,6 +49,7 @@ namespace KanimExplorer.Forms
 			this.buttonPrevFrame = new System.Windows.Forms.Button();
 			this.panelExplorer.SuspendLayout();
 			this.menuStrip1.SuspendLayout();
+			this.panelDisplayArea.SuspendLayout();
 			this.panelTimeline.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -58,53 +60,58 @@ namespace KanimExplorer.Forms
 			this.panelExplorer.Controls.Add(this.listBoxBanks);
 			this.panelExplorer.Controls.Add(this.label1);
 			this.panelExplorer.Dock = System.Windows.Forms.DockStyle.Left;
-			this.panelExplorer.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.panelExplorer.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.panelExplorer.Location = new System.Drawing.Point(0, 24);
+			this.panelExplorer.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.panelExplorer.Name = "panelExplorer";
-			this.panelExplorer.Size = new System.Drawing.Size(200, 642);
+			this.panelExplorer.Size = new System.Drawing.Size(233, 745);
 			this.panelExplorer.TabIndex = 0;
 			// 
 			// listBoxDupeBanks
 			// 
 			this.listBoxDupeBanks.Dock = System.Windows.Forms.DockStyle.Top;
 			this.listBoxDupeBanks.Enabled = false;
-			this.listBoxDupeBanks.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.listBoxDupeBanks.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.listBoxDupeBanks.FormattingEnabled = true;
 			this.listBoxDupeBanks.ItemHeight = 16;
-			this.listBoxDupeBanks.Location = new System.Drawing.Point(0, 208);
+			this.listBoxDupeBanks.Location = new System.Drawing.Point(0, 234);
+			this.listBoxDupeBanks.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.listBoxDupeBanks.Name = "listBoxDupeBanks";
-			this.listBoxDupeBanks.Size = new System.Drawing.Size(200, 164);
+			this.listBoxDupeBanks.Size = new System.Drawing.Size(233, 180);
 			this.listBoxDupeBanks.TabIndex = 3;
 			this.listBoxDupeBanks.SelectedIndexChanged += new System.EventHandler(this.listBoxDupeBanks_SelectedIndexChanged);
 			// 
 			// label2
 			// 
 			this.label2.Dock = System.Windows.Forms.DockStyle.Top;
-			this.label2.Location = new System.Drawing.Point(0, 178);
+			this.label2.Location = new System.Drawing.Point(0, 199);
+			this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(200, 30);
+			this.label2.Size = new System.Drawing.Size(233, 35);
 			this.label2.TabIndex = 2;
 			this.label2.Text = "Dupe Animations:";
 			// 
 			// listBoxBanks
 			// 
 			this.listBoxBanks.Dock = System.Windows.Forms.DockStyle.Top;
-			this.listBoxBanks.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.listBoxBanks.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.listBoxBanks.FormattingEnabled = true;
 			this.listBoxBanks.ItemHeight = 16;
-			this.listBoxBanks.Location = new System.Drawing.Point(0, 30);
+			this.listBoxBanks.Location = new System.Drawing.Point(0, 35);
+			this.listBoxBanks.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.listBoxBanks.Name = "listBoxBanks";
-			this.listBoxBanks.Size = new System.Drawing.Size(200, 148);
+			this.listBoxBanks.Size = new System.Drawing.Size(233, 164);
 			this.listBoxBanks.TabIndex = 1;
 			this.listBoxBanks.SelectedIndexChanged += new System.EventHandler(this.listBoxBanks_SelectedIndexChanged);
 			// 
 			// label1
 			// 
 			this.label1.Dock = System.Windows.Forms.DockStyle.Top;
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.label1.Location = new System.Drawing.Point(0, 0);
+			this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
 			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(200, 30);
+			this.label1.Size = new System.Drawing.Size(233, 35);
 			this.label1.TabIndex = 0;
 			this.label1.Text = "Animations:";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -115,7 +122,8 @@ namespace KanimExplorer.Forms
             this.fileToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(0, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(1312, 24);
+			this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
+			this.menuStrip1.Size = new System.Drawing.Size(1531, 24);
 			this.menuStrip1.TabIndex = 1;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -152,18 +160,42 @@ namespace KanimExplorer.Forms
 			// 
 			this.panelDisplayArea.BackColor = System.Drawing.SystemColors.ControlDarkDark;
 			this.panelDisplayArea.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+			this.panelDisplayArea.Controls.Add(this.display);
 			this.panelDisplayArea.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panelDisplayArea.Location = new System.Drawing.Point(200, 24);
+			this.panelDisplayArea.Location = new System.Drawing.Point(233, 24);
+			this.panelDisplayArea.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.panelDisplayArea.Name = "panelDisplayArea";
-			this.panelDisplayArea.Size = new System.Drawing.Size(912, 642);
+			this.panelDisplayArea.Size = new System.Drawing.Size(1065, 745);
 			this.panelDisplayArea.TabIndex = 2;
+			// 
+			// display
+			// 
+			this.display.API = OpenTK.Windowing.Common.ContextAPI.OpenGL;
+			this.display.APIVersion = new System.Version(3, 3, 0, 0);
+			this.display.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.display.Flags = OpenTK.Windowing.Common.ContextFlags.Default;
+			this.display.IsEventDriven = true;
+			this.display.Location = new System.Drawing.Point(0, 0);
+			this.display.Name = "display";
+			this.display.Profile = OpenTK.Windowing.Common.ContextProfile.Core;
+			this.display.Size = new System.Drawing.Size(1061, 741);
+			this.display.TabIndex = 0;
+			this.display.Text = "glControl1";
+			this.display.Paint += new System.Windows.Forms.PaintEventHandler(this.Display_Paint);
+			this.display.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Display_MouseDown);
+			this.display.MouseLeave += new System.EventHandler(this.Display_MouseLeave);
+			this.display.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Display_MouseMove);
+			this.display.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Display_MouseUp);
+			this.display.MouseWheel += new System.Windows.Forms.MouseEventHandler(this.Display_MouseWheel);
+			this.display.Resize += new System.EventHandler(this.Display_Resize);
 			// 
 			// panelProperties
 			// 
 			this.panelProperties.Dock = System.Windows.Forms.DockStyle.Right;
-			this.panelProperties.Location = new System.Drawing.Point(1112, 24);
+			this.panelProperties.Location = new System.Drawing.Point(1298, 24);
+			this.panelProperties.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.panelProperties.Name = "panelProperties";
-			this.panelProperties.Size = new System.Drawing.Size(200, 642);
+			this.panelProperties.Size = new System.Drawing.Size(233, 745);
 			this.panelProperties.TabIndex = 0;
 			this.panelProperties.Visible = false;
 			// 
@@ -174,18 +206,20 @@ namespace KanimExplorer.Forms
 			this.panelTimeline.Controls.Add(this.buttonNextFrame);
 			this.panelTimeline.Controls.Add(this.buttonPrevFrame);
 			this.panelTimeline.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.panelTimeline.Location = new System.Drawing.Point(0, 666);
+			this.panelTimeline.Location = new System.Drawing.Point(0, 769);
+			this.panelTimeline.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.panelTimeline.Name = "panelTimeline";
-			this.panelTimeline.Size = new System.Drawing.Size(1312, 100);
+			this.panelTimeline.Size = new System.Drawing.Size(1531, 115);
 			this.panelTimeline.TabIndex = 0;
 			// 
 			// checkBoxPlay
 			// 
 			this.checkBoxPlay.Appearance = System.Windows.Forms.Appearance.Button;
 			this.checkBoxPlay.AutoSize = true;
-			this.checkBoxPlay.Location = new System.Drawing.Point(12, 35);
+			this.checkBoxPlay.Location = new System.Drawing.Point(14, 40);
+			this.checkBoxPlay.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.checkBoxPlay.Name = "checkBoxPlay";
-			this.checkBoxPlay.Size = new System.Drawing.Size(37, 23);
+			this.checkBoxPlay.Size = new System.Drawing.Size(39, 25);
 			this.checkBoxPlay.TabIndex = 3;
 			this.checkBoxPlay.Text = "Play";
 			this.checkBoxPlay.UseVisualStyleBackColor = true;
@@ -193,18 +227,20 @@ namespace KanimExplorer.Forms
 			// 
 			// textBoxFrameNumber
 			// 
-			this.textBoxFrameNumber.Location = new System.Drawing.Point(93, 8);
+			this.textBoxFrameNumber.Location = new System.Drawing.Point(108, 9);
+			this.textBoxFrameNumber.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.textBoxFrameNumber.Name = "textBoxFrameNumber";
 			this.textBoxFrameNumber.ReadOnly = true;
-			this.textBoxFrameNumber.Size = new System.Drawing.Size(100, 20);
+			this.textBoxFrameNumber.Size = new System.Drawing.Size(116, 23);
 			this.textBoxFrameNumber.TabIndex = 2;
 			this.textBoxFrameNumber.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// buttonNextFrame
 			// 
-			this.buttonNextFrame.Location = new System.Drawing.Point(199, 6);
+			this.buttonNextFrame.Location = new System.Drawing.Point(232, 7);
+			this.buttonNextFrame.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.buttonNextFrame.Name = "buttonNextFrame";
-			this.buttonNextFrame.Size = new System.Drawing.Size(75, 23);
+			this.buttonNextFrame.Size = new System.Drawing.Size(88, 27);
 			this.buttonNextFrame.TabIndex = 1;
 			this.buttonNextFrame.Text = "> >";
 			this.buttonNextFrame.UseVisualStyleBackColor = true;
@@ -212,9 +248,10 @@ namespace KanimExplorer.Forms
 			// 
 			// buttonPrevFrame
 			// 
-			this.buttonPrevFrame.Location = new System.Drawing.Point(12, 6);
+			this.buttonPrevFrame.Location = new System.Drawing.Point(14, 7);
+			this.buttonPrevFrame.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.buttonPrevFrame.Name = "buttonPrevFrame";
-			this.buttonPrevFrame.Size = new System.Drawing.Size(75, 23);
+			this.buttonPrevFrame.Size = new System.Drawing.Size(88, 27);
 			this.buttonPrevFrame.TabIndex = 0;
 			this.buttonPrevFrame.Text = "< <";
 			this.buttonPrevFrame.UseVisualStyleBackColor = true;
@@ -222,15 +259,16 @@ namespace KanimExplorer.Forms
 			// 
 			// AnimationForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1312, 766);
+			this.ClientSize = new System.Drawing.Size(1531, 884);
 			this.Controls.Add(this.panelDisplayArea);
 			this.Controls.Add(this.panelProperties);
 			this.Controls.Add(this.panelExplorer);
 			this.Controls.Add(this.panelTimeline);
 			this.Controls.Add(this.menuStrip1);
 			this.MainMenuStrip = this.menuStrip1;
+			this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
 			this.Name = "AnimationForm";
 			this.Text = "Animation Viewer";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AnimationForm_FormClosing);
@@ -238,6 +276,7 @@ namespace KanimExplorer.Forms
 			this.panelExplorer.ResumeLayout(false);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
+			this.panelDisplayArea.ResumeLayout(false);
 			this.panelTimeline.ResumeLayout(false);
 			this.panelTimeline.PerformLayout();
 			this.ResumeLayout(false);
@@ -264,5 +303,6 @@ namespace KanimExplorer.Forms
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.ToolStripMenuItem openInteractKanimToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+		private OpenTK.WinForms.GLControl display;
 	}
 }

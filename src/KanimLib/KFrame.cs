@@ -127,13 +127,16 @@ namespace KanimLib
 
 		public void SetNewSize(Rectangle box, int atlasWidth, int atlasHeight)
 		{
+			float halfPixelW = 1f / atlasWidth;
+			float halfPixelH = 1f / atlasHeight;
+
 			PivotWidth = box.Width * 2;
 			PivotHeight = box.Height * 2;
 
-			UV_X1 = (float)box.Left / (float)atlasWidth;
-			UV_Y1 = (float)box.Top / (float)atlasHeight;
-			UV_X2 = (float)box.Right / (float)atlasWidth;
-			UV_Y2 = (float)box.Bottom / (float)atlasHeight;
+			UV_X1 = (float)box.Left / (float)atlasWidth + halfPixelW;
+			UV_Y1 = (float)box.Top / (float)atlasHeight + halfPixelH;
+			UV_X2 = (float)box.Right / (float)atlasWidth - halfPixelW;
+			UV_Y2 = (float)box.Bottom / (float)atlasHeight - halfPixelH;
 		}
 
 		public PointF GetPivotPoint(float width, float height)

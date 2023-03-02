@@ -13,6 +13,7 @@ using KanimLib;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace KanimExplorer.OpenGL
 {
@@ -49,18 +50,26 @@ namespace KanimExplorer.OpenGL
 			
 			texture.Allocate();
 
+			List<Vertex> gridVertices = new List<Vertex>();
+			for (int i = -5; i <= 5; i++)
+			{
+				Color4 color = Color4.LightGray;
+				if (i == 0) color = Color4.Red;
+				// Horizontal
+				gridVertices.Add(new Vertex(new Vector3(-1000, i*200f, 0), Vector3.UnitZ, color, Vector2.Zero));
+				gridVertices.Add(new Vertex(new Vector3( 1000, i*200f, 0), Vector3.UnitZ, color, Vector2.Zero));
+				// Vertical
+				gridVertices.Add(new Vertex(new Vector3(i*200f, -1000, 0), Vector3.UnitZ, color, Vector2.Zero));
+				gridVertices.Add(new Vertex(new Vector3(i*200f,  1000, 0), Vector3.UnitZ, color, Vector2.Zero));
+			}
+			int[] elements = new int[gridVertices.Count];
+			for (int i=0; i<elements.Length; i++)
+			{
+				elements[i] = i;
+			}
+
 			origin.Allocate();
-			origin.SetData(PrimitiveType.Lines,
-				new Vertex[]
-				{
-					new Vertex(-10000, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0),
-					new Vertex( 10000, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0),
-					new Vertex(0, -10000, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0),
-					new Vertex(0,  10000, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0)
-				},
-				new int[] { 0, 1, 2, 3 },
-				false
-			);
+			origin.SetData(PrimitiveType.Lines, gridVertices.ToArray(), elements, false);
 
 			quad.Allocate();
 		}
@@ -83,16 +92,27 @@ namespace KanimExplorer.OpenGL
 			quad = null;
 		}
 
-		public void SetViewport(int width, int height)
+		public void SetViewport(PointF pos, float scale, int width, int height)
 		{
-			float margin = 400f;
-			projMat = Matrix4.CreateOrthographicOffCenter(-width, width, -margin, 2*height-margin, 10f, -10f);
-			viewMat = Matrix4.LookAt(new Vector3(0, 0, 10f), Vector3.Zero, new Vector3(0, 1f, 0));
+			float scaledWidth = scale * width;
+			float scaledHeight = scale * height;
+			float minX = pos.X - scaledWidth;
+			float maxX = pos.X + scaledWidth;
+			float minY = pos.Y - scaledHeight;
+			float maxY = pos.Y + scaledHeight;
+			projMat = Matrix4.CreateOrthographicOffCenter(minX, maxX, minY, maxY, 10f, -10f);
+			viewMat = Matrix4.LookAt(new Vector3(pos.X, pos.Y, 10f), new Vector3(pos.X, pos.Y, 0f), new Vector3(0, 1f, 0));
 
-			geoShader.SetUniform("Projection", ref projMat);
-			geoShader.SetUniform("View", ref viewMat);
-			spriteShader.SetUniform("Projection", ref projMat);
-			spriteShader.SetUniform("View", ref viewMat);
+			if (geoShader.IsInitialized)
+			{
+				geoShader.SetUniform("Projection", ref projMat);
+				geoShader.SetUniform("View", ref viewMat);
+			}
+			if (spriteShader.IsInitialized)
+			{
+				spriteShader.SetUniform("Projection", ref projMat);
+				spriteShader.SetUniform("View", ref viewMat);
+			}
 		}
 
 		public void SetTexture(Bitmap bmp)

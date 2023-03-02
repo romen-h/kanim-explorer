@@ -4,12 +4,15 @@ using System.Diagnostics;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 
 namespace KanimExplorer.OpenGL.Objects
 {
 	public class Shader
 	{
 		private int id;
+
+		public bool IsInitialized => id > 0;
 
 		public Shader()
 		{
