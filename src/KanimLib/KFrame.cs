@@ -81,8 +81,8 @@ namespace KanimLib
 			get => 1f - ((PivotX / PivotWidth) + 0.5f);
 			set
 			{
-				float clamped = Math.Max(0f, Math.Min(1f, value));
-				PivotX = (0.5f - clamped) * PivotWidth;
+				if (float.IsNaN(value) || float.IsInfinity(value)) throw new ArgumentOutOfRangeException(nameof(value));
+				PivotX = (0.5f - value) * PivotWidth;
 			}
 		}
 
@@ -92,8 +92,8 @@ namespace KanimLib
 			get => 1f - ((PivotY / PivotHeight) + 0.5f);
 			set
 			{
-				float clamped = Math.Max(0f, Math.Min(1f, value));
-				PivotY = (0.5f - clamped) * PivotHeight;
+				if (float.IsNaN(value) || float.IsInfinity(value)) throw new ArgumentOutOfRangeException(nameof(value));
+				PivotY = (0.5f - value) * PivotHeight;
 			}
 		}
 
