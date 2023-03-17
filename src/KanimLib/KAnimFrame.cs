@@ -19,19 +19,15 @@ namespace KanimLib
 		public KAnimBank Parent
 		{ get; internal set; }
 
-		[ReadOnly(true)]
 		public float X
 		{ get; set; } = float.NaN;
 
-		[ReadOnly(true)]
 		public float Y
 		{ get; set; } = float.NaN;
 
-		[ReadOnly(true)]
 		public float Width
 		{ get; set; } = float.NaN;
 
-		[ReadOnly(true)]
 		public float Height
 		{ get; set; } = float.NaN;
 
