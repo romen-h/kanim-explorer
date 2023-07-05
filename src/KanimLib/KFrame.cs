@@ -127,8 +127,8 @@ namespace KanimLib
 
 		public void SetNewSize(Rectangle box, int atlasWidth, int atlasHeight)
 		{
-			float halfPixelW = 1f / atlasWidth;
-			float halfPixelH = 1f / atlasHeight;
+			float halfPixelW = 0.5f / atlasWidth;
+			float halfPixelH = 0.5f / atlasHeight;
 
 			PivotWidth = box.Width * 2;
 			PivotHeight = box.Height * 2;
