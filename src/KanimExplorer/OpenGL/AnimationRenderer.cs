@@ -51,7 +51,7 @@ namespace KanimExplorer.OpenGL
 			texture.Allocate();
 
 			List<Vertex> gridVertices = new List<Vertex>();
-			for (int i = -5; i <= 5; i++)
+			for (int i = -10; i <= 10; i++)
 			{
 				Color4 color = Color4.LightGray;
 				if (i == 0) color = Color4.Red;
