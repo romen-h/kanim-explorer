@@ -50,6 +50,7 @@
 			this.splitTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.rebuildTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exportAtlasBoxesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.autoFlagToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.wizardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.previewAnimToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -59,7 +60,7 @@
 			this.propertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.label2 = new System.Windows.Forms.Label();
 			this.atlasView = new System.Windows.Forms.PictureBox();
-			this.autoFlagToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.duplicateSymbolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -186,7 +187,8 @@
             this.splitTextureAtlasToolStripMenuItem,
             this.rebuildTextureAtlasToolStripMenuItem,
             this.exportAtlasBoxesToolStripMenuItem,
-            this.autoFlagToolStripMenuItem});
+            this.autoFlagToolStripMenuItem,
+            this.duplicateSymbolsToolStripMenuItem});
 			this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			this.toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 22);
 			this.toolsToolStripMenuItem.Text = "Tools";
@@ -249,6 +251,13 @@
 			this.exportAtlasBoxesToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
 			this.exportAtlasBoxesToolStripMenuItem.Text = "Export Atlas Boxes";
 			this.exportAtlasBoxesToolStripMenuItem.Click += new System.EventHandler(this.exportAtlasBoxesToolStripMenuItem_Click);
+			// 
+			// autoFlagToolStripMenuItem
+			// 
+			this.autoFlagToolStripMenuItem.Name = "autoFlagToolStripMenuItem";
+			this.autoFlagToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			this.autoFlagToolStripMenuItem.Text = "Auto Flag";
+			this.autoFlagToolStripMenuItem.Click += new System.EventHandler(this.autoFlagToolStripMenuItem_Click);
 			// 
 			// wizardToolStripMenuItem
 			// 
@@ -366,12 +375,12 @@
 			this.atlasView.TabIndex = 0;
 			this.atlasView.TabStop = false;
 			// 
-			// autoFlagToolStripMenuItem
+			// duplicateSymbolsToolStripMenuItem
 			// 
-			this.autoFlagToolStripMenuItem.Name = "autoFlagToolStripMenuItem";
-			this.autoFlagToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-			this.autoFlagToolStripMenuItem.Text = "Auto Flag";
-			this.autoFlagToolStripMenuItem.Click += new System.EventHandler(this.autoFlagToolStripMenuItem_Click);
+			this.duplicateSymbolsToolStripMenuItem.Name = "duplicateSymbolsToolStripMenuItem";
+			this.duplicateSymbolsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			this.duplicateSymbolsToolStripMenuItem.Text = "Duplicate Symbols";
+			this.duplicateSymbolsToolStripMenuItem.Click += new System.EventHandler(this.duplicateSymbolsToolStripMenuItem_Click);
 			// 
 			// MainForm
 			// 
@@ -434,6 +443,7 @@
 		private System.Windows.Forms.ToolStripMenuItem saveAllToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportAtlasBoxesToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem autoFlagToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem duplicateSymbolsToolStripMenuItem;
 	}
 }
 

@@ -32,7 +32,7 @@ namespace AssetDumpOrganizer
 					}
 					catch (Exception ex)
 					{
-						Console.WriteLine("Unrecoverable while organizing assets:");
+						Console.WriteLine("Unrecoverable error while organizing assets:");
 						Console.WriteLine(ex.ToString());
 					}
 				}

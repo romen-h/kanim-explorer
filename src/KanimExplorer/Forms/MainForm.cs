@@ -727,8 +727,10 @@ namespace KanimExplorer.Forms
 						spr.FrameData.NeedsRepack = false;
 					}
 				}
-				catch
-				{ }
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message, "Things went wrong...", MessageBoxButtons.OK, MessageBoxIcon.Question);
+				}
 
 				UpdateAtlasView(data.Texture);
 				propertyGrid.Refresh();
@@ -770,6 +772,10 @@ namespace KanimExplorer.Forms
 			f.ShowDialog(this);
 		}
 
-		
+		private void duplicateSymbolsToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			SymbolDuplicatorForm f = new SymbolDuplicatorForm(data);
+			f.ShowDialog(this);
+		}
 	}
 }

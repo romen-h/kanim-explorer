@@ -40,7 +40,7 @@ namespace KanimExplorer.Wizard
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.label1.Location = new System.Drawing.Point(13, 12);
 			this.label1.Margin = new System.Windows.Forms.Padding(13, 12, 13, 12);
 			this.label1.Name = "label1";
@@ -51,11 +51,11 @@ namespace KanimExplorer.Wizard
 			// radioButtonBuildingPlaceholder
 			// 
 			this.radioButtonBuildingPlaceholder.AutoSize = true;
-			this.radioButtonBuildingPlaceholder.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.radioButtonBuildingPlaceholder.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
 			this.radioButtonBuildingPlaceholder.Location = new System.Drawing.Point(17, 48);
 			this.radioButtonBuildingPlaceholder.Margin = new System.Windows.Forms.Padding(4);
 			this.radioButtonBuildingPlaceholder.Name = "radioButtonBuildingPlaceholder";
-			this.radioButtonBuildingPlaceholder.Size = new System.Drawing.Size(238, 20);
+			this.radioButtonBuildingPlaceholder.Size = new System.Drawing.Size(237, 20);
 			this.radioButtonBuildingPlaceholder.TabIndex = 1;
 			this.radioButtonBuildingPlaceholder.TabStop = true;
 			this.radioButtonBuildingPlaceholder.Text = "Generate Building Placeholder";
@@ -64,11 +64,11 @@ namespace KanimExplorer.Wizard
 			// radioButtonPackSprites
 			// 
 			this.radioButtonPackSprites.AutoSize = true;
-			this.radioButtonPackSprites.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.radioButtonPackSprites.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
 			this.radioButtonPackSprites.Location = new System.Drawing.Point(17, 116);
 			this.radioButtonPackSprites.Margin = new System.Windows.Forms.Padding(4);
 			this.radioButtonPackSprites.Name = "radioButtonPackSprites";
-			this.radioButtonPackSprites.Size = new System.Drawing.Size(114, 20);
+			this.radioButtonPackSprites.Size = new System.Drawing.Size(113, 20);
 			this.radioButtonPackSprites.TabIndex = 2;
 			this.radioButtonPackSprites.TabStop = true;
 			this.radioButtonPackSprites.Text = "Pack Sprites";
@@ -77,11 +77,11 @@ namespace KanimExplorer.Wizard
 			// radioButtonTileGenerator
 			// 
 			this.radioButtonTileGenerator.AutoSize = true;
-			this.radioButtonTileGenerator.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.radioButtonTileGenerator.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
 			this.radioButtonTileGenerator.Location = new System.Drawing.Point(17, 184);
 			this.radioButtonTileGenerator.Margin = new System.Windows.Forms.Padding(4);
 			this.radioButtonTileGenerator.Name = "radioButtonTileGenerator";
-			this.radioButtonTileGenerator.Size = new System.Drawing.Size(126, 20);
+			this.radioButtonTileGenerator.Size = new System.Drawing.Size(125, 20);
 			this.radioButtonTileGenerator.TabIndex = 3;
 			this.radioButtonTileGenerator.TabStop = true;
 			this.radioButtonTileGenerator.Text = "Tile Generator";
@@ -115,7 +115,7 @@ namespace KanimExplorer.Wizard
 			this.Controls.Add(this.radioButtonPackSprites);
 			this.Controls.Add(this.radioButtonBuildingPlaceholder);
 			this.Controls.Add(this.label1);
-			this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
 			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "StartPage";
 			this.Size = new System.Drawing.Size(409, 354);
