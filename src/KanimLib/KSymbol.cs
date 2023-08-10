@@ -20,6 +20,25 @@ namespace KanimLib
 			Parent = parent;
 		}
 
+		public static KSymbol Copy(KSymbol original, string newName)
+		{
+			KSymbol sym = new KSymbol(newName)
+			{
+				Flags = original.Flags,
+				Color = original.Color
+			};
+
+			foreach (KFrame frame in original.Frames)
+			{
+				KFrame frameCopy = KFrame.Copy(frame);
+				sym.AddFrame(frameCopy);
+			}
+
+			sym.FrameCount = sym.Frames.Count;
+
+			return sym;
+		}
+
 		[Browsable(false)]
 		public KBuild Parent
 		{ get; internal set; }

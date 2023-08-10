@@ -14,6 +14,30 @@ namespace KanimLib
 			Parent = parent;
 		}
 
+		public static KAnimElement Copy(KAnimElement original)
+		{
+			KAnimElement element = new KAnimElement()
+			{
+				SymbolHash = original.SymbolHash,
+				FrameNumber = original.FrameNumber,
+				FolderHash = original.FolderHash,
+				Flags = original.Flags,
+				Alpha = original.Alpha,
+				Red = original.Red,
+				Green = original.Green,
+				Blue = original.Blue,
+				M00 = original.M00,
+				M01 = original.M01,
+				M02 = original.M02,
+				M10 = original.M10,
+				M11 = original.M11,
+				M12 = original.M12,
+				Unused = original.Unused
+			};
+
+			return element;
+		}
+
 		[Browsable(false)]
 		public KAnimFrame Parent
 		{ get; internal set; }

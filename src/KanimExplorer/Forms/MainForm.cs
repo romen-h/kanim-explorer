@@ -778,6 +778,8 @@ namespace KanimExplorer.Forms
 		{
 			SymbolDuplicatorForm f = new SymbolDuplicatorForm(data);
 			f.ShowDialog(this);
+			UpdateBuildTree(data);
+			propertyGrid.Refresh();
 		}
 	}
 }

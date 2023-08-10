@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 
 namespace KanimLib
 {
@@ -28,6 +30,16 @@ namespace KanimLib
 		public readonly List<KAnimBank> Banks = new List<KAnimBank>();
 
 		public readonly Dictionary<int, string> BankNames = new Dictionary<int, string>();
+
+		public KAnimBank GetBank(string name)
+		{
+			foreach (var bank in Banks)
+			{
+				if (bank.Name == name) return bank;
+			}
+
+			return null;
+		}
 
 		public string GetBankName(int hash)
 		{

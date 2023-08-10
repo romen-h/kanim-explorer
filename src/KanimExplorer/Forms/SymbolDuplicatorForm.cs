@@ -13,9 +13,13 @@ namespace KanimExplorer.Forms
 {
 	public partial class SymbolDuplicatorForm : Form
 	{
+		private readonly KAnimPackage kAnimPackage;
+
 		public SymbolDuplicatorForm(KAnimPackage pkg)
 		{
 			InitializeComponent();
+
+			kAnimPackage = pkg;
 
 			buttonOK.Enabled = false;
 
@@ -81,7 +85,7 @@ namespace KanimExplorer.Forms
 		{
 			foreach (ListViewItem lvi in listViewAnimations.Items)
 			{
-				lvi.Checked = true;
+				lvi.Checked = false;
 			}
 
 			ValidateOptions();
@@ -103,6 +107,11 @@ namespace KanimExplorer.Forms
 		}
 
 		private void textBoxSuffix_TextChanged(object sender, EventArgs e)
+		{
+			ValidateOptions();
+		}
+
+		private void checkBoxInvisibleCopies_CheckedChanged(object sender, EventArgs e)
 		{
 			ValidateOptions();
 		}
@@ -146,6 +155,37 @@ namespace KanimExplorer.Forms
 		private void buttonOK_Click(object sender, EventArgs e)
 		{
 			// Do Duplicate
+			List<string> selectedSymbols = new List<string>();
+			foreach (ListViewItem lvi in listViewSymbols.Items)
+			{
+				if (lvi.Checked)
+				{
+					selectedSymbols.Add(lvi.Text);
+				}
+			}
+			List<string> selectedBanks = new List<string>();
+			foreach (ListViewItem lvi in listViewAnimations.Items)
+			{
+				if (lvi.Checked)
+				{
+					selectedBanks.Add(lvi.Text);
+				}
+			}
+			int zOffset = (int)numericUpDownZOffset.Value;
+			string prefix = textBoxPrefix.Text;
+			string suffix = textBoxSuffix.Text;
+			bool invisible = checkBoxInvisibleCopies.Checked;
+
+			try
+			{
+				KAnimUtils.DuplicateSymbols(kAnimPackage, selectedSymbols, selectedBanks, prefix, suffix, zOffset, invisible);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+
+			Close();
 		}
 
 		private void buttonCancel_Click(object sender, EventArgs e)

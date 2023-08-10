@@ -50,6 +50,7 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.numericUpDownZOffset = new System.Windows.Forms.NumericUpDown();
+			this.checkBoxInvisibleCopies = new System.Windows.Forms.CheckBox();
 			this.panel1.SuspendLayout();
 			this.panel2.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
@@ -230,6 +231,7 @@
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.checkBoxInvisibleCopies);
 			this.groupBox1.Controls.Add(this.textBoxSuffix);
 			this.groupBox1.Controls.Add(this.textBoxPrefix);
 			this.groupBox1.Controls.Add(this.label3);
@@ -311,6 +313,17 @@
 			this.numericUpDownZOffset.TabIndex = 0;
 			this.numericUpDownZOffset.ValueChanged += new System.EventHandler(this.numericUpDownZOffset_ValueChanged);
 			// 
+			// checkBoxInvisibleCopies
+			// 
+			this.checkBoxInvisibleCopies.AutoSize = true;
+			this.checkBoxInvisibleCopies.Location = new System.Drawing.Point(204, 22);
+			this.checkBoxInvisibleCopies.Name = "checkBoxInvisibleCopies";
+			this.checkBoxInvisibleCopies.Size = new System.Drawing.Size(108, 19);
+			this.checkBoxInvisibleCopies.TabIndex = 6;
+			this.checkBoxInvisibleCopies.Text = "Invisible Copies";
+			this.checkBoxInvisibleCopies.UseVisualStyleBackColor = true;
+			this.checkBoxInvisibleCopies.CheckedChanged += new System.EventHandler(this.checkBoxInvisibleCopies_CheckedChanged);
+			// 
 			// SymbolDuplicatorForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -358,5 +371,6 @@
 		private System.Windows.Forms.Panel panel4;
 		private System.Windows.Forms.Button buttonSelectNoneAnims;
 		private System.Windows.Forms.Button buttonSelectAllAnims;
+		private System.Windows.Forms.CheckBox checkBoxInvisibleCopies;
 	}
 }

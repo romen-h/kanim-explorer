@@ -323,5 +323,98 @@ namespace KanimLib
 				return false;
 			}
 		}
+		
+		public static void DuplicateSymbols(KAnimPackage pkg, IReadOnlyList<string> symbolsToDuplicate, IReadOnlyList<string> targetBanks, string prefix, string suffix, int zOffset, bool invisible)
+		{
+			if (!pkg.HasBuild) throw new ArgumentException("No build data.", nameof(pkg));
+			if (!pkg.HasAnim) throw new ArgumentException("No animation data.", nameof(pkg));
+
+			if (symbolsToDuplicate == null || symbolsToDuplicate.Count == 0) throw new ArgumentException("No symbols to duplicate.", nameof(symbolsToDuplicate));
+			if (targetBanks == null || targetBanks.Count == 0) throw new ArgumentException("No target animations.", nameof(targetBanks));
+
+			if (string.IsNullOrWhiteSpace(prefix) && string.IsNullOrWhiteSpace(suffix)) throw new ArgumentException("Prefix and Suffix are both empty.");
+
+			if (zOffset == 0) throw new ArgumentException("zOffset must not be 0", nameof(zOffset));
+
+			Dictionary<int, int> originalHashToDupeHash = new Dictionary<int, int>();
+
+			foreach (string symbolName in symbolsToDuplicate)
+			{
+				KSymbol original = pkg.Build.GetSymbol(symbolName);
+				if (original != null)
+				{
+					string duplicatedName = prefix + symbolName + suffix;
+					KSymbol duplicated = KSymbol.Copy(original, duplicatedName);
+					if (invisible)
+					{
+						foreach (var frame in duplicated.Frames)
+						{
+							frame.UV_X1 = 0;
+							frame.UV_Y1 = 0;
+							frame.UV_X2 = 0;
+							frame.UV_Y2 = 0;
+						}
+					}
+					pkg.Build.AddSymbol(duplicated);
+					originalHashToDupeHash[original.Hash] = duplicated.Hash;
+				}
+			}
+
+			foreach (string targetBank in targetBanks)
+			{
+				KAnimBank bank = pkg.Anim.GetBank(targetBank);
+
+				foreach (var animFrame in bank.Frames)
+				{
+					foreach (string symbolName in symbolsToDuplicate)
+					{
+						KSymbol originalSymbol = pkg.Build.GetSymbol(symbolName);
+						LinkedList<KAnimElement> tempElements = new LinkedList<KAnimElement>(animFrame.Elements);
+
+						LinkedListNode<KAnimElement> currentElement = tempElements.First;
+						do
+						{
+							if (currentElement.Value.SymbolHash == originalSymbol.Hash)
+							{
+								int newHash = originalHashToDupeHash[currentElement.Value.SymbolHash];
+								KAnimElement copy = KAnimElement.Copy(currentElement.Value);
+								copy.SymbolHash = newHash;
+								copy.FolderHash = newHash;
+
+								int steps = Math.Abs(zOffset) - 1;
+								if (zOffset > 0)
+								{
+									// Step forward
+									LinkedListNode<KAnimElement> pos = currentElement;
+									while (steps > 0)
+									{
+										pos = pos.Next ?? pos;
+										steps--;
+									}
+
+									tempElements.AddAfter(pos, copy);
+								}
+								else if (zOffset < 0)
+								{
+									// Step backward
+									LinkedListNode<KAnimElement> pos = currentElement;
+									while (steps > 0)
+									{
+										pos = pos.Previous ?? pos;
+									}
+
+									tempElements.AddBefore(pos, copy);
+								}
+							}
+							currentElement = currentElement.Next;
+						} while (currentElement != null);
+
+						animFrame.Elements.Clear();
+						animFrame.Elements.AddRange(tempElements);
+						animFrame.ElementCount = animFrame.Elements.Count;
+					}
+				}
+			}
+		}
 	}
 }

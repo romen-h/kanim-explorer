@@ -15,6 +15,27 @@ namespace KanimLib
 			Parent = parent;
 		}
 
+		public static KFrame Copy(KFrame original)
+		{
+			KFrame frame = new KFrame()
+			{
+				Index = original.Index,
+				Duration = original.Duration,
+				ImageIndex = original.ImageIndex,
+				PivotX = original.PivotX,
+				PivotY = original.PivotY,
+				PivotWidth = original.PivotWidth,
+				PivotHeight = original.PivotHeight,
+				UV_X1 = original.UV_X1,
+				UV_X2 = original.UV_X2,
+				UV_Y1 = original.UV_Y1,
+				UV_Y2 = original.UV_Y2,
+				Time = original.Time
+			};
+
+			return frame;
+		}
+
 		public bool NeedsRepack = false;
 
 		/// <summary>
