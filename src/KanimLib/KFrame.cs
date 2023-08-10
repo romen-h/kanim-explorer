@@ -121,7 +121,23 @@ namespace KanimLib
 		public int Time
 		{ get; set; }
 
-		public RectangleF GetUVRectangle(int width, int height) => RectangleF.FromLTRB(UV_X1 * width, UV_Y1 * height, UV_X2 * width, UV_Y2 * height);
+		public RectangleF GetUVRectangle(int width, int height)
+		{
+			// If the UV rect is 0x0 we need to grow to 1x1, some vanilla kanims have this problem
+
+			float uv_x2 = UV_X2;
+			if (UV_X2 == UV_X1)
+			{
+				uv_x2 = UV_X1 + 1.0f / width;
+			}
+			float uv_y2 = UV_Y2;
+			if (UV_Y2 == UV_Y1)
+			{
+				uv_y2 = UV_Y1 + 1.0f / height;
+			}
+
+			return RectangleF.FromLTRB(UV_X1 * width, UV_Y1 * height, uv_x2 * width, uv_y2 * height);
+		}
 
 		public RectangleF GetUVRectangle() => RectangleF.FromLTRB(UV_X1, UV_Y1, UV_X2, UV_Y2);
 
