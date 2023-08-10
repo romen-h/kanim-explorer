@@ -21,9 +21,13 @@ namespace KanimLib.Sprites
 			{
 				foreach (KFrame frame in symbol.Frames)
 				{
-					Bitmap croppedImg = atlas.Clone(frame.GetUVRectangle(atlas.Width, atlas.Height), atlas.PixelFormat);
-					Sprite spr = new Sprite(frame, croppedImg);
-					sprites.Add(spr);
+					if (atlas.Width > 0 && atlas.Height > 0)
+					{
+						Bitmap croppedImg = atlas.Clone(frame.GetUVRectangle(atlas.Width, atlas.Height),
+							atlas.PixelFormat);
+						Sprite spr = new Sprite(frame, croppedImg);
+						sprites.Add(spr);
+					}
 				}
 			}
 			return sprites.ToArray();
