@@ -60,41 +60,44 @@ namespace KanimLib.Converters
 			foreach (var file in folder.Files)
 			{
 				string spriteFile = Path.Combine(directory, file.Name);
-				string frameName = Path.GetFileNameWithoutExtension(file.Name);
-				string[] frameNameCmps = frameName.Split('_');
-				string[] symbolNameCmps = frameNameCmps.Take(frameNameCmps.Length - 1).ToArray();
-				string frameIndexStr = frameNameCmps.Last();
-				int frameIndex = int.Parse(frameIndexStr);
-				string symbolName = string.Join("_", symbolNameCmps);
-
-				KSymbol symbol;
-				if (!symbols.TryGetValue(symbolName, out symbol))
+				if (File.Exists(spriteFile))
 				{
-					symbol = new KSymbol(symbolName);
-					symbols[symbolName] = symbol;
-					build.AddSymbol(symbol);
+					string frameName = Path.GetFileNameWithoutExtension(file.Name);
+					string[] frameNameCmps = frameName.Split('_');
+					string[] symbolNameCmps = frameNameCmps.Take(frameNameCmps.Length - 1).ToArray();
+					string frameIndexStr = frameNameCmps.Last();
+					int frameIndex = int.Parse(frameIndexStr);
+					string symbolName = string.Join("_", symbolNameCmps);
+
+					KSymbol symbol;
+					if (!symbols.TryGetValue(symbolName, out symbol))
+					{
+						symbol = new KSymbol(symbolName);
+						symbols[symbolName] = symbol;
+						build.AddSymbol(symbol);
+					}
+					symbolsById[file.Id] = symbol;
+
+					KFrame frame = new KFrame();
+					frame.Index = frameIndex;
+					frame.Duration = 1; // TODO: What is duration for?
+					frame.ImageIndex = 0;
+					frame.Time = 0;
+					frame.SpriteWidth = file.Width;
+					frame.SpriteHeight = file.Height;
+					frame.SpriterPivotX = file.PivotX;
+					frame.SpriterPivotY = 1.0f - file.PivotY;
+					frame.NeedsRepack = true;
+
+					symbol.AddFrame(frame);
+					framesById[file.Id] = frame;
+					build.FrameCount++;
+
+					Bitmap bmp = (Bitmap)Bitmap.FromFile(spriteFile);
+
+					Sprite sprite = new Sprite(frame, bmp);
+					sprites.Add(file.Id, sprite);
 				}
-				symbolsById[file.Id] = symbol;
-
-				KFrame frame = new KFrame();
-				frame.Index = frameIndex;
-				frame.Duration = 1; // TODO: What is duration for?
-				frame.ImageIndex = 0;
-				frame.Time = 0;
-				frame.SpriteWidth = file.Width;
-				frame.SpriteHeight = file.Height;
-				frame.SpriterPivotX = file.PivotX;
-				frame.SpriterPivotY = 1.0f - file.PivotY;
-				frame.NeedsRepack = true;
-
-				symbol.AddFrame(frame);
-				framesById[file.Id] = frame;
-				build.FrameCount++;
-
-				Bitmap bmp = (Bitmap)Bitmap.FromFile(spriteFile);
-
-				Sprite sprite = new Sprite(frame, bmp);
-				sprites.Add(file.Id, sprite);
 			}
 
 			pkg.Texture = SpriteUtils.RebuildAtlas(sprites.Values.ToArray());
