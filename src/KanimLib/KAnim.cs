@@ -29,7 +29,7 @@ namespace KanimLib
 
 		public readonly List<KAnimBank> Banks = new List<KAnimBank>();
 
-		public readonly Dictionary<int, string> BankNames = new Dictionary<int, string>();
+		public readonly Dictionary<int, string> SymbolNames = new Dictionary<int, string>();
 
 		public KAnimBank GetBank(string name)
 		{
@@ -41,23 +41,10 @@ namespace KanimLib
 			return null;
 		}
 
-		public string GetBankName(int hash)
-		{
-			if (BankNames.ContainsKey(hash))
-			{
-				return BankNames[hash];
-			}
-
-			return null;
-		}
-
 		internal void AddBank(KAnimBank bank)
 		{
 			bank.Parent = this;
 			Banks.Add(bank);
-			int hash = bank.Name.KHash();
-			BankNames[hash] = bank.Name;
-			BankCount = Banks.Count;
 		}
 	}
 }

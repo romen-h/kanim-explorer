@@ -229,7 +229,7 @@ namespace KanimLib
 		private static KAnimBank AddBank(KAnim parent, string name, int size)
 		{
 			int hash = name.KHash();
-			parent.BankNames[hash] = name;
+			parent.SymbolNames[hash] = name;
 
 			KAnimBank bank = new KAnimBank(parent);
 			bank.Name = name;

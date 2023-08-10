@@ -231,7 +231,7 @@ namespace KanimLib
 				{
 					int hash = reader.ReadInt32();
 					string str = reader.ReadKString();
-					anim.BankNames[hash] = str;
+					anim.SymbolNames[hash] = str;
 				}
 
 				return anim;
@@ -307,9 +307,9 @@ namespace KanimLib
 
 					writer.Write(anim.MaxVisSymbols);
 
-					int numHashes = anim.BankNames.Count;
+					int numHashes = anim.SymbolNames.Count;
 					writer.Write(numHashes);
-					foreach (KeyValuePair<int, string> kvp in anim.BankNames)
+					foreach (KeyValuePair<int, string> kvp in anim.SymbolNames)
 					{
 						writer.Write(kvp.Key);
 						writer.WriteKString(kvp.Value);
@@ -357,6 +357,7 @@ namespace KanimLib
 					}
 					pkg.Build.AddSymbol(duplicated);
 					originalHashToDupeHash[original.Hash] = duplicated.Hash;
+					pkg.Anim.SymbolNames[duplicated.Hash] = duplicated.Name;
 				}
 			}
 
