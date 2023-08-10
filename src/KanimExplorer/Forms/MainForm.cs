@@ -746,14 +746,16 @@ namespace KanimExplorer.Forms
 					string lowerName = symbol.Name.ToLowerInvariant();
 					if (lowerName.Contains("_bloom"))
 					{
-						symbol.Flags.SetFlag(SymbolFlags.Bloom, true);
+						symbol.Flags = symbol.Flags.SetFlag(SymbolFlags.Bloom, true);
 					}
 
 					if (lowerName.Contains("_fg"))
 					{
-						symbol.Flags.SetFlag(SymbolFlags.Foreground, true);
+						symbol.Flags = symbol.Flags.SetFlag(SymbolFlags.Foreground, true);
 					}
 				}
+
+				propertyGrid.Refresh();
 			}
 		}
 
