@@ -50,17 +50,19 @@ namespace KanimExplorer.OpenGL
 			
 			texture.Allocate();
 
+			int extent = 10;
+
 			List<Vertex> gridVertices = new List<Vertex>();
-			for (int i = -10; i <= 10; i++)
+			for (int i = -extent; i <= extent; i++)
 			{
 				Color4 color = Color4.LightGray;
 				if (i == 0) color = Color4.Red;
 				// Horizontal
-				gridVertices.Add(new Vertex(new Vector3(-1000, i*200f, 0), Vector3.UnitZ, color, Vector2.Zero));
-				gridVertices.Add(new Vertex(new Vector3( 1000, i*200f, 0), Vector3.UnitZ, color, Vector2.Zero));
+				gridVertices.Add(new Vertex(new Vector3(-extent * 200f, i*200f, 0), Vector3.UnitZ, color, Vector2.Zero));
+				gridVertices.Add(new Vertex(new Vector3( extent * 200f, i*200f, 0), Vector3.UnitZ, color, Vector2.Zero));
 				// Vertical
-				gridVertices.Add(new Vertex(new Vector3(i*200f, -1000, 0), Vector3.UnitZ, color, Vector2.Zero));
-				gridVertices.Add(new Vertex(new Vector3(i*200f,  1000, 0), Vector3.UnitZ, color, Vector2.Zero));
+				gridVertices.Add(new Vertex(new Vector3(i*200f, -extent * 200f, 0), Vector3.UnitZ, color, Vector2.Zero));
+				gridVertices.Add(new Vertex(new Vector3(i*200f,  extent * 200f, 0), Vector3.UnitZ, color, Vector2.Zero));
 			}
 			int[] elements = new int[gridVertices.Count];
 			for (int i=0; i<elements.Length; i++)
