@@ -402,6 +402,7 @@ namespace KanimLib
 									while (steps > 0)
 									{
 										pos = pos.Previous ?? pos;
+										steps--;
 									}
 
 									tempElements.AddBefore(pos, copy);
