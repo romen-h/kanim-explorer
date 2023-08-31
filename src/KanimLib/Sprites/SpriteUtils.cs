@@ -23,7 +23,7 @@ namespace KanimLib.Sprites
 				{
 					if (atlas.Width > 0 && atlas.Height > 0)
 					{
-						Bitmap croppedImg = atlas.Clone(frame.GetUVRectangle(atlas.Width, atlas.Height),
+						Bitmap croppedImg = atlas.Clone(frame.GetTextureRectangle(atlas.Width, atlas.Height),
 							atlas.PixelFormat);
 						Sprite spr = new Sprite(frame, croppedImg);
 						sprites.Add(spr);

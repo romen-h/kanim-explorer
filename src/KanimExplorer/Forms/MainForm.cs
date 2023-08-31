@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -260,36 +261,64 @@ namespace KanimExplorer.Forms
 					return;
 				}
 
-				bool invalidFiles = false;
-
-				foreach (string file in dlg.FileNames)
+				if (SelectSupportedFiles(dlg.FileNames, out bool invalidFiles))
 				{
-					if (file.EndsWith(".png"))
+					if (invalidFiles)
 					{
-						currentAtlasFile = file;
+						MessageBox.Show(this, "Invalid files were selected.\nThey will not be loaded.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
 					}
-					else if (file.EndsWith("build.bytes") || file.EndsWith("build.txt"))
-					{
-						currentBuildFile = file;
-					}
-					else if (file.EndsWith("anim.bytes") || file.EndsWith("anim.txt"))
-					{
-						currentAnimFile = file;
-					}
-					else
-					{
-						invalidFiles = true;
-					}
-				}
 
-				if (invalidFiles)
+					OpenFiles();
+				}
+				else
 				{
-					MessageBox.Show(this, "Invalid files were selected.\nThey will not be loaded.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show(this, "No supported files were selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 				}
-
-				OpenFiles();
 			}
 		}
+
+		private bool SelectSupportedFiles(IEnumerable<string> files, out bool invalidFiles)
+		{
+			invalidFiles = false;
+
+			bool selectedPNG = false;
+			bool selectedBuild = false;
+			bool selectedAnim = false;
+
+			foreach (string file in files)
+			{
+				if (file.EndsWith(".png"))
+				{
+					if (!selectedPNG)
+					{
+						currentAtlasFile = file;
+						selectedPNG = true;
+					}
+				}
+				else if (file.EndsWith("build.bytes") || file.EndsWith("build.txt"))
+				{
+					if (!selectedBuild)
+					{
+						currentBuildFile = file;
+						selectedBuild = true;
+					}
+				}
+				else if (file.EndsWith("anim.bytes") || file.EndsWith("anim.txt"))
+				{
+					if (!selectedAnim)
+					{
+						currentAnimFile = file;
+						selectedAnim = true;
+					}
+				}
+				else
+				{
+					invalidFiles = true;
+				}
+			}
+
+			return (selectedPNG || selectedBuild || selectedAnim);
+	}
 
 		private void openSCMLToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -342,7 +371,7 @@ namespace KanimExplorer.Forms
 						{
 							foreach (KFrame frame in symbol.Frames)
 							{
-								frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+								frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
 								pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 							}
 						}
@@ -351,7 +380,7 @@ namespace KanimExplorer.Forms
 					case KFrame frame:
 						if (data.Texture != null)
 						{
-							frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+							frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
 							pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 						}
 						break;
@@ -367,7 +396,7 @@ namespace KanimExplorer.Forms
 									if (symbol.FrameCount > element.FrameNumber)
 									{
 										KFrame frame = symbol.Frames[element.FrameNumber];
-										frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+										frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
 										pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 									}
 								}
@@ -384,7 +413,7 @@ namespace KanimExplorer.Forms
 								if (symbol.FrameCount > element.FrameNumber)
 								{
 									KFrame frame = symbol.Frames[element.FrameNumber];
-									frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+									frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
 									pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 								}
 							}
@@ -417,7 +446,7 @@ namespace KanimExplorer.Forms
 					{
 						foreach (KFrame frame in symbol.Frames)
 						{
-							frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+							frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
 							pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 						}
 					}
@@ -426,7 +455,7 @@ namespace KanimExplorer.Forms
 				case KFrame frame:
 					if (data.Texture != null)
 					{
-						frames.Add(frame.GetUVRectangle(data.Texture.Width, data.Texture.Height));
+						frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
 						pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
 					}
 					break;
@@ -780,6 +809,35 @@ namespace KanimExplorer.Forms
 			f.ShowDialog(this);
 			UpdateBuildTree(data);
 			propertyGrid.Refresh();
+		}
+
+		private void MainForm_DragEnter(object sender, DragEventArgs e)
+		{
+			if (e.Data.GetDataPresent(DataFormats.FileDrop))
+			{
+				e.Effect = DragDropEffects.Copy;
+			}
+		}
+
+		private void MainForm_DragDrop(object sender, DragEventArgs e)
+		{
+			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+			if (SelectSupportedFiles(files, out bool invalidFiles))
+			{
+				if (FilesAreOpen) CloseFiles();
+
+				if (invalidFiles)
+				{
+					MessageBox.Show(this, "Invalid files were dropped.\nThey will not be loaded.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+
+				OpenFiles();
+			}
+			else
+			{
+				MessageBox.Show(this, "No supported files were dropped.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+			}
 		}
 	}
 }

@@ -51,6 +51,7 @@
 			this.rebuildTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.exportAtlasBoxesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.autoFlagToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.duplicateSymbolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.wizardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.previewAnimToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -60,7 +61,6 @@
 			this.propertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.label2 = new System.Windows.Forms.Label();
 			this.atlasView = new System.Windows.Forms.PictureBox();
-			this.duplicateSymbolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
 			this.splitContainer1.Panel1.SuspendLayout();
@@ -259,6 +259,13 @@
 			this.autoFlagToolStripMenuItem.Text = "Auto Flag";
 			this.autoFlagToolStripMenuItem.Click += new System.EventHandler(this.autoFlagToolStripMenuItem_Click);
 			// 
+			// duplicateSymbolsToolStripMenuItem
+			// 
+			this.duplicateSymbolsToolStripMenuItem.Name = "duplicateSymbolsToolStripMenuItem";
+			this.duplicateSymbolsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			this.duplicateSymbolsToolStripMenuItem.Text = "Duplicate Symbols";
+			this.duplicateSymbolsToolStripMenuItem.Click += new System.EventHandler(this.duplicateSymbolsToolStripMenuItem_Click);
+			// 
 			// wizardToolStripMenuItem
 			// 
 			this.wizardToolStripMenuItem.Name = "wizardToolStripMenuItem";
@@ -375,15 +382,9 @@
 			this.atlasView.TabIndex = 0;
 			this.atlasView.TabStop = false;
 			// 
-			// duplicateSymbolsToolStripMenuItem
-			// 
-			this.duplicateSymbolsToolStripMenuItem.Name = "duplicateSymbolsToolStripMenuItem";
-			this.duplicateSymbolsToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-			this.duplicateSymbolsToolStripMenuItem.Text = "Duplicate Symbols";
-			this.duplicateSymbolsToolStripMenuItem.Click += new System.EventHandler(this.duplicateSymbolsToolStripMenuItem_Click);
-			// 
 			// MainForm
 			// 
+			this.AllowDrop = true;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(668, 655);
@@ -393,6 +394,8 @@
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "MainForm";
 			this.Text = "Kanim Explorer";
+			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
+			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
 			this.splitContainer1.Panel1.ResumeLayout(false);

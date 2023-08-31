@@ -126,15 +126,19 @@ namespace KanimLib
 		public float PivotHeight
 		{ get; set; }
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float UV_X1
 		{ get; set; }
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float UV_Y1
 		{ get; set; }
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float UV_X2
 		{ get; set; }
 
+		[RefreshProperties(RefreshProperties.All)]
 		public float UV_Y2
 		{ get; set; }
 
@@ -142,38 +146,35 @@ namespace KanimLib
 		public int Time
 		{ get; set; }
 
-		public RectangleF GetUVRectangle(int width, int height)
+		public RectangleF GetTextureRectangle(int texWidth, int texHeight)
 		{
-			// If the UV rect is 0x0 we need to grow to 1x1, some vanilla kanims have this problem
+			// If the UV rect is 0 length on one side it has to be expanded to at least 1 pixel.
 
 			float uv_x2 = UV_X2;
 			if (UV_X2 == UV_X1)
 			{
-				uv_x2 = UV_X1 + 1.0f / width;
+				uv_x2 = UV_X1 + (1.0f / texWidth);
 			}
 			float uv_y2 = UV_Y2;
 			if (UV_Y2 == UV_Y1)
 			{
-				uv_y2 = UV_Y1 + 1.0f / height;
+				uv_y2 = UV_Y1 + (1.0f / texHeight);
 			}
 
-			return RectangleF.FromLTRB(UV_X1 * width, UV_Y1 * height, uv_x2 * width, uv_y2 * height);
+			return RectangleF.FromLTRB(UV_X1 * texWidth, UV_Y1 * texHeight, uv_x2 * texWidth, uv_y2 * texHeight);
 		}
 
 		public RectangleF GetUVRectangle() => RectangleF.FromLTRB(UV_X1, UV_Y1, UV_X2, UV_Y2);
 
 		public void SetNewSize(Rectangle box, int atlasWidth, int atlasHeight)
 		{
-			float halfPixelW = 0.5f / atlasWidth;
-			float halfPixelH = 0.5f / atlasHeight;
-
 			PivotWidth = box.Width * 2;
 			PivotHeight = box.Height * 2;
 
-			UV_X1 = (float)box.Left / (float)atlasWidth + halfPixelW;
-			UV_Y1 = (float)box.Top / (float)atlasHeight + halfPixelH;
-			UV_X2 = (float)box.Right / (float)atlasWidth - halfPixelW;
-			UV_Y2 = (float)box.Bottom / (float)atlasHeight - halfPixelH;
+			UV_X1 = (box.Left + 0.5f / atlasWidth);
+			UV_Y1 = (box.Top + 0.5f / atlasHeight);
+			UV_X2 = (box.Right - 0.5f / atlasWidth);
+			UV_Y2 = (box.Bottom - 0.5f) / atlasHeight;
 		}
 
 		public PointF GetPivotPoint(float width, float height)

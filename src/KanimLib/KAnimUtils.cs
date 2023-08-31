@@ -389,7 +389,9 @@ namespace KanimLib
 									LinkedListNode<KAnimElement> pos = currentElement;
 									while (steps > 0)
 									{
-										pos = pos.Next ?? pos;
+										var next = pos.Next;
+										if (next == null) break;
+										pos = next;
 										steps--;
 									}
 
@@ -401,7 +403,9 @@ namespace KanimLib
 									LinkedListNode<KAnimElement> pos = currentElement;
 									while (steps > 0)
 									{
-										pos = pos.Previous ?? pos;
+										var prev = pos.Previous;
+										if (prev == null) break;
+										pos = prev;
 										steps--;
 									}
 
