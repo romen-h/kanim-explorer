@@ -171,10 +171,10 @@ namespace KanimLib
 			PivotWidth = box.Width * 2;
 			PivotHeight = box.Height * 2;
 
-			UV_X1 = (box.Left + 0.5f / atlasWidth);
-			UV_Y1 = (box.Top + 0.5f / atlasHeight);
-			UV_X2 = (box.Right - 0.5f / atlasWidth);
-			UV_Y2 = (box.Bottom - 0.5f) / atlasHeight;
+			UV_X1 = ((box.Left + 0.5f) / atlasWidth);
+			UV_Y1 = ((box.Top + 0.5f) / atlasHeight);
+			UV_X2 = ((box.Right - 0.5f) / atlasWidth);
+			UV_Y2 = ((box.Bottom - 0.5f) / atlasHeight;
 		}
 
 		public PointF GetPivotPoint(float width, float height)
