@@ -45,6 +45,9 @@ namespace KanimLib
 		{
 			bank.Parent = this;
 			Banks.Add(bank);
+			int hash = bank.Name.KHash();
+			SymbolNames[hash] = bank.Name;
+			BankCount = Banks.Count;
 		}
 	}
 }
