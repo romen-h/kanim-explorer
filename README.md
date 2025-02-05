@@ -22,7 +22,7 @@ A tool for viewing and modifying Oxygen Not Included's kanim files.
 - Supports bones and curves!
 
 ### Exporting SCML Files
-Parts of [Kanimal-SE](https://github.com/skairunner/kanimal-SE) by skairunner has been integrated into Kanim Explorer.  
+Parts of [Kanimal-SE](https://github.com/skairunner/kanimal-SE) by skairunner have been integrated into Kanim Explorer.  
 Any bugs with Kanim to SCML conversion should be reported as an issue here instead of on that repo.
 
 ### Animation Previews
