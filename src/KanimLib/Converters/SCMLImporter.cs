@@ -177,6 +177,8 @@ namespace KanimLib.Converters
 						element.M12 = mdy;
 
 						element.Alpha = spriteData.Alpha;
+
+						anim.SymbolNames[element.SymbolHash] = build.GetSymbolName(element.SymbolHash);
 					}
 				}
 			}

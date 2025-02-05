@@ -96,6 +96,11 @@ namespace KanimExplorer
 				try
 				{
 					pkg.Anim = KAnimUtils.ReadAnim(animFile);
+
+					if (pkg.Build != null)
+					{
+						pkg.Anim.RepairStringsFromBuild(pkg.Build);
+					}
 				}
 				catch (Exception ex)
 				{ }

@@ -49,5 +49,13 @@ namespace KanimLib
 			SymbolNames[hash] = bank.Name;
 			BankCount = Banks.Count;
 		}
+
+		public void RepairStringsFromBuild(KBuild build)
+		{
+			foreach (var kvp in build.SymbolNames)
+			{
+				SymbolNames[kvp.Key] = kvp.Value;
+			}
+		}
 	}
 }

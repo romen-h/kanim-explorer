@@ -37,7 +37,14 @@ namespace KanimLib
 			if (!File.Exists(buildFile)) throw new ArgumentException("The given file does not exist.");
 
 			using (FileStream file = new FileStream(buildFile, FileMode.Open))
-			using (BinaryReader reader = new BinaryReader(file))
+			{
+				return ReadBuild(file);
+			}
+		}
+
+		public static KBuild ReadBuild(Stream stream)
+		{
+			using (BinaryReader reader = new BinaryReader(stream))
 			{
 				// Verify header
 				string header = Encoding.ASCII.GetString(reader.ReadBytes(KBuild.BUILD_HEADER.Length));
@@ -102,7 +109,21 @@ namespace KanimLib
 			try
 			{
 				using (FileStream file = new FileStream(buildFile, FileMode.Create))
-				using (BinaryWriter writer = new BinaryWriter(file))
+				{
+					return WriteBuild(file, build);
+				}
+			}
+			catch (Exception ex)
+			{
+				return false;
+			}
+		}
+
+		public static bool WriteBuild(Stream stream, KBuild build)
+		{
+			try
+			{
+				BinaryWriter writer = new BinaryWriter(stream);
 				{
 					writer.Write(Encoding.ASCII.GetBytes(KBuild.BUILD_HEADER));
 
@@ -146,6 +167,8 @@ namespace KanimLib
 						writer.Write(kvp.Key);
 						writer.WriteKString(kvp.Value);
 					}
+
+					writer.Flush();
 				}
 
 				return true;
@@ -161,7 +184,14 @@ namespace KanimLib
 			if (!File.Exists(animFile)) throw new ArgumentException("The given file does not exist.");
 
 			using (FileStream file = new FileStream(animFile, FileMode.Open))
-			using (BinaryReader reader = new BinaryReader(file))
+			{
+				return ReadAnim(file);
+			}
+		}
+
+		public static KAnim ReadAnim(Stream stream)
+		{
+			using (BinaryReader reader = new BinaryReader(stream))
 			{
 				// Verify header
 				string header = Encoding.ASCII.GetString(reader.ReadBytes(ANIM_HEADER.Length));
@@ -254,7 +284,21 @@ namespace KanimLib
 			try
 			{
 				using (FileStream file = new FileStream(animFile, FileMode.Create))
-				using (BinaryWriter writer = new BinaryWriter(file))
+				{
+					return WriteAnim(file, anim);
+				}
+			}
+			catch (Exception ex)
+			{
+				return false;
+			}
+		}
+
+		public static bool WriteAnim(Stream stream, KAnim anim)
+		{
+			try
+			{
+				BinaryWriter writer = new BinaryWriter(stream);
 				{
 					writer.Write(Encoding.ASCII.GetBytes(ANIM_HEADER));
 
@@ -314,6 +358,8 @@ namespace KanimLib
 						writer.Write(kvp.Key);
 						writer.WriteKString(kvp.Value);
 					}
+
+					writer.Flush();
 				}
 
 				return true;

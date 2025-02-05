@@ -40,6 +40,7 @@ namespace KanimExplorer.Forms
 			saveTextureAtlasToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Enabled = false;
 			saveAllToolStripMenuItem.Enabled = false;
+			saveSCMLToolStripMenuItem.Enabled = false;
 		}
 
 		private void OpenFiles()
@@ -65,6 +66,11 @@ namespace KanimExplorer.Forms
 			if (currentAnimFile != null)
 			{
 				anim = KAnimUtils.ReadAnim(currentAnimFile);
+
+				if (build != null)
+				{
+					anim.RepairStringsFromBuild(build);
+				}
 			}
 
 			OpenData(atlas, build, anim);
@@ -72,7 +78,7 @@ namespace KanimExplorer.Forms
 
 		private void OpenData(Bitmap atlas, KBuild build, KAnim anim)
 		{
-			data = new KAnimPackage(); 
+			data = new KAnimPackage();
 			data.Texture = atlas;
 			UpdateAtlasView(data.Texture);
 
@@ -91,6 +97,7 @@ namespace KanimExplorer.Forms
 			saveAnimFileToolStripMenuItem.Enabled = data.HasAnim;
 			saveAllToolStripMenuItem.Enabled = data.HasTexture || data.HasBuild || data.HasAnim;
 			previewAnimToolStripMenuItem.Enabled = data.IsComplete;
+			saveSCMLToolStripMenuItem.Enabled = data.IsComplete;
 		}
 
 		private void UpdateAtlasView(Bitmap img, RectangleF[] frames = null, PointF[] pivots = null)
@@ -182,7 +189,7 @@ namespace KanimExplorer.Forms
 					TreeNode bankNode = new TreeNode(bank.Name);
 					bankNode.Tag = bank;
 
-					for (int i=0; i<bank.Frames.Count; i++)
+					for (int i = 0; i < bank.Frames.Count; i++)
 					{
 						KAnimFrame frame = bank.Frames[i];
 						TreeNode frameNode = new TreeNode($"Frame {i}");
@@ -318,7 +325,7 @@ namespace KanimExplorer.Forms
 			}
 
 			return (selectedPNG || selectedBuild || selectedAnim);
-	}
+		}
 
 		private void openSCMLToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -334,6 +341,27 @@ namespace KanimExplorer.Forms
 				{
 					OpenData(pkg.Texture, pkg.Build, pkg.Anim);
 				}
+			}
+		}
+
+		private void saveSCMLToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (!FilesAreOpen) return;
+
+			try
+			{
+				FolderBrowserDialog dlg = new FolderBrowserDialog();
+				dlg.ShowNewFolderButton = true;
+				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+					SCMLExporter.Convert(data, dlg.SelectedPath);
+					MessageBox.Show(this, "SCML project saved successfully.", "Save Success", MessageBoxButtons.OK);
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine(ex.ToString());
+				MessageBox.Show("Failed to export SCML", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
