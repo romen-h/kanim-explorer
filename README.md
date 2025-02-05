@@ -17,9 +17,13 @@ A tool for viewing and modifying Oxygen Not Included's kanim files.
 - Allows flags for Bloom, OnLight, SnapTo, and Foreground to be toggled for each sprite.  
   *Make those sprites glow!*
   
-### Importing SCML Files [Beta]
+### Importing SCML Files
 - Supports opening a Spriter `.scml` file directly to convert it to the equivalent Kanim.
 - Supports bones and curves!
+
+### Exporting SCML Files
+Parts of [Kanimal-SE](https://github.com/skairunner/kanimal-SE) by skairunner has been integrated into Kanim Explorer.  
+Any bugs with Kanim to SCML conversion should be reported as an issue here instead of on that repo.
 
 ### Animation Previews
 Kanim Explorer implements an OpenGL based renderer that lets you actually play the animations and inspect them frame by frame.  
@@ -32,10 +36,6 @@ Generate all sorts of useful files from a couple easy prompts:
   *Just need to get a basic sprite into the game with 1-frame animations? This is very useful for Asteroids & Entities!*
 - Custom tile textures
 
-### Kanimal-SE Integration
-Converting back and forth between kanim and scml is now easier with a GUI.  
-You must download kanimal-cli.exe separately.
-
 ### And More!
 - Split a texture atlas into individual sprite files.
 - Resizing individual sprites in place & re-packing the texture atlas.  
@@ -43,6 +43,9 @@ You must download kanimal-cli.exe separately.
 - Save an empty anim.bytes file to stick in a kanim folder that doesn't have one.  
   *The game needs a file there to load, even if it has no animations.*
  
- ## Credits
- 
- Thanks to loodakrawa for the C# [SpriterDotNet](https://github.com/loodakrawa/SpriterDotNet) library.
+## Credits
+
+- Thanks to loodakrawa for the C# [SpriterDotNet](https://github.com/loodakrawa/SpriterDotNet) library.
+
+- Thanks to skairunner for developing kanimal-se, Kanim Explorer started as a simple UI to run that tool and grew into what it is now.
+kanimal-se Copyright (c) 2019 Skye Im (MIT License)
