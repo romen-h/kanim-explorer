@@ -7,10 +7,11 @@ It is still in development and only handles kanim files for now.
 Assets/
   Kanims/
     some_kanim_name/
-      some_kanim_name_build.bytes
+      some_kanim_name_0.png
       some_kanim_name_anim.bytes
-      some_kanim_name_0.pmg
-    ...
+      some_kanim_name_build.bytes
+    some_other_kanim/
+      ...
 ```
 
 ## How to use this
