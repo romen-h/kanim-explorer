@@ -31,21 +31,19 @@
 			menuStrip1 = new System.Windows.Forms.MenuStrip();
 			fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			openSCMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			saveTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			saveBuildFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			saveAnimFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			saveAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+			openSCMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			saveSCMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			saveBlankAnimbytesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-			locateKanimalCLIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			convertToSCMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			convertFromSCMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			splitTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			rebuildTextureAtlasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,8 +59,6 @@
 			propertyGrid = new System.Windows.Forms.PropertyGrid();
 			label2 = new System.Windows.Forms.Label();
 			atlasView = new System.Windows.Forms.PictureBox();
-			saveSCMLToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
 			menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -96,22 +92,15 @@
 			// openToolStripMenuItem
 			// 
 			openToolStripMenuItem.Name = "openToolStripMenuItem";
-			openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			openToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			openToolStripMenuItem.Text = "Open";
 			openToolStripMenuItem.Click += openToolStripMenuItem_Click;
-			// 
-			// openSCMLToolStripMenuItem
-			// 
-			openSCMLToolStripMenuItem.Name = "openSCMLToolStripMenuItem";
-			openSCMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			openSCMLToolStripMenuItem.Text = "Open SCML...";
-			openSCMLToolStripMenuItem.Click += openSCMLToolStripMenuItem_Click;
 			// 
 			// saveTextureAtlasToolStripMenuItem
 			// 
 			saveTextureAtlasToolStripMenuItem.Enabled = false;
 			saveTextureAtlasToolStripMenuItem.Name = "saveTextureAtlasToolStripMenuItem";
-			saveTextureAtlasToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			saveTextureAtlasToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			saveTextureAtlasToolStripMenuItem.Text = "Save Texture Atlas...";
 			saveTextureAtlasToolStripMenuItem.Click += saveTextureAtlasToolStripMenuItem_Click;
 			// 
@@ -119,7 +108,7 @@
 			// 
 			saveBuildFileToolStripMenuItem.Enabled = false;
 			saveBuildFileToolStripMenuItem.Name = "saveBuildFileToolStripMenuItem";
-			saveBuildFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			saveBuildFileToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			saveBuildFileToolStripMenuItem.Text = "Save Build File...";
 			saveBuildFileToolStripMenuItem.Click += saveBuildFileToolStripMenuItem_Click;
 			// 
@@ -127,45 +116,64 @@
 			// 
 			saveAnimFileToolStripMenuItem.Enabled = false;
 			saveAnimFileToolStripMenuItem.Name = "saveAnimFileToolStripMenuItem";
-			saveAnimFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			saveAnimFileToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			saveAnimFileToolStripMenuItem.Text = "Save Anim File...";
 			saveAnimFileToolStripMenuItem.Click += saveAnimFileToolStripMenuItem_Click;
 			// 
 			// saveAllToolStripMenuItem
 			// 
 			saveAllToolStripMenuItem.Name = "saveAllToolStripMenuItem";
-			saveAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			saveAllToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			saveAllToolStripMenuItem.Text = "Save All...";
 			saveAllToolStripMenuItem.Click += saveAllToolStripMenuItem_Click;
+			// 
+			// toolStripSeparator5
+			// 
+			toolStripSeparator5.Name = "toolStripSeparator5";
+			toolStripSeparator5.Size = new System.Drawing.Size(174, 6);
+			// 
+			// openSCMLToolStripMenuItem
+			// 
+			openSCMLToolStripMenuItem.Name = "openSCMLToolStripMenuItem";
+			openSCMLToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+			openSCMLToolStripMenuItem.Text = "Open SCML...";
+			openSCMLToolStripMenuItem.Click += openSCMLToolStripMenuItem_Click;
+			// 
+			// saveSCMLToolStripMenuItem
+			// 
+			saveSCMLToolStripMenuItem.Name = "saveSCMLToolStripMenuItem";
+			saveSCMLToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
+			saveSCMLToolStripMenuItem.Text = "Save SCML...";
+			saveSCMLToolStripMenuItem.Click += saveSCMLToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator2
 			// 
 			toolStripSeparator2.Name = "toolStripSeparator2";
-			toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+			toolStripSeparator2.Size = new System.Drawing.Size(174, 6);
 			// 
 			// closeToolStripMenuItem
 			// 
 			closeToolStripMenuItem.Enabled = false;
 			closeToolStripMenuItem.Name = "closeToolStripMenuItem";
-			closeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			closeToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			closeToolStripMenuItem.Text = "Close";
 			closeToolStripMenuItem.Click += closeToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator1
 			// 
 			toolStripSeparator1.Name = "toolStripSeparator1";
-			toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+			toolStripSeparator1.Size = new System.Drawing.Size(174, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-			exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+			exitToolStripMenuItem.Size = new System.Drawing.Size(177, 22);
 			exitToolStripMenuItem.Text = "Exit";
 			exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
 			// 
 			// toolsToolStripMenuItem
 			// 
-			toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveBlankAnimbytesToolStripMenuItem, toolStripSeparator4, locateKanimalCLIToolStripMenuItem, convertToSCMLToolStripMenuItem, convertFromSCMLToolStripMenuItem, toolStripSeparator3, splitTextureAtlasToolStripMenuItem, rebuildTextureAtlasToolStripMenuItem, exportAtlasBoxesToolStripMenuItem, autoFlagToolStripMenuItem, duplicateSymbolsToolStripMenuItem });
+			toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveBlankAnimbytesToolStripMenuItem, toolStripSeparator3, splitTextureAtlasToolStripMenuItem, rebuildTextureAtlasToolStripMenuItem, exportAtlasBoxesToolStripMenuItem, autoFlagToolStripMenuItem, duplicateSymbolsToolStripMenuItem });
 			toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 22);
 			toolsToolStripMenuItem.Text = "Tools";
@@ -176,32 +184,6 @@
 			saveBlankAnimbytesToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
 			saveBlankAnimbytesToolStripMenuItem.Text = "Save Blank Anim.bytes";
 			saveBlankAnimbytesToolStripMenuItem.Click += saveBlankAnimbytesToolStripMenuItem_Click;
-			// 
-			// toolStripSeparator4
-			// 
-			toolStripSeparator4.Name = "toolStripSeparator4";
-			toolStripSeparator4.Size = new System.Drawing.Size(190, 6);
-			// 
-			// locateKanimalCLIToolStripMenuItem
-			// 
-			locateKanimalCLIToolStripMenuItem.Name = "locateKanimalCLIToolStripMenuItem";
-			locateKanimalCLIToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-			locateKanimalCLIToolStripMenuItem.Text = "Locate Kanimal-CLI";
-			locateKanimalCLIToolStripMenuItem.Click += locateKanimalCLIToolStripMenuItem_Click;
-			// 
-			// convertToSCMLToolStripMenuItem
-			// 
-			convertToSCMLToolStripMenuItem.Name = "convertToSCMLToolStripMenuItem";
-			convertToSCMLToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-			convertToSCMLToolStripMenuItem.Text = "Convert to SCML";
-			convertToSCMLToolStripMenuItem.Click += convertToSCMLToolStripMenuItem_Click;
-			// 
-			// convertFromSCMLToolStripMenuItem
-			// 
-			convertFromSCMLToolStripMenuItem.Name = "convertFromSCMLToolStripMenuItem";
-			convertFromSCMLToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
-			convertFromSCMLToolStripMenuItem.Text = "Convert from SCML";
-			convertFromSCMLToolStripMenuItem.Click += convertFromSCMLToolStripMenuItem_Click;
 			// 
 			// toolStripSeparator3
 			// 
@@ -359,18 +341,6 @@
 			atlasView.TabIndex = 0;
 			atlasView.TabStop = false;
 			// 
-			// saveSCMLToolStripMenuItem
-			// 
-			saveSCMLToolStripMenuItem.Name = "saveSCMLToolStripMenuItem";
-			saveSCMLToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-			saveSCMLToolStripMenuItem.Text = "Save SCML...";
-			saveSCMLToolStripMenuItem.Click += saveSCMLToolStripMenuItem_Click;
-			// 
-			// toolStripSeparator5
-			// 
-			toolStripSeparator5.Name = "toolStripSeparator5";
-			toolStripSeparator5.Size = new System.Drawing.Size(177, 6);
-			// 
 			// MainForm
 			// 
 			AllowDrop = true;
@@ -418,18 +388,14 @@
 		private System.Windows.Forms.SplitContainer splitContainer2;
 		private System.Windows.Forms.ToolStripMenuItem saveBuildFileToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem convertToSCMLToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem splitTextureAtlasToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem saveAnimFileToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem saveBlankAnimbytesToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem convertFromSCMLToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem rebuildTextureAtlasToolStripMenuItem;
-		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 		private System.Windows.Forms.ToolStripMenuItem saveTextureAtlasToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem previewAnimToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem wizardToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem locateKanimalCLIToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem openSCMLToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem saveAllToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem exportAtlasBoxesToolStripMenuItem;

@@ -33,7 +33,6 @@ namespace KanimExplorer.Forms
 			InitializeComponent();
 
 			closeToolStripMenuItem.Enabled = false;
-			convertToSCMLToolStripMenuItem.Enabled = false;
 			splitTextureAtlasToolStripMenuItem.Enabled = false;
 			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
 			exportAtlasBoxesToolStripMenuItem.Enabled = false;
@@ -87,7 +86,6 @@ namespace KanimExplorer.Forms
 			UpdateBuildTree(data);
 
 			closeToolStripMenuItem.Enabled = FilesAreOpen;
-			convertToSCMLToolStripMenuItem.Enabled = data.IsComplete;
 			splitTextureAtlasToolStripMenuItem.Enabled = data.IsValidAtlas;
 			rebuildTextureAtlasToolStripMenuItem.Enabled = data.IsValidAtlas;
 			saveTextureAtlasToolStripMenuItem.Enabled = data.HasTexture;
@@ -241,7 +239,6 @@ namespace KanimExplorer.Forms
 			propertyGrid.SelectedObject = null;
 
 			closeToolStripMenuItem.Enabled = false;
-			convertToSCMLToolStripMenuItem.Enabled = false;
 			splitTextureAtlasToolStripMenuItem.Enabled = false;
 			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
 			saveTextureAtlasToolStripMenuItem.Enabled = false;
@@ -498,30 +495,6 @@ namespace KanimExplorer.Forms
 			}
 		}
 
-		private bool VerifyKanimalSEPath()
-		{
-			string kanimalPath = Settings.Default.KanimalCLIPath;
-
-			if (File.Exists(kanimalPath)) return true;
-
-			DialogResult r = MessageBox.Show(this, "Kanim Explorer depends on Kanimal-SE to convert to SCML.\nPlease navigate to the kanimal-cli executable.", "Kanimal-SE Path", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-			if (r == DialogResult.OK)
-			{
-				OpenFileDialog dlg = new OpenFileDialog();
-				dlg.Filter = "Kanimal-SE Executable|kanimal-cli.exe";
-
-				if (dlg.ShowDialog() == DialogResult.OK)
-				{
-					kanimalPath = dlg.FileName;
-					Settings.Default.KanimalCLIPath = kanimalPath;
-					Settings.Default.Save();
-					return true;
-				}
-			}
-
-			return false;
-		}
-
 		private void saveTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			SaveFileDialog dlg = new SaveFileDialog();
@@ -616,99 +589,6 @@ namespace KanimExplorer.Forms
 				catch
 				{
 					MessageBox.Show(this, "Failed to save kanim files.", "Save Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				}
-			}
-		}
-
-		private void locateKanimalCLIToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Filter = "Kanimal-SE Executable|kanimal-cli.exe";
-
-			if (dlg.ShowDialog() == DialogResult.OK)
-			{
-				string kanimalPath = dlg.FileName;
-				Settings.Default.KanimalCLIPath = kanimalPath;
-				Settings.Default.Save();
-			}
-		}
-
-		private void convertToSCMLToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (VerifyKanimalSEPath())
-			{
-				FolderBrowserDialog dlg = new FolderBrowserDialog();
-				dlg.ShowNewFolderButton = true;
-				dlg.Description = "Select a folder to save the converted files...";
-				if (dlg.ShowDialog() == DialogResult.OK)
-				{
-					string outPath = dlg.SelectedPath;
-
-					StringBuilder kanimalOutput = new StringBuilder();
-
-					Process kanimal = new Process();
-					ProcessStartInfo ps = new ProcessStartInfo();
-					ps.RedirectStandardOutput = true;
-					ps.FileName = Settings.Default.KanimalCLIPath;
-					ps.Arguments = $"scml --output \"{outPath}\" \"{currentAtlasFile}\" \"{currentBuildFile}\" \"{currentAnimFile}\"";
-					ps.UseShellExecute = false;
-					kanimal.StartInfo = ps;
-					kanimal.OutputDataReceived += (p, a) =>
-					{
-						kanimalOutput.AppendLine(a.Data);
-					};
-					kanimal.Start();
-					kanimal.BeginOutputReadLine();
-					kanimal.WaitForExit();
-
-					Trace.Write(kanimalOutput.ToString());
-
-					Process.Start("explorer.exe", outPath);
-				}
-			}
-		}
-
-		private void convertFromSCMLToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (VerifyKanimalSEPath())
-			{
-				OpenFileDialog scmlDlg = new OpenFileDialog();
-				scmlDlg.Filter = "Spriter Projects (*.scml)|*.scml";
-				scmlDlg.Title = "Select a Spriter Project...";
-				if (scmlDlg.ShowDialog() == DialogResult.OK)
-				{
-					DialogResult r = MessageBox.Show(this, "Do you want to interpolate frames for this conversion?", "Interpolate Frames?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-					if (r == DialogResult.Cancel) return;
-					bool interpolate = (r == DialogResult.Yes);
-
-					FolderBrowserDialog dlg = new FolderBrowserDialog();
-					dlg.ShowNewFolderButton = true;
-					dlg.Description = "Select a folder to save the converted files...";
-					if (dlg.ShowDialog() == DialogResult.OK)
-					{
-						string outPath = dlg.SelectedPath;
-
-						StringBuilder kanimalOutput = new StringBuilder();
-
-						Process kanimal = new Process();
-						ProcessStartInfo ps = new ProcessStartInfo();
-						ps.RedirectStandardOutput = true;
-						ps.FileName = Settings.Default.KanimalCLIPath;
-						ps.Arguments = $"kanim \"{scmlDlg.FileName}\" --output \"{outPath}\"" + (interpolate ? " --interpolate" : "");
-						ps.UseShellExecute = false;
-						kanimal.StartInfo = ps;
-						kanimal.OutputDataReceived += (p, a) =>
-						{
-							kanimalOutput.AppendLine(a.Data);
-						};
-						kanimal.Start();
-						kanimal.BeginOutputReadLine();
-						kanimal.WaitForExit();
-
-						Trace.Write(kanimalOutput.ToString());
-
-						Process.Start("explorer.exe", outPath);
-					}
 				}
 			}
 		}
