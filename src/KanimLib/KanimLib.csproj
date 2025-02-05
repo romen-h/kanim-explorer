@@ -9,7 +9,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\kanimal-se\kanimal\kanimal.csproj" />
     <ProjectReference Include="..\kanimal\kanimal.csproj" />
     <ProjectReference Include="..\SpriterDotNet\SpriterDotNet.csproj" />
   </ItemGroup>

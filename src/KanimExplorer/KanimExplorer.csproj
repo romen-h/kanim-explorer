@@ -6,6 +6,17 @@
     <OutputType>WinExe</OutputType>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
+  <PropertyGroup>
+    <BuildYear>$([System.DateTime]::UtcNow.ToString("yyyy"))</BuildYear>
+    <BuildMonth>$([System.DateTime]::UtcNow.ToString("MM"))</BuildMonth>
+    <BuildDay>$([System.DateTime]::UtcNow.ToString("dd"))</BuildDay>
+    <BuildHour>$([System.DateTime]::UtcNow.ToString("HH"))</BuildHour>
+    <BuildMinute>$([System.DateTime]::UtcNow.ToString("mm"))</BuildMinute>
+    <VersionPrefix>$(BuildYear).$(BuildMonth).$(BuildDay).1$(BuildHour)$(BuildMinute)</VersionPrefix>
+    <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
+    <FileVersion>$(VersionPrefix)</FileVersion>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.7.5" />
     <PackageReference Include="OpenTK.WinForms" Version="4.0.0-pre.6" />
