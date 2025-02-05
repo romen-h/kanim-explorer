@@ -45,8 +45,8 @@ Generate all sorts of useful files from a couple easy prompts:
  
 ## Credits
 
-- Thanks to loodakrawa for the C# [SpriterDotNet](https://github.com/loodakrawa/SpriterDotNet) library.
+- Thanks to loodakrawa for the C# [SpriterDotNet](https://github.com/loodakrawa/SpriterDotNet) library.  
 SpriterDotNet Copyright (c) Luka "loodakrawa" Sverko (Zlib License)
 
-- Thanks to skairunner for developing kanimal-se, Kanim Explorer started as a simple UI to run that tool and grew into what it is now.
+- Thanks to skairunner for developing [kanimal-SE](https://github.com/skairunner/kanimal-SE), Kanim Explorer started as a simple UI to run that tool and grew into what it is now.
 kanimal-se Copyright (c) 2019 Skye Im (MIT License)
