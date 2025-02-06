@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using NLog;
-using MaxRectsBinPack;
+using kanimal.MaxRectsBinPack;
 
 namespace kanimal
 {

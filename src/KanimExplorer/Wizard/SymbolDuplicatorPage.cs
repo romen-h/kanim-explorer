@@ -18,7 +18,7 @@ namespace KanimExplorer.Wizard
 			InitializeComponent();
 		}
 
-		internal void Load(KAnimPackage pkg)
+		internal void LoadKanim(KAnimPackage pkg)
 		{
 		}
 

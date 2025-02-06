@@ -113,7 +113,7 @@ namespace KanimLib
 					return WriteBuild(file, build);
 				}
 			}
-			catch (Exception ex)
+			catch
 			{
 				return false;
 			}
@@ -173,7 +173,7 @@ namespace KanimLib
 
 				return true;
 			}
-			catch (Exception ex)
+			catch
 			{
 				return false;
 			}
@@ -288,7 +288,7 @@ namespace KanimLib
 					return WriteAnim(file, anim);
 				}
 			}
-			catch (Exception ex)
+			catch
 			{
 				return false;
 			}
@@ -364,7 +364,7 @@ namespace KanimLib
 
 				return true;
 			}
-			catch (Exception ex)
+			catch
 			{
 				return false;
 			}

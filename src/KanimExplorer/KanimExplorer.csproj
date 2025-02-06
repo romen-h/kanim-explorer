@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <AssemblyName>KanimExplorer</AssemblyName>
     <OutputType>WinExe</OutputType>
     <UseWindowsForms>true</UseWindowsForms>
@@ -16,6 +16,7 @@
     <BuildHour>$([System.DateTime]::UtcNow.ToString("HH"))</BuildHour>
     <BuildMinute>$([System.DateTime]::UtcNow.ToString("mm"))</BuildMinute>
     <VersionPrefix>$(BuildYear).$(BuildMonth).$(BuildDay).1$(BuildHour)$(BuildMinute)</VersionPrefix>
+    <VersionSuffix>local</VersionSuffix>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
@@ -25,7 +26,7 @@
   <ItemGroup>
     <PackageReference Include="OpenTK" Version="4.7.5" />
     <PackageReference Include="OpenTK.WinForms" Version="4.0.0-pre.6" />
-    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KanimLib\KanimLib.csproj" />

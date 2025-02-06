@@ -10,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace MaxRectsBinPack
+namespace kanimal.MaxRectsBinPack
 {
     using Rect = Rectangle;
 

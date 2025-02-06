@@ -77,7 +77,7 @@ namespace KanimExplorer
 						pkg.Texture = (Bitmap)bmp.Clone();
 					}
 				}
-				catch (Exception ex)
+				catch
 				{ }
 			}
 
@@ -87,7 +87,7 @@ namespace KanimExplorer
 				{
 					pkg.Build = KAnimUtils.ReadBuild(buildFile);
 				}
-				catch (Exception ex)
+				catch
 				{ }
 			}
 
@@ -102,7 +102,7 @@ namespace KanimExplorer
 						pkg.Anim.RepairStringsFromBuild(pkg.Build);
 					}
 				}
-				catch (Exception ex)
+				catch
 				{ }
 			}
 
