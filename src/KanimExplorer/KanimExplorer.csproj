@@ -6,13 +6,18 @@
     <OutputType>WinExe</OutputType>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(CI_VersionPrefix)' != ''">
+    <VersionPrefix>$(CI_VersionPrefix)</VersionPrefix>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(CI_VersionPrefix)' == ''">
     <BuildYear>$([System.DateTime]::UtcNow.ToString("yyyy"))</BuildYear>
     <BuildMonth>$([System.DateTime]::UtcNow.ToString("MM"))</BuildMonth>
     <BuildDay>$([System.DateTime]::UtcNow.ToString("dd"))</BuildDay>
     <BuildHour>$([System.DateTime]::UtcNow.ToString("HH"))</BuildHour>
     <BuildMinute>$([System.DateTime]::UtcNow.ToString("mm"))</BuildMinute>
     <VersionPrefix>$(BuildYear).$(BuildMonth).$(BuildDay).1$(BuildHour)$(BuildMinute)</VersionPrefix>
+  </PropertyGroup>
+  <PropertyGroup>
     <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
     <FileVersion>$(VersionPrefix)</FileVersion>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
