@@ -40,6 +40,15 @@ jobs:
     - name: Compress Build Output
       run: Compress-Archive ./publish "KanimExplorer_${Env:CI_VersionPrefix}-ci_x64.zip"
 
+    # Build Changelog
+    - name: Build Changelog
+      id: build_changelog
+      uses: mikepenz/release-changelog-builder-action@{latest-release}
+      env:
+        GITHUB_TOKEN: ${{github.token}}
+      with:
+        outputFile: CHANGELOG.md
+
     # Create release
     - name: Create Release
       uses: actions/create-release@v1
@@ -60,13 +69,6 @@ jobs:
         GITHUB_TOKEN: ${{github.token}}
       with:
         upload_url: ${{steps.create_release.outputs.upload_url}}
-        asset_path: ./publish/
-
-    # Upload the publish output: https://github.com/marketplace/actions/upload-a-build-artifact
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64
         asset_path: ./KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64.zip
         asset_name: KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64.zip
         asset_content_type: application/zip
