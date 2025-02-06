@@ -83,7 +83,7 @@ jobs:
         Configuration: ${{ matrix.configuration }}
 
     - name: Publish
-      run: dotnet publish $env:Exe_Project_name --framework net6.0 --os win -a x64 --no-build --sc false --version-suffix ci --output publish
+      run: dotnet publish $env:Exe_Project_name --framework net6.0-windows --os win -a x64 --no-build --sc false --version-suffix ci --output publish
   
 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
