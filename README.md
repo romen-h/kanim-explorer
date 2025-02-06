@@ -8,7 +8,7 @@ A tool for viewing and modifying Oxygen Not Included's kanim files.
 ## Requirements to Build & Run
 
 - **Visual Studio 2022**
-- .NET 6.0 Runtime
+- .NET 8.0 Runtime
 - An OpenGL 3.3 capable GPU (for the Animation Viewer)
 
 ## Features
