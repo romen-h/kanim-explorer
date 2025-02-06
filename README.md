@@ -1,5 +1,5 @@
 # Kanim Explorer
-[![Build Kanim Explorer](https://github.com/romen-h/kanim-explorer/actions/workflows/dotnet-desktop.yml/badge.svg)](https://github.com/romen-h/kanim-explorer/actions/workflows/dotnet-desktop.yml)
+[![Build Kanim Explorer](https://github.com/romen-h/kanim-explorer/actions/workflows/release-win-x64.yml/badge.svg?branch=main)](https://github.com/romen-h/kanim-explorer/actions/workflows/release-win-x64.yml)
 
 A tool for viewing and modifying Oxygen Not Included's kanim files.
 
