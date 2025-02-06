@@ -13,7 +13,6 @@ jobs:
     env:
       Solution_Name: src/KanimExplorer.sln
       Exe_Project_Name: src/KanimExplorer/KanimExplorer.csproj
-      CI_VersionPrefix: 1.2.3.4
 
     steps:
     # Checkout code
@@ -31,6 +30,11 @@ jobs:
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
       uses: microsoft/setup-msbuild@v2
+
+    # Configure Version
+    - name: Configure Version
+      run: |
+        ./workflow-scripts/ConfigureVersion.ps1
 
     # Build and publish the application
     - name: Build & Publish
