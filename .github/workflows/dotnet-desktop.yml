@@ -13,6 +13,7 @@ jobs:
     env:
       Solution_Name: src/KanimExplorer.sln
       Exe_Project_Name: src/KanimExplorer/KanimExplorer.csproj
+      CI_VersionPrefix: 1.2.3.4
 
     steps:
     # Checkout code
@@ -39,5 +40,5 @@ jobs:
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: KanimExplorer.zip
+        name: KanimExplorer-x64
         path: publish
