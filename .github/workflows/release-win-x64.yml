@@ -1,8 +1,6 @@
 name: Build Kanim Explorer
 
-on:
-  release:
-    types: [published]
+on: workflow_dispatch
 
 jobs:
   build:
@@ -38,9 +36,37 @@ jobs:
     - name: Build & Publish
       run: dotnet publish $env:Exe_Project_name --configuration Release --version-suffix ci --framework net8.0-windows --os win -a x64 --sc false --output publish
 
+    # Create Zip
+    - name: Compress Build Output
+      run: Compress-Archive ./publish "KanimExplorer_${Env:CI_VersionPrefix}-ci_x64.zip"
+
+    # Create release
+    - name: Create Release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: false
+        prerelease: true
+        release_name: Kanim Explorer ${{env.CI_VersionPrefix}}
+        tag_name: v${{env.CI_VersionPrefix}}-ci
+        body_path: CHANGELOG.md
+      env:
+        GITHUB_TOKEN: ${{github.token}}
+
+    # Upload build artifact
+    - name: Upload Build Artifacts
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{github.token}}
+      with:
+        upload_url: ${{steps.create_release.outputs.upload_url}}
+        asset_path: ./publish/
+
     # Upload the publish output: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
         name: KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64
-        path: publish
+        asset_path: ./KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64.zip
+        asset_name: KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64.zip
+        asset_content_type: application/zip
