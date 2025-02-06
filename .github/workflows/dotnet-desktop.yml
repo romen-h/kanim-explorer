@@ -33,7 +33,8 @@ jobs:
 
     # Configure Version
     - name: Configure Version
-      run: | workflow-scripts/ConfigureVersion.ps1
+      run: |
+        ./workflow-scripts/ConfigureVersion.ps1
 
     # Build and publish the application
     - name: Build & Publish
