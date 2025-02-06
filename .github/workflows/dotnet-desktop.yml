@@ -25,7 +25,7 @@ jobs:
     - name: Install .NET Core
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 6.x
+        dotnet-version: 8.x
 
     # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
     - name: Setup MSBuild.exe
@@ -38,11 +38,11 @@ jobs:
 
     # Build and publish the application
     - name: Build & Publish
-      run: dotnet publish $env:Exe_Project_name --configuration Release --version-suffix ci --framework net6.0-windows --os win -a x64 --sc false --output publish
+      run: dotnet publish $env:Exe_Project_name --configuration Release --version-suffix ci --framework net8.0-windows --os win -a x64 --sc false --output publish
 
     # Upload the publish output: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: KanimExplorer-x64
+        name: KanimExplorer_${env:CI_VersionPrefix}-ci_x64
         path: publish
