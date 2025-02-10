@@ -1,6 +1,10 @@
 name: Build Kanim Explorer
 
-on: workflow_dispatch
+on:
+    push:
+        branches:
+            - main
+            - dev
 
 jobs:
   build:
@@ -9,6 +13,7 @@ jobs:
     env:
       Solution_Name: src/KanimExplorer.sln
       Exe_Project_Name: src/KanimExplorer/KanimExplorer.csproj
+      CI_VersionSuffix: ${{github.ref_name == 'main' && 'ci' || github.ref_name}}
 
     steps:
     # Checkout code
@@ -34,11 +39,11 @@ jobs:
 
     # Build and publish the application
     - name: Build & Publish
-      run: dotnet publish $env:Exe_Project_name --configuration Release --version-suffix ci --framework net8.0-windows --os win -a x64 --sc false --output publish
+      run: dotnet publish $env:Exe_Project_name --configuration Release --version-suffix $env:CI_VersionSuffix --framework net8.0-windows --os win -a x64 --sc false --output publish
 
     # Create Zip
     - name: Compress Build Output
-      run: Compress-Archive ./publish "KanimExplorer_${Env:CI_VersionPrefix}-ci_x64.zip"
+      run: Compress-Archive ./publish "KanimExplorer_${Env:CI_VersionPrefix}-${Env:CI_VersionSuffix}_x64.zip"
 
     # Build Changelog
     - name: Build Changelog
@@ -55,9 +60,9 @@ jobs:
       id: create_release
       with:
         draft: false
-        prerelease: false
-        release_name: Kanim Explorer ${{env.CI_VersionPrefix}}
-        tag_name: v${{env.CI_VersionPrefix}}-ci
+        prerelease: true
+        release_name: Kanim Explorer ${{env.CI_VersionPrefix}}-${{env.CI_VersionSuffix}} (${{github.ref_name}})
+        tag_name: v${{env.CI_VersionPrefix}}-${{env.CI_VersionSuffix}}
         body_path: CHANGELOG.md
       env:
         GITHUB_TOKEN: ${{github.token}}
@@ -69,6 +74,6 @@ jobs:
         GITHUB_TOKEN: ${{github.token}}
       with:
         upload_url: ${{steps.create_release.outputs.upload_url}}
-        asset_path: ./KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64.zip
-        asset_name: KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64.zip
+        asset_path: ./KanimExplorer_${{env.CI_VersionPrefix}}-${{env.CI_VersionSuffix}}_x64.zip
+        asset_name: KanimExplorer_${{env.CI_VersionPrefix}}-${{env.CI_VersionSuffix}}_x64.zip
         asset_content_type: application/zip
