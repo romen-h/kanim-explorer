@@ -1,0 +1,74 @@
+name: Build Kanim Explorer
+
+on: workflow_dispatch # Only run this manually because it makes the actual release too
+
+jobs:
+  build:
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    env:
+      Solution_Name: src/KanimExplorer.sln
+      Exe_Project_Name: src/KanimExplorer/KanimExplorer.csproj
+
+    steps:
+    # Checkout code
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.x
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+
+    # Configure Version
+    - name: Configure Version
+      run: |
+        ./workflow-scripts/ConfigureVersion.ps1
+
+    # Build and publish the application
+    - name: Build & Publish
+      run: dotnet publish $env:Exe_Project_name --configuration Release --version-suffix ci --framework net8.0-windows --os win -a x64 --sc false --output publish
+
+    # Create Zip
+    - name: Compress Build Output
+      run: Compress-Archive ./publish "KanimExplorer_${Env:CI_VersionPrefix}-ci_x64.zip"
+
+    # Build Changelog
+    - name: Build Changelog
+      id: build_changelog
+      uses: mikepenz/release-changelog-builder-action@v5.1.0
+      env:
+        GITHUB_TOKEN: ${{github.token}}
+      with:
+        outputFile: CHANGELOG.md
+
+    # Create release
+    - name: Create Release
+      uses: actions/create-release@v1
+      id: create_release
+      with:
+        draft: false
+        prerelease: false
+        release_name: Kanim Explorer ${{env.CI_VersionPrefix}}
+        tag_name: v${{env.CI_VersionPrefix}}-ci
+        body_path: CHANGELOG.md
+      env:
+        GITHUB_TOKEN: ${{github.token}}
+
+    # Upload build artifact
+    - name: Upload Build Artifacts
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{github.token}}
+      with:
+        upload_url: ${{steps.create_release.outputs.upload_url}}
+        asset_path: ./KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64.zip
+        asset_name: KanimExplorer_${{env.CI_VersionPrefix}}-ci_x64.zip
+        asset_content_type: application/zip
