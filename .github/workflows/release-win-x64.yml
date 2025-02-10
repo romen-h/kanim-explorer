@@ -55,7 +55,7 @@ jobs:
       id: create_release
       with:
         draft: false
-        prerelease: true
+        prerelease: false
         release_name: Kanim Explorer ${{env.CI_VersionPrefix}}
         tag_name: v${{env.CI_VersionPrefix}}-ci
         body_path: CHANGELOG.md
