@@ -1,5 +1,5 @@
 # Kanim Explorer
-[![Build Kanim Explorer](https://github.com/romen-h/kanim-explorer/actions/workflows/on-push.yml/badge.svg?branch=main)](https://github.com/romen-h/kanim-explorer/actions/workflows/on-push.yml)
+[![Kanim Explorer (main)](https://github.com/romen-h/kanim-explorer/actions/workflows/on-push.yml/badge.svg?branch=main)](https://github.com/romen-h/kanim-explorer/actions/workflows/on-push.yml)
 
 A tool for viewing and modifying Oxygen Not Included's kanim files.
 
