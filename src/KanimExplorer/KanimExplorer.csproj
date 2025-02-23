@@ -5,6 +5,7 @@
     <AssemblyName>KanimExplorer</AssemblyName>
     <OutputType>WinExe</OutputType>
     <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
   <PropertyGroup Condition="'$(CI_VersionPrefix)' != ''">
     <VersionPrefix>$(CI_VersionPrefix)</VersionPrefix>
