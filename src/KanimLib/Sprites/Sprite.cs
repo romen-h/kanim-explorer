@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using kanimal;
 
 namespace KanimLib.Sprites
 {
@@ -34,8 +35,8 @@ namespace KanimLib.Sprites
 			using (Graphics g = Graphics.FromImage(newImage))
 			{
 				g.Clear(Color.FromArgb(0, 0, 0, 0));
-				g.DrawImage(Image, deltaWidth / 2, deltaHeight / 2, Image.Width, Image.Height);
 			}
+			Image.CopyTo(newImage, deltaWidth / 2, deltaHeight / 2);
 			Image.Dispose();
 			Image = newImage;
 		}

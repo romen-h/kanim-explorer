@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-
+using kanimal;
 using MaxRectsBinPack;
 
 namespace KanimLib.Sprites
@@ -61,15 +61,12 @@ namespace KanimLib.Sprites
 			PackedSprite[] packedSprites = Pack(sprites, out int atlasWidth, out int atlasHeight);
 
 			Bitmap newAtlas = new Bitmap(atlasWidth, atlasHeight, PixelFormat.Format32bppArgb);
-			using (Graphics g = Graphics.FromImage(newAtlas))
+			foreach (PackedSprite packed in packedSprites)
 			{
-				foreach (PackedSprite packed in packedSprites)
-				{
-					packed.Sprite.FrameData.SetNewSize(packed.BoundingBox, atlasWidth, atlasHeight);
-					g.DrawImage(packed.Sprite.Image, packed.BoundingBox);
-				}
+				packed.Sprite.FrameData.SetNewSize(packed.BoundingBox, atlasWidth, atlasHeight);
+				packed.Sprite.Image.CopyTo(newAtlas, packed.Position.X, packed.Position.Y);
 			}
-
+			
 			return newAtlas;
 		}
 
