@@ -255,7 +255,7 @@ namespace KanimExplorer.Forms
 
 			OpenFileDialog dlg = new OpenFileDialog();
 			dlg.Multiselect = true;
-			dlg.Filter = "Kanim files|*.png;*.bytes;*.txt";
+			dlg.Filter = "Kanim files|*.png;*.bytes;*.prefab;*.txt|All Files|*.*";
 
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
