@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using kanimal;
@@ -19,8 +20,10 @@ namespace KanimLib.Sprites
 			List<Sprite> sprites = new List<Sprite>();
 			foreach (KSymbol symbol in buildData.Symbols)
 			{
+				Debug.WriteLine($"Symbol={symbol.Name}");
 				foreach (KFrame frame in symbol.Frames)
 				{
+					Debug.WriteLine($"    FrameIndex={frame.Index}");
 					if (atlas.Width > 0 && atlas.Height > 0)
 					{
 						Bitmap croppedImg = atlas.Clone(frame.GetTextureRectangle(atlas.Width, atlas.Height),

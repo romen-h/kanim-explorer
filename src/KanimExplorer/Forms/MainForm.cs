@@ -98,7 +98,7 @@ namespace KanimExplorer.Forms
 			saveSCMLToolStripMenuItem.Enabled = data.IsComplete;
 		}
 
-		private void UpdateAtlasView(Bitmap img, RectangleF[] frames = null, PointF[] pivots = null)
+		private void UpdateAtlasView(Bitmap img, Rectangle[] frames = null, PointF[] pivots = null)
 		{
 			if (img != null)
 			{
@@ -110,9 +110,9 @@ namespace KanimExplorer.Forms
 
 					if (frames != null)
 					{
-						foreach (RectangleF frame in frames)
+						foreach (Rectangle frame in frames)
 						{
-							if (frame != RectangleF.Empty)
+							if (frame != Rectangle.Empty)
 							{
 								using (Pen pen = new Pen(Color.Red, 2f))
 								{
@@ -255,7 +255,7 @@ namespace KanimExplorer.Forms
 
 			OpenFileDialog dlg = new OpenFileDialog();
 			dlg.Multiselect = true;
-			dlg.Filter = "Kanim files|*.png;*.bytes;*.prefab;*.txt|All Files|*.*";
+			dlg.Filter = "Kanim files|*.png;*.bytes;*.prefab;*.txt";
 
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
@@ -299,7 +299,7 @@ namespace KanimExplorer.Forms
 						selectedPNG = true;
 					}
 				}
-				else if (file.EndsWith("build.bytes") || file.EndsWith("build.txt"))
+				else if (file.EndsWith("build.bytes") || file.EndsWith("build.txt") || file.EndsWith("build.prefab"))
 				{
 					if (!selectedBuild)
 					{
@@ -307,7 +307,7 @@ namespace KanimExplorer.Forms
 						selectedBuild = true;
 					}
 				}
-				else if (file.EndsWith("anim.bytes") || file.EndsWith("anim.txt"))
+				else if (file.EndsWith("anim.bytes") || file.EndsWith("anim.txt") || file.EndsWith("anim.prefab"))
 				{
 					if (!selectedAnim)
 					{
@@ -378,7 +378,7 @@ namespace KanimExplorer.Forms
 			TreeView tree = sender as TreeView;
 			if (tree == null) return;
 
-			List<RectangleF> frames = new List<RectangleF>();
+			List<Rectangle> frames = new List<Rectangle>();
 			List<PointF> pivots = new List<PointF>();
 
 			if (e.Node != null)
@@ -458,7 +458,7 @@ namespace KanimExplorer.Forms
 
 		private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
 		{
-			List<RectangleF> frames = new List<RectangleF>();
+			List<Rectangle> frames = new List<Rectangle>();
 			List<PointF> pivots = new List<PointF>();
 
 			switch (propertyGrid.SelectedObject)

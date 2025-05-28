@@ -146,7 +146,7 @@ namespace KanimLib
 		public int Time
 		{ get; set; }
 
-		public RectangleF GetTextureRectangle(int texWidth, int texHeight)
+		public Rectangle GetTextureRectangle(int texWidth, int texHeight)
 		{
 			// If the UV rect is 0 length on one side it has to be expanded to at least 1 pixel.
 
@@ -160,8 +160,13 @@ namespace KanimLib
 			{
 				uv_y2 = UV_Y1 + (1.0f / texHeight);
 			}
+			
+			int left = Math.Max(0, (int)(UV_X1 * texWidth));
+			int top = Math.Max(0, (int)(UV_Y1 * texHeight));
+			int right = Math.Min(texWidth, (int)(uv_x2 * texWidth));
+			int bottom = Math.Min(texHeight, (int)(uv_y2 * texHeight));
 
-			return RectangleF.FromLTRB(UV_X1 * texWidth, UV_Y1 * texHeight, uv_x2 * texWidth, uv_y2 * texHeight);
+			return Rectangle.FromLTRB(left, top, right, bottom);
 		}
 
 		public RectangleF GetUVRectangle() => RectangleF.FromLTRB(UV_X1, UV_Y1, UV_X2, UV_Y2);
