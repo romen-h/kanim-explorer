@@ -59,6 +59,7 @@ namespace KanimLib
 
 				return $"Hash: {Hash}";
 			}
+#if false // Allowing setting from property grid just leads to complexity I don't need
 			set
 			{
 				name = value;
@@ -76,6 +77,7 @@ namespace KanimLib
 					Parent.SymbolNames[Hash] = value;
 				}
 			}
+#endif
 		}
 
 		public int Hash

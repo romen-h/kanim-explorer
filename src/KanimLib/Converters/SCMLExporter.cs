@@ -12,7 +12,6 @@ namespace KanimLib.Converters
 		{
 			if (package == null) throw new ArgumentNullException(nameof(package));
 			if (!package.HasBuild) throw new ArgumentException("KAnimPackge has not build data.");
-			if (!package.HasAnim) throw new ArgumentException("KAnimPackage has no anim data.");
 			if (!package.HasTexture) throw new ArgumentException("KAnimPackage has no texture data.");
 			if (string.IsNullOrWhiteSpace(outputPath)) throw new ArgumentNullException(nameof(outputPath));
 
@@ -25,8 +24,17 @@ namespace KanimLib.Converters
 				KAnimUtils.WriteBuild(buildStream, package.Build);
 				buildStream.Seek(0, SeekOrigin.Begin);
 
-				KAnimUtils.WriteAnim(animStream, package.Anim);
-				animStream.Seek(0, SeekOrigin.Begin);
+				if (package.HasAnim)
+				{
+					KAnimUtils.WriteAnim(animStream, package.Anim);
+					animStream.Seek(0, SeekOrigin.Begin);
+				}
+				else
+				{
+					KAnim blank = KAnimUtils.CreateEmptyAnim();
+					KAnimUtils.WriteAnim(animStream, blank);
+					animStream.Seek(0, SeekOrigin.Begin);
+				}
 
 				package.Texture.Save(textureStream, ImageFormat.Png);
 				textureStream.Seek(0, SeekOrigin.Begin);

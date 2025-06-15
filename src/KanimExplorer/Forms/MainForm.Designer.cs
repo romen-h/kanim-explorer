@@ -59,6 +59,8 @@
 			propertyGrid = new System.Windows.Forms.PropertyGrid();
 			label2 = new System.Windows.Forms.Label();
 			atlasView = new System.Windows.Forms.PictureBox();
+			toolsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+			renameSymbolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -173,9 +175,9 @@
 			// 
 			// toolsToolStripMenuItem
 			// 
-			toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveBlankAnimbytesToolStripMenuItem, toolStripSeparator3, splitTextureAtlasToolStripMenuItem, rebuildTextureAtlasToolStripMenuItem, exportAtlasBoxesToolStripMenuItem, autoFlagToolStripMenuItem, duplicateSymbolsToolStripMenuItem });
+			toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveBlankAnimbytesToolStripMenuItem, toolStripSeparator3, renameSymbolToolStripMenuItem, splitTextureAtlasToolStripMenuItem, rebuildTextureAtlasToolStripMenuItem, exportAtlasBoxesToolStripMenuItem, autoFlagToolStripMenuItem, duplicateSymbolsToolStripMenuItem, toolsToolStripMenuItem1 });
 			toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-			toolsToolStripMenuItem.Size = new System.Drawing.Size(46, 22);
+			toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 22);
 			toolsToolStripMenuItem.Text = "Tools";
 			// 
 			// saveBlankAnimbytesToolStripMenuItem
@@ -341,6 +343,19 @@
 			atlasView.TabIndex = 0;
 			atlasView.TabStop = false;
 			// 
+			// toolsToolStripMenuItem1
+			// 
+			toolsToolStripMenuItem1.Name = "toolsToolStripMenuItem1";
+			toolsToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
+			toolsToolStripMenuItem1.Text = "Tools";
+			// 
+			// renameSymbolToolStripMenuItem
+			// 
+			renameSymbolToolStripMenuItem.Name = "renameSymbolToolStripMenuItem";
+			renameSymbolToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			renameSymbolToolStripMenuItem.Text = "Rename Symbol";
+			renameSymbolToolStripMenuItem.Click += renameSymbolToolStripMenuItem_Click;
+			// 
 			// MainForm
 			// 
 			AllowDrop = true;
@@ -403,6 +418,8 @@
 		private System.Windows.Forms.ToolStripMenuItem duplicateSymbolsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private System.Windows.Forms.ToolStripMenuItem saveSCMLToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem renameSymbolToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem1;
 	}
 }
 

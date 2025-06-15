@@ -7,7 +7,6 @@ namespace KanimLib
 {
 	public class KAnimUtils
 	{
-
 		const string ANIM_HEADER = "ANIM";
 
 		public static KAnimPackage OpenPackage(string textureFile, string buildFile, string animFile)
@@ -367,6 +366,44 @@ namespace KanimLib
 			catch
 			{
 				return false;
+			}
+		}
+		
+		public static void RenameSymbol(KAnimPackage pkg, string oldSymbolName, string newSymbolName)
+		{
+			int oldHash = KleiUtil.HashString(oldSymbolName);
+			int newHash = KleiUtil.HashString(newSymbolName);
+			
+			if (pkg.HasBuild)
+			{
+				foreach (var symbol in pkg.Build.Symbols)
+				{
+					if (symbol.Hash != oldHash) continue;
+					
+					symbol.Hash = newHash;
+				}
+				
+				pkg.Build.SymbolNames.Remove(oldHash);
+				pkg.Build.SymbolNames.Add(newHash, newSymbolName);
+			}
+			
+			if (pkg.HasAnim)
+			{
+				foreach (var bank in pkg.Anim.Banks)
+				{
+					foreach (var frame in bank.Frames)
+					{
+						foreach (var element in frame.Elements)
+						{
+							if (element.SymbolHash != oldHash) continue;
+							
+							element.SymbolHash = newHash;
+						}
+					}
+				}
+				
+				pkg.Anim.SymbolNames.Remove(oldHash);
+				pkg.Anim.SymbolNames.Add(newHash, newSymbolName);
 			}
 		}
 		

@@ -95,7 +95,7 @@ namespace KanimExplorer.Forms
 			saveAnimFileToolStripMenuItem.Enabled = data.HasAnim;
 			saveAllToolStripMenuItem.Enabled = data.HasTexture || data.HasBuild || data.HasAnim;
 			previewAnimToolStripMenuItem.Enabled = data.IsComplete;
-			saveSCMLToolStripMenuItem.Enabled = data.IsComplete;
+			saveSCMLToolStripMenuItem.Enabled = data.HasTexture && data.HasBuild;
 		}
 
 		private void UpdateAtlasView(Bitmap img, Rectangle[] frames = null, PointF[] pivots = null)
@@ -593,6 +593,28 @@ namespace KanimExplorer.Forms
 			}
 		}
 
+		private void renameSymbolToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (data != null && data.HasBuild)
+			{
+				RenameSymbolForm dlg = new RenameSymbolForm(data.Build.SymbolNames.Values);
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					try
+					{
+						KAnimUtils.RenameSymbol(data, dlg.OldName, dlg.NewName);
+						UpdateBuildTree(data);
+						MessageBox.Show(this, "Symbol renamed successfully.", "Rename Success", MessageBoxButtons.OK);
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show(this, "Failed to rename symbol.", "Rename Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+					
+				}
+			}
+		}
+
 		private void splitTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			FolderBrowserDialog dlg = new FolderBrowserDialog();
@@ -747,5 +769,7 @@ namespace KanimExplorer.Forms
 				MessageBox.Show(this, "No supported files were dropped.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
+
+		
 	}
 }
