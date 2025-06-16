@@ -40,6 +40,7 @@ namespace KanimExplorer.Forms
 			saveBuildFileToolStripMenuItem.Enabled = false;
 			saveAllToolStripMenuItem.Enabled = false;
 			saveSCMLToolStripMenuItem.Enabled = false;
+			renameSymbolToolStripMenuItem.Enabled = false;
 		}
 
 		private void OpenFiles()
@@ -96,6 +97,7 @@ namespace KanimExplorer.Forms
 			saveAllToolStripMenuItem.Enabled = data.HasTexture || data.HasBuild || data.HasAnim;
 			previewAnimToolStripMenuItem.Enabled = data.IsComplete;
 			saveSCMLToolStripMenuItem.Enabled = data.HasTexture && data.HasBuild;
+			renameSymbolToolStripMenuItem.Enabled = data.HasBuild;
 		}
 
 		private void UpdateAtlasView(Bitmap img, Rectangle[] frames = null, PointF[] pivots = null)
@@ -769,7 +771,5 @@ namespace KanimExplorer.Forms
 				MessageBox.Show(this, "No supported files were dropped.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 			}
 		}
-
-		
 	}
 }

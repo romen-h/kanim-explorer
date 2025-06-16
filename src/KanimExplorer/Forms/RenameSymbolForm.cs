@@ -77,5 +77,18 @@ namespace KanimExplorer.Forms
 				buttonOK.Enabled = false;
 			}
 		}
+
+		private void textBox_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		{
+			if (e.KeyCode == Keys.Enter)
+			{
+				if (ValidateName(textBox.Text))
+				{
+					NewName = textBox.Text;
+					DialogResult = DialogResult.OK;
+					Close();
+				}
+			}
+		}
 	}
 }

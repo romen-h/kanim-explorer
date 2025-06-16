@@ -77,6 +77,7 @@
 			textBox.Size = new System.Drawing.Size(320, 23);
 			textBox.TabIndex = 3;
 			textBox.TextChanged += textBox_TextChanged;
+			textBox.PreviewKeyDown += textBox_PreviewKeyDown;
 			// 
 			// oldNamesComboBox
 			// 
