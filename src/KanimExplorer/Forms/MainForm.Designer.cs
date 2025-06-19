@@ -60,6 +60,7 @@
 			propertyGrid = new System.Windows.Forms.PropertyGrid();
 			label2 = new System.Windows.Forms.Label();
 			atlasView = new System.Windows.Forms.PictureBox();
+			editPivotToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
 			splitContainer1.Panel1.SuspendLayout();
@@ -174,7 +175,7 @@
 			// 
 			// toolsToolStripMenuItem
 			// 
-			toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveBlankAnimbytesToolStripMenuItem, toolStripSeparator3, renameSymbolToolStripMenuItem, splitTextureAtlasToolStripMenuItem, rebuildTextureAtlasToolStripMenuItem, exportAtlasBoxesToolStripMenuItem, autoFlagToolStripMenuItem, duplicateSymbolsToolStripMenuItem });
+			toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { saveBlankAnimbytesToolStripMenuItem, toolStripSeparator3, renameSymbolToolStripMenuItem, editPivotToolStripMenuItem, splitTextureAtlasToolStripMenuItem, rebuildTextureAtlasToolStripMenuItem, exportAtlasBoxesToolStripMenuItem, autoFlagToolStripMenuItem, duplicateSymbolsToolStripMenuItem });
 			toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
 			toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 22);
 			toolsToolStripMenuItem.Text = "Tools";
@@ -349,6 +350,13 @@
 			atlasView.TabIndex = 0;
 			atlasView.TabStop = false;
 			// 
+			// editPivotToolStripMenuItem
+			// 
+			editPivotToolStripMenuItem.Name = "editPivotToolStripMenuItem";
+			editPivotToolStripMenuItem.Size = new System.Drawing.Size(193, 22);
+			editPivotToolStripMenuItem.Text = "Edit Pivot";
+			editPivotToolStripMenuItem.Click += editPivotToolStripMenuItem_Click;
+			// 
 			// MainForm
 			// 
 			AllowDrop = true;
@@ -412,6 +420,7 @@
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
 		private System.Windows.Forms.ToolStripMenuItem saveSCMLToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem renameSymbolToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem editPivotToolStripMenuItem;
 	}
 }
 

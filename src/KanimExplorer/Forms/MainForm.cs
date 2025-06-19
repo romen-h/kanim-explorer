@@ -612,7 +612,23 @@ namespace KanimExplorer.Forms
 					{
 						MessageBox.Show(this, "Failed to rename symbol.", "Rename Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					}
-					
+
+				}
+			}
+		}
+
+		private void editPivotToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (data != null && data.HasBuild && data.HasTexture)
+			{
+				if (propertyGrid.SelectedObject is KFrame frame)
+				{
+					PivotEditorForm dlg = new PivotEditorForm(frame, data.Texture);
+					if (dlg.ShowDialog() == DialogResult.OK)
+					{
+						frame.SpriterPivotX = dlg.PivotX;
+						frame.SpriterPivotY = dlg.PivotY;
+					}
 				}
 			}
 		}
