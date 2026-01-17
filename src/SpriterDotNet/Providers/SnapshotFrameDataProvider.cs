@@ -20,6 +20,9 @@ namespace SpriterDotNet.Providers
         {
             Dictionary<string, FrameData[]> results = new Dictionary<string, FrameData[]>();
 
+            if (entity.Animations == null)
+                return results;
+
             foreach (SpriterAnimation anim in entity.Animations)
             {
                 int length = (int)Math.Ceiling(anim.Length / interval);

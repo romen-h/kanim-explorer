@@ -17,10 +17,15 @@ namespace SpriterDotNet.Preprocessors
 
         protected virtual void Init(Spriter spriter)
         {
+            if (spriter.Entities == null)
+                return;
             foreach (SpriterEntity entity in spriter.Entities)
             {
                 entity.Spriter = spriter;
                 if (entity.ObjectInfos == null) entity.ObjectInfos = new SpriterObjectInfo[0];
+                if (entity.Animations == null)
+                    return;
+
                 foreach (SpriterAnimation animation in entity.Animations)
                 {
                     animation.Entity = entity;
