@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
+using KanimLib.KanimModel;
+
 namespace KanimLib
 {
 	/// <summary>
 	/// Contains a hierarchy of data representing the sprites used in an animation.
 	/// </summary>
-	public class KBuild
+	public class KBuild : INotifyPropertyChanged
 	{
 		/// <summary>
 		/// A 4 character sequence used to identify whether a file contains build data.
@@ -18,6 +20,9 @@ namespace KanimLib
 		/// </summary>
 		public const int CURRENT_BUILD_VERSION = 10;
 
+		public KanimPackage Parent
+		{ get; internal set; }
+		
 		/// <summary>
 		/// Gets or sets the name of the animation.
 		/// </summary>
@@ -56,31 +61,19 @@ namespace KanimLib
 		/// A dictionary of names for the symbols indexed by their KHash.
 		/// </summary>
 		public readonly Dictionary<int, string> SymbolNames = new Dictionary<int, string>();
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void InvokePropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
 
 		public KBuild()
 		{ }
-
-		/// <summary>
-		/// Gets whether the build data has changed in a way that requires the texture to be repacked.
-		/// </summary>
-		[Browsable(false)]
-		public bool NeedsRepack
+		
+		public void TriggerAtlasRebuild()
 		{
-			get
-			{
-				foreach (var symbol in Symbols)
-				{
-					if (symbol.NeedsRepack) return true;
-				}
-				return false;
-			}
-			set
-			{
-				foreach (var symbol in Symbols)
-				{
-					symbol.NeedsRepack = value;
-				}
-			}
+			Parent?.RebuildAtlas();
 		}
 
 		/// <summary>
@@ -97,13 +90,25 @@ namespace KanimLib
 			return null;
 		}
 
+		public bool SymbolExists(string name)
+		{
+			if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name));
+
+			foreach (var symbol in Symbols)
+			{
+				if (symbol.Name == name) return true;
+			}
+			
+			return false;
+		}
+		
 		/// <summary>
 		/// Returns the symbol for the given name.
 		/// </summary>
 		/// <returns>Null if the symbol is not found.</returns>
 		public KSymbol GetSymbol(string name)
 		{
-			if (string.IsNullOrEmpty(name)) throw new ArgumentException("name");
+			if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name));
 
 			foreach (var symbol in Symbols)
 			{
@@ -151,6 +156,18 @@ namespace KanimLib
 			Symbols.Add(symbol);
 			int hash = symbol.Name.KHash();
 			SymbolNames[hash] = symbol.Name;
+			SymbolCount = Symbols.Count;
+		}
+		
+		internal void InsertSymbolAfter(KSymbol inserted, KSymbol after)
+		{
+			inserted.Parent = this;
+			
+			int insertIndex = Symbols.IndexOf(after) + 1;
+			Symbols.Insert(insertIndex, inserted);
+			
+			int hash = inserted.Name.KHash();
+			SymbolNames[hash] = inserted.Name;
 			SymbolCount = Symbols.Count;
 		}
 	}

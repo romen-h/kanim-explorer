@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
+using KanimLib.KanimModel;
 using KanimLib.Sprites;
 
 using SpriterDotNet;
@@ -18,7 +19,7 @@ namespace KanimLib.Converters
 {
 	public static class SCMLImporter
 	{
-		public static KAnimPackage Convert(string scmlPath)
+		public static KanimPackage Convert(string scmlPath)
 		{
 			if (!File.Exists(scmlPath)) throw new Exception("Could not find scml file.");
 
@@ -30,7 +31,7 @@ namespace KanimLib.Converters
 			return Convert(directory, spriterData);
 		}
 
-		private static KAnimPackage Convert(string directory, Spriter spriterData)
+		private static KanimPackage Convert(string directory, Spriter spriterData)
 		{
 			Debug.Assert(Directory.Exists(directory), "Path to scml file does not exist.");
 			Debug.Assert(spriterData != null, "Spriter data is null");
@@ -41,14 +42,11 @@ namespace KanimLib.Converters
 
 			string kanimName = entity.Name;
 
-			KAnimPackage pkg = new KAnimPackage();
-
 			// Sprite Atlas + Build File
 
 			KBuild build = new KBuild();
 			build.Name = kanimName;
 			build.Version = KBuild.CURRENT_BUILD_VERSION;
-			pkg.Build = build;
 
 			SpriterFolder folder = spriterData.Folders[0];
 			Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
@@ -78,16 +76,17 @@ namespace KanimLib.Converters
 					}
 					symbolsById[file.Id] = symbol;
 
-					KFrame frame = new KFrame();
-					frame.Index = frameIndex;
-					frame.Duration = 1; // TODO: What is duration for?
-					frame.ImageIndex = 0;
-					frame.Time = 0;
-					frame.SpriteWidth = file.Width;
-					frame.SpriteHeight = file.Height;
-					frame.SpriterPivotX = file.PivotX;
-					frame.SpriterPivotY = 1.0f - file.PivotY;
-					frame.NeedsRepack = true;
+					KFrame frame = new KFrame
+					{
+						Index = frameIndex,
+						Duration = 1,
+						ImageIndex = 0,
+						Time = 0,
+						SpriteWidth = file.Width,
+						SpriteHeight = file.Height,
+						SpriterPivotX = file.PivotX,
+						SpriterPivotY = 1.0f - file.PivotY
+					};
 
 					symbol.AddFrame(frame);
 					framesById[file.Id] = frame;
@@ -100,13 +99,12 @@ namespace KanimLib.Converters
 				}
 			}
 
-			pkg.Texture = SpriteUtils.RebuildAtlas(sprites.Values.ToArray());
-			pkg.Build.NeedsRepack = false;
+			var spritesArr = sprites.Values.ToList();
+			Bitmap texture = SpriteUtils.RebuildAtlas(spritesArr);
 
 			// Anim File
 
 			KAnim anim = KAnimUtils.CreateEmptyAnim();
-			pkg.Anim = anim;
 
 			int maxElements = 0;
 
@@ -185,6 +183,7 @@ namespace KanimLib.Converters
 
 			anim.MaxVisSymbols = maxElements;
 
+			KanimPackage pkg = new KanimPackage(texture, build, anim, spritesArr);
 			return pkg;
 		}
 	}

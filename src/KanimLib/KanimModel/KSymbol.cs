@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Text.Json.Serialization;
+
+using KanimLib.KanimModel;
 
 namespace KanimLib
 {
@@ -127,27 +130,10 @@ namespace KanimLib
 		{ get; set; } = 0;
 
 		public readonly List<KFrame> Frames = new List<KFrame>();
-
-		/// <summary>
-		/// Gets whether the symbol data has changed in a way that requires the texture to be repacked.
-		/// </summary>
-		public bool NeedsRepack
+		
+		internal void TriggerAtlasRebuild()
 		{
-			get
-			{
-				foreach (var frame in Frames)
-				{
-					if (frame.NeedsRepack) return true;
-				}
-				return false;
-			}
-			set
-			{
-				foreach (var frame in Frames)
-				{
-					frame.NeedsRepack = value;
-				}
-			}
+			Parent?.TriggerAtlasRebuild();
 		}
 
 #if false

@@ -2,14 +2,16 @@
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace kanimal
 {
     // TODO: assemble spritesheet from Sprites list & build instead of assuming it's been dealt with
     public class KanimWriter : Writer
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public static ILogger Logger
+        { get; set; }
+        
         private Bitmap spritesheet;
 
         public KanimWriter(Reader reader)
@@ -47,18 +49,18 @@ namespace kanimal
             var writer = new BinaryWriter(output);
             writer.Write("BILD".ToCharArray());
             writer.Write(10); // build version
-            Logger.Debug("version=10");
+            Logger.LogDebug("version=10");
             writer.Write(BuildData.Symbols.Count);
-            Logger.Debug($"symbols={BuildData.Symbols.Count}");
+            Logger.LogDebug($"symbols={BuildData.Symbols.Count}");
             writer.Write(BuildData.FrameCount);
-            Logger.Debug($"frames={BuildData.FrameCount}");
+            Logger.LogDebug($"frames={BuildData.FrameCount}");
             writer.WritePString(BuildData.Name);
-            Logger.Debug($"name={BuildData.Name}");
+            Logger.LogDebug($"name={BuildData.Name}");
 
             for (var i = 0; i < BuildData.Symbols.Count; i++)
             {
                 var symbol = BuildData.Symbols[i];
-                Logger.Debug(
+                Logger.LogDebug(
                     $"symbol {i}=({symbol.Hash},{symbol.Path},{symbol.Color},{symbol.Flags},{symbol.FrameCount})");
                 writer.Write(symbol.Hash);
                 writer.Write(symbol.Path);
@@ -89,12 +91,12 @@ namespace kanimal
             writer.Write(BuildHashes.Count);
             foreach (var entry in BuildHashes)
             {
-                Logger.Debug($"{entry.Key}={entry.Value}");
+                Logger.LogDebug($"{entry.Key}={entry.Value}");
                 writer.Write(entry.Key);
                 writer.WritePString(entry.Value);
             }
 
-            Logger.Debug("=== end build ===");
+            Logger.LogDebug("=== end build ===");
         }
 
         public void WriteAnim(Stream output)
@@ -144,7 +146,7 @@ namespace kanimal
             writer.Write(AnimHashes.Count);
             foreach (var entry in AnimHashes)
             {
-                Logger.Debug($"{entry.Key}={entry.Value}");
+                Logger.LogDebug($"{entry.Key}={entry.Value}");
                 writer.Write(entry.Key);
                 writer.WritePString(entry.Value);
             }

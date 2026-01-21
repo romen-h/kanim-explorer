@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using KanimLib;
 
 namespace KanimExplorer.Wizard
@@ -18,7 +19,7 @@ namespace KanimExplorer.Wizard
 			InitializeComponent();
 		}
 
-		internal void LoadKanim(KAnimPackage pkg)
+		internal void LoadKanim(KanimPackage pkg)
 		{
 		}
 

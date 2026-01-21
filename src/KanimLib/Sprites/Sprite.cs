@@ -1,6 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Drawing;
+
 using kanimal;
+
+using KanimLib.KanimModel;
 
 namespace KanimLib.Sprites
 {
@@ -11,17 +15,18 @@ namespace KanimLib.Sprites
 		public string Name => SymbolData.Name;
 		public int FrameIndex => FrameData.Index;
 
+		[NotNull]
 		public Bitmap Image
-		{ get; set; } = null;
+		{ get; internal set; } = null;
 
 		public int Width => Image.Width;
 		public int Height => Image.Height;
 		public int Area => Image.Width * Image.Height;
-
+		
 		public Sprite(KFrame frame, Bitmap img)
 		{
-			if (frame == null) throw new ArgumentNullException("frame");
-			if (img == null) throw new ArgumentNullException("img");
+			ArgumentNullException.ThrowIfNull(frame);
+			ArgumentNullException.ThrowIfNull(img);
 
 			FrameData = frame;
 			Image = img;

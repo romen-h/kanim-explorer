@@ -3,10 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 
-namespace KanimLib
+namespace KanimLib.KanimModel
 {
 	public class KAnim
 	{
+		public const string ANIM_HEADER = @"ANIM";
+
+		public const int CURRENT_ANIM_VERSION = 5;
+
+		public KanimPackage Parent
+		{ get; internal set; }
+		
 		[ReadOnly(true)]
 		public int Version
 		{ get; set; }
@@ -28,6 +35,17 @@ namespace KanimLib
 		{ get; set; }
 
 		public readonly List<KAnimBank> Banks = new List<KAnimBank>();
+
+		public IEnumerable<string> BankNames
+		{
+			get
+			{
+				foreach (var bank in Banks)
+				{
+					yield return bank.Name;
+				}
+			}
+		}
 
 		public readonly Dictionary<int, string> SymbolNames = new Dictionary<int, string>();
 

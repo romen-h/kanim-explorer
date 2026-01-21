@@ -6,13 +6,15 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace kanimal
 {
     public class ScmlWriter : Writer
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public static ILogger Logger
+        { get; set; }
+        
         // Maps file names as strings to integers, because Spriter assigns an index
         // to each unique sprite, presumably to deduplicate its XML.
         private Dictionary<Filename, int> filenameindex;
@@ -100,7 +102,7 @@ namespace kanimal
                     {
                         if (AllowDuplicateSprites)
                         {
-                            Logger.Warn($"Duplicate sprite for {key.Value}. This may be indicative of a problem with the source file.");
+                            Logger.LogWarning($"Duplicate sprite for {key.Value}. This may be indicative of a problem with the source file.");
                         }
                         else
                         {
@@ -190,7 +192,7 @@ namespace kanimal
 
                     
                     var occName = occurenceMap.FindObjectName(element, AnimHashes);
-                    Logger.Debug(occName);
+                    Logger.LogDebug(occName.ToString());
 
                     objectRef.SetAttribute("id", idMap[occName].ToString());
                     objectRef.SetAttribute("timeline", idMap[occName].ToString());

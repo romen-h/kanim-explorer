@@ -8,12 +8,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using KanimLib;
+using KanimLib.Serialization;
 
 namespace KanimExplorer
 {
 	public static class KanimLoader
 	{
-		public static KAnimPackage BrowseForKanimFiles()
+		public static KanimPackage BrowseForKanimFiles()
 		{
 			OpenFileDialog dlg = new OpenFileDialog();
 			dlg.Multiselect = true;
@@ -63,9 +64,9 @@ namespace KanimExplorer
 			return null;
 		}
 
-		public static KAnimPackage OpenKanimFiles(string atlasFile, string buildFile, string animFile)
+		public static KanimPackage OpenKanimFiles(string atlasFile, string buildFile, string animFile)
 		{
-			KAnimPackage pkg = new KAnimPackage();
+			KanimPackage pkg = new KanimPackage();
 
 			if (atlasFile != null)
 			{
@@ -74,7 +75,7 @@ namespace KanimExplorer
 					using (FileStream fs = new FileStream(atlasFile, FileMode.Open))
 					{
 						Bitmap bmp = new Bitmap(fs);
-						pkg.Texture = (Bitmap)bmp.Clone();
+						pkg.SetTexture((Bitmap)bmp.Clone());
 					}
 				}
 				catch
@@ -85,7 +86,7 @@ namespace KanimExplorer
 			{
 				try
 				{
-					pkg.Build = KAnimUtils.ReadBuild(buildFile);
+					pkg.SetBuild(KanimReader.ReadBuild(buildFile));
 				}
 				catch
 				{ }
@@ -95,7 +96,7 @@ namespace KanimExplorer
 			{
 				try
 				{
-					pkg.Anim = KAnimUtils.ReadAnim(animFile);
+					pkg.SetAnim(KanimReader.ReadAnim(animFile));
 
 					if (pkg.Build != null)
 					{

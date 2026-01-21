@@ -4,11 +4,14 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 
+using KanimLib.KanimModel;
+using KanimLib.Serialization;
+
 namespace KanimLib.Converters
 {
 	public static class SCMLExporter
 	{
-		public static void Convert(KAnimPackage package, string outputPath)
+		public static void Convert(KanimPackage package, string outputPath)
 		{
 			if (package == null) throw new ArgumentNullException(nameof(package));
 			if (!package.HasBuild) throw new ArgumentException("KAnimPackge has not build data.");
@@ -21,18 +24,18 @@ namespace KanimLib.Converters
 			using (MemoryStream animStream = new MemoryStream())
 			using (MemoryStream textureStream = new MemoryStream())
 			{
-				KAnimUtils.WriteBuild(buildStream, package.Build);
+				KanimWriter.WriteBuild(buildStream, package.Build);
 				buildStream.Seek(0, SeekOrigin.Begin);
 
 				if (package.HasAnim)
 				{
-					KAnimUtils.WriteAnim(animStream, package.Anim);
+					KanimWriter.WriteAnim(animStream, package.Anim);
 					animStream.Seek(0, SeekOrigin.Begin);
 				}
 				else
 				{
 					KAnim blank = KAnimUtils.CreateEmptyAnim();
-					KAnimUtils.WriteAnim(animStream, blank);
+					KanimWriter.WriteAnim(animStream, blank);
 					animStream.Seek(0, SeekOrigin.Begin);
 				}
 

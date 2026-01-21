@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using System.Xml;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace kanimal
 {
@@ -100,11 +100,12 @@ namespace kanimal
      * supposed to be present at that time step */
     public class KeyFrameInterpolateProcessor : Processor
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+	    public static ILogger Logger
+        { get; set; }
 
         public override XmlDocument Process(XmlDocument original)
         {
-            Logger.Info("Interpolating key frames.");
+            Logger.LogInformation("Interpolating key frames.");
             /* clone to avoid modifying original data */
             XmlDocument processedScml = (XmlDocument)original.Clone();
 
@@ -201,7 +202,7 @@ namespace kanimal
                     }
                     if (time % interval != 0)
                     {
-                        Logger.Warn(
+                        Logger.LogWarning(
                             $"While parsing animation \"{name}\", found broken snapping in the mainline: it is time {time} ms that is not a multiple of snapping interval {interval} ms.");
                         hasBrokenSnapping = true;
                         brokenAnims.Add(name);
@@ -257,7 +258,7 @@ namespace kanimal
                             }
                             if (time % interval != 0)
                             {
-                                Logger.Warn(
+                                Logger.LogWarning(
                                     $"While parsing animation \"{name}\", found broken snapping at timeline {timeline}: it is time {time} ms that is not a multiple of snapping interval {interval} ms.");
                                 hasBrokenSnapping = true;
                                 brokenAnims.Add(name);
@@ -446,7 +447,7 @@ namespace kanimal
                          * in which this sprite exists */
                         if (afterFrame == null)
                         {
-                            Logger.Debug("Could not find after frame to interpolate between. Interpreting this to mean that this frame is expected to take the entire duration of the timeline.");
+                            Logger.LogDebug("Could not find after frame to interpolate between. Interpreting this to mean that this frame is expected to take the entire duration of the timeline.");
                             afterFrame = beforeFrame;
                             afterFrameIndex = beforeFrameIndex;
                         }
@@ -518,7 +519,7 @@ namespace kanimal
                          * in which this sprite exists */
                         if (afterFrame == null)
                         {
-                            Logger.Debug("Could not find after frame to interpolate between. Interpreting this to mean that this frame is expected to take the entire duration of the timeline.");
+                            Logger.LogDebug("Could not find after frame to interpolate between. Interpreting this to mean that this frame is expected to take the entire duration of the timeline.");
                             afterFrame = beforeFrame;
                             afterFrameIndex = beforeFrameIndex;
                         }

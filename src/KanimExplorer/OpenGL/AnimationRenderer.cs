@@ -10,6 +10,7 @@ using KanimExplorer.OpenGL.Objects;
 using KanimExplorer.OpenGL.Shaders;
 
 using KanimLib;
+using KanimLib.KanimModel;
 
 using OpenTK;
 using OpenTK.Graphics.OpenGL;

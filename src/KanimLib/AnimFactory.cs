@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
+using KanimLib.KanimModel;
 using KanimLib.Sprites;
 
 namespace KanimLib
@@ -50,7 +51,7 @@ namespace KanimLib
 			atlas = SpriteUtils.RebuildAtlas(new Sprite[] { uiSpr, placeSpr, offSpr, onSpr });
 
 			anim = new KAnim();
-			anim.Version = 5;
+			anim.Version = KAnim.CURRENT_ANIM_VERSION;
 			anim.ElementCount = 0;
 			anim.FrameCount = 0;
 			anim.BankCount = 4;

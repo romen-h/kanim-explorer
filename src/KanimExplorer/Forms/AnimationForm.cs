@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 
 using KanimExplorer.OpenGL;
+
 using KanimLib;
 
 using OpenTK;
@@ -14,9 +15,9 @@ namespace KanimExplorer.Forms
 {
 	public partial class AnimationForm : Form
 	{
-		KAnimPackage _data;
+		KanimPackage _data;
 
-		KAnimPackage _dupeData;
+		KanimPackage _dupeData;
 
 		KAnimBank SelectedBank;
 
@@ -37,7 +38,7 @@ namespace KanimExplorer.Forms
 		PointF _viewPos = new PointF(0,-100);
 		float _viewScale = 1f;
 
-		public AnimationForm(KAnimPackage data)
+		public AnimationForm(KanimPackage data)
 		{
 			InitializeComponent();
 
@@ -132,7 +133,7 @@ namespace KanimExplorer.Forms
 			display.Invalidate();
 		}
 
-		private void SetData(KAnimPackage pkg)
+		private void SetData(KanimPackage pkg)
 		{
 			Debug.Assert(pkg.IsComplete);
 

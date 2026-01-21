@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace KanimLib
+namespace KanimLib.KanimModel
 {
 	public class KAnimFrame
 	{

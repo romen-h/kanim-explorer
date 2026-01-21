@@ -2,333 +2,222 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-
+using KanimExplorer.Controls;
 using KanimExplorer.Wizard;
 
 using KanimLib;
 using KanimLib.Converters;
+using KanimLib.KanimModel;
+using KanimLib.Serialization;
 using KanimLib.Sprites;
+
+using Microsoft.Extensions.Logging;
 
 namespace KanimExplorer.Forms
 {
 	public partial class MainForm : Form
 	{
-		private Font fnt = new Font(FontFamily.GenericSansSerif, 10f);
+		private readonly ILogger _log = KanimLib.Logging.Factory.CreateLogger("MainForm");
 
-		private string currentAtlasFile = null;
-		private string currentBuildFile = null;
-		private string currentAnimFile = null;
-		private KAnimPackage data;
+		private readonly Controls.KanimDataTreeControl kanimDataTreeControl;
+		private readonly Controls.AtlasControl atlasControl;
+		private readonly Controls.SpriteControl spriteControl;
 
-		public bool FilesAreOpen => data?.HasAnyData ?? false;
+		private LogForm _logForm;
+
+		private KanimPackage data => DocumentManager.Instance.Data;
 
 		public MainForm()
 		{
+			_log.LogTrace("Constructing MainForm...");
+
 			InitializeComponent();
 
-			closeToolStripMenuItem.Enabled = false;
-			splitTextureAtlasToolStripMenuItem.Enabled = false;
-			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
-			exportAtlasBoxesToolStripMenuItem.Enabled = false;
-			saveTextureAtlasToolStripMenuItem.Enabled = false;
-			saveBuildFileToolStripMenuItem.Enabled = false;
-			saveAllToolStripMenuItem.Enabled = false;
-			saveSCMLToolStripMenuItem.Enabled = false;
-			renameSymbolToolStripMenuItem.Enabled = false;
+			kanimDataTreeControl = new KanimDataTreeControl();
+			kanimDataTreeControl.Dock = DockStyle.Fill;
+			kanimDataTreeControl.SelectedObjectChanged += KanimDataTreeControl_SelectedObjectChanged;
+			splitContainerOuter.Panel1.Controls.Add(kanimDataTreeControl);
+			
+			atlasControl = new AtlasControl();
+			atlasControl.Dock = DockStyle.Fill;
+			tabPageAtlas.Controls.Add(atlasControl);
+			
+			spriteControl = new SpriteControl();
+			spriteControl.Dock = DockStyle.Fill;
+			spriteControl.FramePivotUpdated += SpriteControl_FramePivotUpdated;
+			tabPageSprite.Controls.Add(spriteControl);
+
+			_logForm = new LogForm();
+
+			DocumentManager.Instance.LoadedTextureChanged += DocumentManager_LoadedTextureChanged;
+			DocumentManager.Instance.LoadedBuildChanged += DocumentManager_LoadedBuildChanged;
+			DocumentManager.Instance.LoadedAnimChanged += DocumentManager_LoadedAnimChanged;
+
+			ResolveControls();
 		}
 
-		private void OpenFiles()
+		/// <summary>
+		/// Called when the DocumentManager has a new texture loaded.
+		/// </summary>
+		private void DocumentManager_LoadedTextureChanged(object sender, EventArgs e)
 		{
-			Bitmap atlas = null;
-			KBuild build = null;
-			KAnim anim = null;
-
-			if (currentAtlasFile != null)
-			{
-				using (FileStream fs = new FileStream(currentAtlasFile, FileMode.Open))
-				{
-					Bitmap bmp = new Bitmap(fs);
-					atlas = (Bitmap)bmp.Clone();
-				}
-			}
-
-			if (currentBuildFile != null)
-			{
-				build = KAnimUtils.ReadBuild(currentBuildFile);
-			}
-
-			if (currentAnimFile != null)
-			{
-				anim = KAnimUtils.ReadAnim(currentAnimFile);
-
-				if (build != null)
-				{
-					anim.RepairStringsFromBuild(build);
-				}
-			}
-
-			OpenData(atlas, build, anim);
+			atlasControl.Texture = DocumentManager.Instance.Data?.Texture;
+			ResolveControls();
 		}
 
-		private void OpenData(Bitmap atlas, KBuild build, KAnim anim)
+		/// <summary>
+		/// Called when the DocumentManager has a new build.bytes loaded.
+		/// </summary>
+		private void DocumentManager_LoadedBuildChanged(object sender, EventArgs e)
 		{
-			data = new KAnimPackage();
-			data.Texture = atlas;
-			UpdateAtlasView(data.Texture);
-
-			data.Build = build;
-			data.Anim = anim;
-			UpdateBuildTree(data);
-
-			closeToolStripMenuItem.Enabled = FilesAreOpen;
-			splitTextureAtlasToolStripMenuItem.Enabled = data.IsValidAtlas;
-			rebuildTextureAtlasToolStripMenuItem.Enabled = data.IsValidAtlas;
-			saveTextureAtlasToolStripMenuItem.Enabled = data.HasTexture;
-			exportAtlasBoxesToolStripMenuItem.Enabled = data.HasTexture && data.HasBuild;
-			autoFlagToolStripMenuItem.Enabled = data.HasBuild;
-			saveBuildFileToolStripMenuItem.Enabled = data.HasBuild;
-			saveAnimFileToolStripMenuItem.Enabled = data.HasAnim;
-			saveAllToolStripMenuItem.Enabled = data.HasTexture || data.HasBuild || data.HasAnim;
-			previewAnimToolStripMenuItem.Enabled = data.IsComplete;
-			saveSCMLToolStripMenuItem.Enabled = data.HasTexture && data.HasBuild;
-			renameSymbolToolStripMenuItem.Enabled = data.HasBuild;
+			kanimDataTreeControl.SetKanim(DocumentManager.Instance.Data);
+			atlasControl.Build = DocumentManager.Instance.Data?.Build;
+			ResolveControls();
 		}
 
-		private void UpdateAtlasView(Bitmap img, Rectangle[] frames = null, PointF[] pivots = null)
+		/// <summary>
+		/// Called when the DocumentManager has a new anim.bytes loaded.
+		/// </summary>
+		private void DocumentManager_LoadedAnimChanged(object sender, EventArgs e)
 		{
-			if (img != null)
-			{
-				Bitmap bmp = new Bitmap(img.Width, img.Height);
-				using (Graphics g = Graphics.FromImage(bmp))
-				{
-					g.Clear(Color.FromArgb(128, 128, 128));
-					g.DrawImage(img, 0, 0, img.Width, img.Height);
+			kanimDataTreeControl.SetKanim(DocumentManager.Instance.Data);
+			ResolveControls();
+		}
 
-					if (frames != null)
+		/// <summary>
+		/// Called when the tree view on the sidebar selects an object.
+		/// </summary>
+		private void KanimDataTreeControl_SelectedObjectChanged(object sender, EventArgs e)
+		{
+			var selected = kanimDataTreeControl.SelectedObject;
+			if (selected == null) return;
+
+			propertyGrid.SelectedObject = selected;
+
+			switch (selected)
+			{
+				case KBuild build:
+				case KAnim anim:
+					spriteControl.Frame = null;
+					break;
+
+				case KSymbol symbol:
+					atlasControl.SelectedFrames = symbol.Frames;
+					spriteControl.Frame = symbol.Frames.FirstOrDefault();
+					break;
+
+				case KFrame frame:
+					atlasControl.SelectedFrames = [frame];
+					spriteControl.Frame = frame;
+					break;
+
+				case KAnimFrame animFrame:
+					List<KFrame> framesInAnim = new List<KFrame>();
+					if (data.Texture != null && data.Build != null)
 					{
-						foreach (Rectangle frame in frames)
+						foreach (KAnimElement element in animFrame.Elements)
 						{
-							if (frame != Rectangle.Empty)
+							KSymbol symbol = data.Build.GetSymbol(element.SymbolHash);
+							if (symbol != null)
 							{
-								using (Pen pen = new Pen(Color.Red, 2f))
+								if (symbol.FrameCount > element.FrameNumber)
 								{
-									g.DrawRectangle(pen, frame.Left, frame.Top, frame.Width, frame.Height);
+									KFrame frame = symbol.Frames[element.FrameNumber];
+									framesInAnim.Add(frame);
 								}
 							}
 						}
 					}
+					atlasControl.SelectedFrames = framesInAnim;
+					spriteControl.Frame = framesInAnim.FirstOrDefault();
+					break;
 
-					if (pivots != null)
+				case KAnimElement element:
+					KFrame frameInElement = null;
+					if (data.Texture != null && data.Build != null)
 					{
-						foreach (PointF pivot in pivots)
+						KSymbol symbol = data.Build.GetSymbol(element.SymbolHash);
+						if (symbol != null)
 						{
-							if (pivot != PointF.Empty)
+							if (symbol.FrameCount > element.FrameNumber)
 							{
-								g.FillRectangle(Brushes.Lime, pivot.X - 1f, pivot.Y - 1f, 3f, 3f);
+								frameInElement = symbol.Frames[element.FrameNumber];
 							}
 						}
 					}
+					atlasControl.SelectedFrames = [frameInElement];
+					spriteControl.Frame = frameInElement;
+					break;
 
-					if (data.Build != null && data.Build.NeedsRepack)
-					{
-						g.DrawString("Requires Rebuild", fnt, Brushes.Orange, 5, 5);
-					}
-				}
-
-				atlasView.Image = bmp;
-			}
-			else
-			{
-				atlasView.Image = null;
+				default:
+					break;
 			}
 		}
 
-		private void UpdateBuildTree(KAnimPackage data)
+		private void SpriteControl_FramePivotUpdated(object sender, EventArgs e)
 		{
-			buildTreeView.Nodes.Clear();
-
-			if (data == null) return;
-
-			if (data.Build != null)
-			{
-				TreeNode buildNode = new TreeNode(data.Build.ToString());
-				buildNode.Tag = data.Build;
-
-				foreach (KSymbol symbol in data.Build.Symbols)
-				{
-					TreeNode symbolNode = new TreeNode(symbol.Name);
-					symbolNode.Tag = symbol;
-
-					foreach (KFrame frame in symbol.Frames)
-					{
-						TreeNode frameNode = new TreeNode(frame.Index.ToString());
-						frameNode.Tag = frame;
-
-						symbolNode.Nodes.Add(frameNode);
-					}
-
-					buildNode.Nodes.Add(symbolNode);
-				}
-
-				buildTreeView.Nodes.Add(buildNode);
-			}
-
-			if (data.Anim != null)
-			{
-				TreeNode animNode = new TreeNode("Animations");
-				animNode.Tag = data.Anim;
-
-				foreach (KAnimBank bank in data.Anim.Banks)
-				{
-					TreeNode bankNode = new TreeNode(bank.Name);
-					bankNode.Tag = bank;
-
-					for (int i = 0; i < bank.Frames.Count; i++)
-					{
-						KAnimFrame frame = bank.Frames[i];
-						TreeNode frameNode = new TreeNode($"Frame {i}");
-						frameNode.Tag = frame;
-
-						for (int j = 0; j < frame.Elements.Count; j++)
-						{
-							KAnimElement element = frame.Elements[j];
-							TreeNode elementNode = new TreeNode($"Element {j}");
-							elementNode.Tag = element;
-
-							frameNode.Nodes.Add(elementNode);
-						}
-
-						bankNode.Nodes.Add(frameNode);
-					}
-
-					animNode.Nodes.Add(bankNode);
-				}
-
-				buildTreeView.Nodes.Add(animNode);
-			}
-
-			//buildTreeView.ExpandAll();
+			propertyGrid.Refresh();
 		}
 
-		private void CloseFiles()
+		private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
 		{
-			if (data == null) return;
+			string? propertyName = e.ChangedItem?.PropertyDescriptor.Name;
+			List<Rectangle> frames = new List<Rectangle>();
+			List<PointF> pivots = new List<PointF>();
 
-			currentAtlasFile = null;
-			if (data.Texture != null)
+			switch (propertyGrid.SelectedObject)
 			{
-				data.Texture.Dispose();
-				data.Texture = null;
+				case KBuild build:
+					break;
+
+				case KSymbol symbol:
+					atlasControl.OnBuildUpdated();
+					break;
+
+				case KFrame frame:
+					if (propertyName == nameof(KFrame.SpriterPivotX) || propertyName == nameof(KFrame.SpriterPivotY))
+					{
+						spriteControl.OnFrameUpdated();
+					}
+					atlasControl.OnBuildUpdated();
+					break;
+
+				default:
+					break;
 			}
-			atlasView.Image = null;
-
-			currentBuildFile = null;
-			data.Build = null;
-
-			currentAnimFile = null;
-			data.Anim = null;
-
-			data = null;
-
-			UpdateBuildTree(null);
-
-			propertyGrid.SelectedObject = null;
-
-			closeToolStripMenuItem.Enabled = false;
-			splitTextureAtlasToolStripMenuItem.Enabled = false;
-			rebuildTextureAtlasToolStripMenuItem.Enabled = false;
-			saveTextureAtlasToolStripMenuItem.Enabled = false;
-			exportAtlasBoxesToolStripMenuItem.Enabled = false;
-			autoFlagToolStripMenuItem.Enabled = false;
-			saveBuildFileToolStripMenuItem.Enabled = false;
-			saveAllToolStripMenuItem.Enabled = false;
-			previewAnimToolStripMenuItem.Enabled = false;
 		}
 
 		private void openToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (FilesAreOpen) CloseFiles();
-
-			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Multiselect = true;
-			dlg.Filter = "Kanim files|*.png;*.bytes;*.prefab;*.txt";
-
-			if (dlg.ShowDialog() == DialogResult.OK)
+			using (_log.BeginFunction())
 			{
+				OpenFileDialog dlg = new OpenFileDialog();
+				dlg.Multiselect = true;
+				dlg.Filter = "Kanim files|*.png;*.bytes;*.prefab;*.txt";
+
+				if (dlg.ShowDialog() != DialogResult.OK) return;
+
 				if (dlg.FileNames.Length > 3)
 				{
-					MessageBox.Show(this, "Too many files selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+					MessageBox.Show(this, "A maximum of 3 files can be selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 					return;
 				}
 
-				if (SelectSupportedFiles(dlg.FileNames, out bool invalidFiles))
-				{
-					if (invalidFiles)
-					{
-						MessageBox.Show(this, "Invalid files were selected.\nThey will not be loaded.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
-					}
-
-					OpenFiles();
-				}
-				else
-				{
-					MessageBox.Show(this, "No supported files were selected.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-				}
+				OpenFilesList(dlg.FileNames, "Opening Files");
 			}
-		}
-
-		private bool SelectSupportedFiles(IEnumerable<string> files, out bool invalidFiles)
-		{
-			invalidFiles = false;
-
-			bool selectedPNG = false;
-			bool selectedBuild = false;
-			bool selectedAnim = false;
-
-			foreach (string file in files)
-			{
-				if (file.EndsWith(".png"))
-				{
-					if (!selectedPNG)
-					{
-						currentAtlasFile = file;
-						selectedPNG = true;
-					}
-				}
-				else if (file.EndsWith("build.bytes") || file.EndsWith("build.txt") || file.EndsWith("build.prefab"))
-				{
-					if (!selectedBuild)
-					{
-						currentBuildFile = file;
-						selectedBuild = true;
-					}
-				}
-				else if (file.EndsWith("anim.bytes") || file.EndsWith("anim.txt") || file.EndsWith("anim.prefab"))
-				{
-					if (!selectedAnim)
-					{
-						currentAnimFile = file;
-						selectedAnim = true;
-					}
-				}
-				else
-				{
-					invalidFiles = true;
-				}
-			}
-
-			return (selectedPNG || selectedBuild || selectedAnim);
 		}
 
 		private void openSCMLToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (FilesAreOpen) CloseFiles();
+			_log.LogTrace("Open SCML menu item clicked.");
+
+			DocumentManager.Instance.CloseEverything();
 
 			OpenFileDialog scmlDlg = new OpenFileDialog();
 			scmlDlg.Filter = "Spriter Projects (*.scml)|*.scml";
@@ -336,16 +225,15 @@ namespace KanimExplorer.Forms
 			if (scmlDlg.ShowDialog() == DialogResult.OK)
 			{
 				var pkg = SCMLImporter.Convert(scmlDlg.FileName);
-				if (pkg != null)
-				{
-					OpenData(pkg.Texture, pkg.Build, pkg.Anim);
-				}
+				DocumentManager.Instance.OpenConvertedData(pkg);
 			}
 		}
 
 		private void saveSCMLToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (!FilesAreOpen) return;
+			_log.LogTrace("Save SCML menu item clicked.");
+
+			if (!DocumentManager.Instance.FilesAreOpen) return;
 
 			try
 			{
@@ -359,146 +247,30 @@ namespace KanimExplorer.Forms
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine(ex.ToString());
+				_log.LogError(ex, "Failed to export SCML.");
 				MessageBox.Show("Failed to export SCML", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
 		private void closeToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			CloseFiles();
+			_log.LogTrace("Close menu item clicked.");
+
+			DocumentManager.Instance.CloseEverything();
 		}
 
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			CloseFiles();
+			_log.LogTrace("Exit menu item clicked.");
+
+			DocumentManager.Instance.CloseEverything();
 			Close();
-		}
-
-		private void buildTreeView_AfterSelect(object sender, TreeViewEventArgs e)
-		{
-			TreeView tree = sender as TreeView;
-			if (tree == null) return;
-
-			List<Rectangle> frames = new List<Rectangle>();
-			List<PointF> pivots = new List<PointF>();
-
-			if (e.Node != null)
-			{
-				propertyGrid.SelectedObject = e.Node.Tag;
-
-				switch (e.Node.Tag)
-				{
-					case KBuild build:
-					case KAnim anim:
-						break;
-
-					case KSymbol symbol:
-						if (data.Texture != null)
-						{
-							foreach (KFrame frame in symbol.Frames)
-							{
-								frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
-								pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
-							}
-						}
-						break;
-
-					case KFrame frame:
-						if (data.Texture != null)
-						{
-							frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
-							pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
-						}
-						break;
-
-					case KAnimFrame animFrame:
-						if (data.Texture != null && data.Build != null)
-						{
-							foreach (KAnimElement element in animFrame.Elements)
-							{
-								KSymbol symbol = data.Build.GetSymbol(element.SymbolHash);
-								if (symbol != null)
-								{
-									if (symbol.FrameCount > element.FrameNumber)
-									{
-										KFrame frame = symbol.Frames[element.FrameNumber];
-										frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
-										pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
-									}
-								}
-							}
-						}
-						break;
-
-					case KAnimElement element:
-						if (data.Texture != null && data.Build != null)
-						{
-							KSymbol symbol = data.Build.GetSymbol(element.SymbolHash);
-							if (symbol != null)
-							{
-								if (symbol.FrameCount > element.FrameNumber)
-								{
-									KFrame frame = symbol.Frames[element.FrameNumber];
-									frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
-									pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
-								}
-							}
-						}
-						break;
-
-					default:
-						break;
-				}
-			}
-
-			if (data.Texture != null)
-			{
-				UpdateAtlasView(data.Texture, frames.ToArray(), pivots.ToArray());
-			}
-		}
-
-		private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-		{
-			List<Rectangle> frames = new List<Rectangle>();
-			List<PointF> pivots = new List<PointF>();
-
-			switch (propertyGrid.SelectedObject)
-			{
-				case KBuild build:
-					break;
-
-				case KSymbol symbol:
-					if (data.Texture != null)
-					{
-						foreach (KFrame frame in symbol.Frames)
-						{
-							frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
-							pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
-						}
-					}
-					break;
-
-				case KFrame frame:
-					if (data.Texture != null)
-					{
-						frames.Add(frame.GetTextureRectangle(data.Texture.Width, data.Texture.Height));
-						pivots.Add(frame.GetPivotPoint(data.Texture.Width, data.Texture.Height));
-					}
-					break;
-
-				default:
-					break;
-			}
-
-			if (data.Texture != null)
-			{
-				UpdateAtlasView(data.Texture, frames.ToArray(), pivots.ToArray());
-			}
 		}
 
 		private void saveTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			_log.LogTrace("Save Texture Atlas menu item clicked.");
+
 			SaveFileDialog dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
@@ -516,17 +288,12 @@ namespace KanimExplorer.Forms
 
 		private void saveBuildFileToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (data.Build.NeedsRepack)
-			{
-				MessageBox.Show("The texture atlas needs to be rebuilt first.");
-				// Repack
-				return;
-			}
+			_log.LogTrace("Save Build menu item clicked.");
 
 			SaveFileDialog dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				if (KAnimUtils.WriteBuild(dlg.FileName, data.Build))
+				if (KanimWriter.WriteBuild(dlg.FileName, data.Build))
 				{
 					MessageBox.Show(this, "Build file saved successfully.", "Save Success", MessageBoxButtons.OK);
 				}
@@ -539,10 +306,12 @@ namespace KanimExplorer.Forms
 
 		private void saveAnimFileToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			_log.LogTrace("Save Anim menu item clicked.");
+
 			SaveFileDialog dlg = new SaveFileDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				if (KAnimUtils.WriteAnim(dlg.FileName, data.Anim))
+				if (KanimWriter.WriteAnim(dlg.FileName, data.Anim))
 				{
 					MessageBox.Show(this, "Anim file saved successfully.", "Save Success", MessageBoxButtons.OK);
 				}
@@ -555,6 +324,8 @@ namespace KanimExplorer.Forms
 
 		private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			_log.LogTrace("Save All menu item clicked.");
+
 			FolderBrowserDialog dlg = new FolderBrowserDialog();
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
@@ -577,11 +348,11 @@ namespace KanimExplorer.Forms
 					}
 					if (data.HasBuild)
 					{
-						if (!KAnimUtils.WriteBuild(buildFile, data.Build)) throw new Exception();
+						if (!KanimWriter.WriteBuild(buildFile, data.Build)) throw new Exception();
 					}
 					if (data.HasAnim)
 					{
-						if (!KAnimUtils.WriteAnim(animFile, data.Anim)) throw new Exception();
+						if (!KanimWriter.WriteAnim(animFile, data.Anim)) throw new Exception();
 					}
 
 					MessageBox.Show(this, "Kanim files saved successfully.", "Save Success", MessageBoxButtons.OK);
@@ -595,65 +366,25 @@ namespace KanimExplorer.Forms
 			}
 		}
 
-		private void renameSymbolToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (data != null && data.HasBuild)
-			{
-				RenameSymbolForm dlg = new RenameSymbolForm(data.Build.SymbolNames.Values);
-				if (dlg.ShowDialog(this) == DialogResult.OK)
-				{
-					try
-					{
-						KAnimUtils.RenameSymbol(data, dlg.OldName, dlg.NewName);
-						UpdateBuildTree(data);
-						MessageBox.Show(this, "Symbol renamed successfully.", "Rename Success", MessageBoxButtons.OK);
-					}
-					catch (Exception ex)
-					{
-						MessageBox.Show(this, "Failed to rename symbol.", "Rename Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					}
-
-				}
-			}
-		}
-
-		private void editPivotToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			if (data != null && data.HasBuild && data.HasTexture)
-			{
-				if (propertyGrid.SelectedObject is KFrame frame)
-				{
-					PivotEditorForm dlg = new PivotEditorForm(frame, data.Texture);
-					if (dlg.ShowDialog() == DialogResult.OK)
-					{
-						frame.SpriterPivotX = dlg.PivotX;
-						frame.SpriterPivotY = dlg.PivotY;
-					}
-				}
-			}
-		}
-
 		private void splitTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			_log.LogTrace("Split Texture Atlas menu item clicked.");
+
 			FolderBrowserDialog dlg = new FolderBrowserDialog();
 			dlg.ShowNewFolderButton = true;
 			dlg.Description = "Select a folder to save the exported frames...";
 
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				Sprite[] sprites = SpriteUtils.BuildSprites(data.Texture, data.Build);
-				foreach (Sprite sprite in sprites)
-				{
-					string frameFileName = $"{sprite.SymbolData.Name}_{sprite.FrameData.Index}.png";
-					string framePath = Path.Combine(dlg.SelectedPath, frameFileName);
-					sprite.Image.Save(framePath, ImageFormat.Png);
-				}
+				KAnimUtils.SplitTextureAtlas(data.Texture, data.Build, dlg.SelectedPath);
 				Process.Start("explorer.exe", dlg.SelectedPath);
 			}
 		}
 
 		private void saveBlankAnimbytesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			_log.LogTrace("Save Blank Anim menu item clicked.");
+
 			SaveFileDialog dlg = new SaveFileDialog()
 			{
 				Filter = "*.bytes|*.bytes"
@@ -661,7 +392,7 @@ namespace KanimExplorer.Forms
 
 			if (dlg.ShowDialog() == DialogResult.OK)
 			{
-				if (KAnimUtils.WriteAnim(dlg.FileName, KAnimUtils.CreateEmptyAnim()))
+				if (KanimWriter.WriteAnim(dlg.FileName, KAnimUtils.CreateEmptyAnim()))
 				{
 					MessageBox.Show(this, "Blank anim file saved successfully.", "Save Success", MessageBoxButtons.OK);
 				}
@@ -674,6 +405,8 @@ namespace KanimExplorer.Forms
 
 		private void exportAtlasBoxesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			_log.LogTrace("Export Texture Atlas Boxes menu item clicked.");
+
 			SaveFileDialog dlg = new SaveFileDialog()
 			{
 				Filter = "*.png|*.png"
@@ -686,8 +419,11 @@ namespace KanimExplorer.Forms
 			}
 		}
 
+#if false
 		private void rebuildTextureAtlasToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			_log.LogTrace("Rebuild Texture Atlas menu item clicked.");
+			
 			if (!data.Build.NeedsRepack)
 			{
 				MessageBox.Show("The build data does not have any changes that require repacking.");
@@ -713,31 +449,40 @@ namespace KanimExplorer.Forms
 				propertyGrid.Refresh();
 			}
 		}
+#endif
 
 		private void autoFlagToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (data != null && data.HasBuild)
+			using (_log.BeginFunction())
 			{
-				foreach (var symbol in data.Build.Symbols)
+				try
 				{
-					string lowerName = symbol.Name.ToLowerInvariant();
-					if (lowerName.Contains("_bloom"))
-					{
-						symbol.Flags = symbol.Flags.SetFlag(SymbolFlags.Bloom, true);
-					}
-
-					if (lowerName.Contains("_fg"))
-					{
-						symbol.Flags = symbol.Flags.SetFlag(SymbolFlags.Foreground, true);
-					}
+					if (data == null) throw new InvalidOperationException("No kanim data is loaded yet.");
+					if (!data.HasBuild) throw new InvalidOperationException("No build file loaded yet.");
+					KAnimUtils.AutoFlagSymbols(data);
+					propertyGrid.Refresh();
 				}
-
-				propertyGrid.Refresh();
+				catch (Exception ex)
+				{
+					_log.LogError(ex, "Failed to auto-flag symbols.");
+					MessageBox.Show("Failed to auto-flag symbols.\nPlease check the log for more details.", "Auto-Flagging Symbols", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				}
 			}
 		}
 
-		private void previewAnimToolStripMenuItem_Click(object sender, EventArgs e)
+		private void duplicateSymbolsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			SymbolDuplicatorForm dlg = new SymbolDuplicatorForm(data);
+			dlg.ShowDialog(this);
+
+			kanimDataTreeControl.RebuildTree();
+			propertyGrid.Refresh();
+		}
+
+		private void oldAnimationViewerToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			_log.LogTrace("Animation Viewer menu item clicked.");
+
 			if (data != null && data.IsComplete)
 			{
 				AnimationForm animForm = new AnimationForm(data);
@@ -747,20 +492,28 @@ namespace KanimExplorer.Forms
 
 		private void wizardToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			_log.LogTrace("Wizards menu item clicked.");
+
 			WizardForm f = new WizardForm();
 			f.ShowDialog(this);
 		}
 
-		private void duplicateSymbolsToolStripMenuItem_Click(object sender, EventArgs e)
+		private void logToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			SymbolDuplicatorForm f = new SymbolDuplicatorForm(data);
-			f.ShowDialog(this);
-			UpdateBuildTree(data);
-			propertyGrid.Refresh();
+			_log.LogTrace("Log menu item clicked.");
+
+			if (_logForm == null)
+			{
+				_logForm = new LogForm();
+			}
+
+			_logForm.Show();
 		}
 
 		private void MainForm_DragEnter(object sender, DragEventArgs e)
 		{
+			_log.LogTrace("Item drag entered window.");
+
 			if (e.Data.GetDataPresent(DataFormats.FileDrop))
 			{
 				e.Effect = DragDropEffects.Copy;
@@ -769,23 +522,120 @@ namespace KanimExplorer.Forms
 
 		private void MainForm_DragDrop(object sender, DragEventArgs e)
 		{
-			string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-
-			if (SelectSupportedFiles(files, out bool invalidFiles))
+			using (_log.BeginFunction())
 			{
-				if (FilesAreOpen) CloseFiles();
+				string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+				OpenFilesList(files, "Opening Dropped Files");
+			}
+		}
 
-				if (invalidFiles)
+		private void OpenFilesList(IEnumerable<string> files, string messageBoxContext)
+		{
+			using (_log.BeginFunction())
+			{
+				DocumentManager.SelectSupportedFiles(files, out string textureFile, out string buildFile, out string animFile, out var invalidFiles);
+
+				bool anythingSupported = textureFile != null || buildFile != null || animFile != null;
+				if (!anythingSupported)
 				{
-					MessageBox.Show(this, "Invalid files were dropped.\nThey will not be loaded.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Information);
+					MessageBox.Show(this, "No supported files were selected.", messageBoxContext, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+					return;
 				}
 
-				OpenFiles();
+				if (invalidFiles.Count > 0)
+				{
+					StringBuilder sb = new StringBuilder();
+					sb.AppendLine("Invalid files were selected.");
+					sb.AppendLine("These files will not be loaded:");
+					foreach (var file in invalidFiles)
+					{
+						string fileName = Path.GetFileName(file);
+						sb.AppendLine(fileName);
+					}
+					MessageBox.Show(this, sb.ToString(), messageBoxContext, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				}
+
+				if (DocumentManager.Instance.FilesAreOpen)
+				{
+					bool overloading = false;
+					overloading |= textureFile != null && DocumentManager.Instance.Data.HasTexture;
+					overloading |= buildFile != null && DocumentManager.Instance.Data.HasBuild;
+					overloading |= animFile != null && DocumentManager.Instance.Data.HasAnim;
+
+					if (overloading)
+					{
+						var rc = MessageBox.Show(this, "Files are already open.\nDo you want to close everything before opening the new ones?", "Opening Selected Files", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+						if (rc == DialogResult.No)
+						{
+							_log.LogTrace("User selected yes.");
+							if (textureFile != null && DocumentManager.Instance.Data.HasTexture)
+							{
+								DocumentManager.Instance.CloseTexture();
+							}
+							if (buildFile != null && DocumentManager.Instance.Data.HasBuild)
+							{
+								DocumentManager.Instance.CloseBuild();
+							}
+							if (animFile != null && DocumentManager.Instance.Data.HasAnim)
+							{
+								DocumentManager.Instance.CloseAnim();
+							}
+						}
+						else if (rc == DialogResult.Yes)
+						{
+							_log.LogTrace("User selected No.");
+							DocumentManager.Instance.CloseEverything();
+						}
+						else if (rc == DialogResult.Cancel)
+						{
+							_log.LogTrace("User selected Cancel.");
+							return;
+						}
+					}
+				}
+
+				if (textureFile != null)
+				{
+					anythingSupported = true;
+					if (!DocumentManager.Instance.OpenTexture(textureFile))
+					{
+						MessageBox.Show(this, "Failed to load texture.\nPlease check the log for more details.", messageBoxContext, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+				}
+
+				if (buildFile != null)
+				{
+					anythingSupported = true;
+					if (!DocumentManager.Instance.OpenBuild(buildFile))
+					{
+						MessageBox.Show(this, "Failed to load build.\nPlease check the log for more details.", messageBoxContext, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+				}
+
+				if (animFile != null)
+				{
+					anythingSupported = true;
+					if (!DocumentManager.Instance.OpenAnim(animFile))
+					{
+						MessageBox.Show(this, "Failed to load anim.\nPlease check the log for more details.", messageBoxContext, MessageBoxButtons.OK, MessageBoxIcon.Error);
+					}
+				}
 			}
-			else
-			{
-				MessageBox.Show(this, "No supported files were dropped.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-			}
+		}
+
+		private void ResolveControls()
+		{
+			closeToolStripMenuItem.Enabled = data != null || (data?.HasAnyData ?? false);
+			splitTextureAtlasToolStripMenuItem.Enabled = data?.IsValidAtlas ?? false;
+			saveTextureAtlasToolStripMenuItem.Enabled = data?.HasTexture ?? false;
+			exportAtlasBoxesToolStripMenuItem.Enabled = data != null && data.HasTexture && data.HasBuild;
+			autoFlagToolStripMenuItem.Enabled = data?.HasBuild ?? false;
+			saveBuildFileToolStripMenuItem.Enabled = data?.HasBuild ?? false;
+			saveAnimFileToolStripMenuItem.Enabled = data?.HasAnim ?? false;
+			duplicateSymbolsToolStripMenuItem.Enabled = data?.HasBuild ?? false;
+			saveAllToolStripMenuItem.Enabled = data != null && (data.HasTexture || data.HasBuild || data.HasAnim);
+			oldAnimationViewerToolStripMenuItem.Enabled = data?.IsComplete ?? false;
+			saveSCMLToolStripMenuItem.Enabled = data != null && data.HasTexture && data.HasBuild;
 		}
 	}
 }

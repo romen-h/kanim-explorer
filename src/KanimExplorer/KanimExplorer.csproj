@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
     <AssemblyName>KanimExplorer</AssemblyName>
@@ -7,9 +8,11 @@
     <UseWindowsForms>true</UseWindowsForms>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(CI_VersionPrefix)' != ''">
     <VersionPrefix>$(CI_VersionPrefix)</VersionPrefix>
   </PropertyGroup>
+
   <PropertyGroup Condition="'$(CI_VersionPrefix)' == ''">
     <BuildYear>$([System.DateTime]::UtcNow.ToString("yyyy"))</BuildYear>
     <BuildMonth>$([System.DateTime]::UtcNow.ToString("MM"))</BuildMonth>
@@ -19,20 +22,40 @@
     <VersionPrefix>$(BuildYear).$(BuildMonth).$(BuildDay).1$(BuildHour)$(BuildMinute)</VersionPrefix>
     <VersionSuffix>local</VersionSuffix>
   </PropertyGroup>
+
   <PropertyGroup>
     <AssemblyVersion>$(VersionPrefix)</AssemblyVersion>
     <FileVersion>$(VersionPrefix)</FileVersion>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="CyotekImageBox" Version="2.0.0-beta.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.2" />
     <PackageReference Include="OpenTK" Version="4.7.5" />
     <PackageReference Include="OpenTK.WinForms" Version="4.0.0-pre.6" />
-    <PackageReference Include="System.Drawing.Common" Version="9.0.1" />
+    <!--<PackageReference Include="System.Drawing.Common" Version="10.0.2" />-->
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\KanimLib\KanimLib.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="System.Windows.Forms" />
+    <Compile Update="Forms\StringPromptForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

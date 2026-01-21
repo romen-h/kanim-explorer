@@ -1,10 +1,12 @@
 ﻿using System.IO;
+using Microsoft.Extensions.Logging;
 
 namespace kanimal
 {
     public static class Kanimal
     {
-        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
-
+        // TODO: Injecting a logger instance here isn't ideal
+        public static ILogger Logger
+        { get; set; }
     }
 }

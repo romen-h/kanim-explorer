@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using KanimLib;
+using KanimLib.KanimModel;
+using KanimLib.Serialization;
 
 namespace KanimExplorer.Wizard
 {
@@ -41,8 +43,8 @@ namespace KanimExplorer.Wizard
 			{
 				AnimFactory.MakePlaceholderBuilding(buildingName, buildingWidth, buildingHeight, out Bitmap tex, out KBuild build, out KAnim anim);
 				tex.Save(texFile, ImageFormat.Png);
-				KAnimUtils.WriteBuild(buildFile, build);
-				KAnimUtils.WriteAnim(animFile, anim);
+				KanimWriter.WriteBuild(buildFile, build);
+				KanimWriter.WriteAnim(animFile, anim);
 			}
 			catch (Exception ex)
 			{

@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Drawing.Imaging;
 using System.IO;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace kanimal
 {
     // TODO: Move code that can be reused in all writers from SCMLWriter to Writer
     public abstract class Writer
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+	    public static ILogger Logger
+        { get; set; }
 
         protected List<KBuild.Row> BuildTable;
         protected KBuild.Build BuildData;

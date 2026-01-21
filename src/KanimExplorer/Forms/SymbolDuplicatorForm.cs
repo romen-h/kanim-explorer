@@ -7,15 +7,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using KanimLib;
 
 namespace KanimExplorer.Forms
 {
 	public partial class SymbolDuplicatorForm : Form
 	{
-		private readonly KAnimPackage kAnimPackage;
+		private readonly KanimPackage kAnimPackage;
 
-		public SymbolDuplicatorForm(KAnimPackage pkg)
+		public SymbolDuplicatorForm(KanimPackage pkg)
 		{
 			InitializeComponent();
 

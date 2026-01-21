@@ -9,9 +9,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using KanimExplorer.OpenGL.Objects;
 
-using KanimLib;
+using KanimLib.KanimModel;
 
 namespace KanimExplorer.Forms
 {

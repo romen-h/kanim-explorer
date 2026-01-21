@@ -3,54 +3,40 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+
 using kanimal;
+
+using KanimLib.KanimModel;
+
 using MaxRectsBinPack;
 
 namespace KanimLib.Sprites
 {
 	public class SpriteUtils
 	{
-		//public static Sprite GenerateBuildingSprite(int width, int height)
-		//{
-
-		//}
-
-		public static Sprite[] BuildSprites(Bitmap atlas, KBuild buildData)
+		public static List<Sprite> BuildSprites(Bitmap atlas, KBuild buildData)
 		{
 			List<Sprite> sprites = new List<Sprite>();
 			foreach (KSymbol symbol in buildData.Symbols)
 			{
-				Debug.WriteLine($"Symbol={symbol.Name}");
+				//Debug.WriteLine($"Symbol={symbol.Name}");
 				foreach (KFrame frame in symbol.Frames)
 				{
-					Debug.WriteLine($"    FrameIndex={frame.Index}");
+					//Debug.WriteLine($"    FrameIndex={frame.Index}");
 					if (atlas.Width > 0 && atlas.Height > 0)
 					{
 						Bitmap croppedImg = atlas.Clone(frame.GetTextureRectangle(atlas.Width, atlas.Height),
 							atlas.PixelFormat);
 						Sprite spr = new Sprite(frame, croppedImg);
+						frame.Sprite = spr;
 						sprites.Add(spr);
 					}
 				}
 			}
-			return sprites.ToArray();
+			return sprites;
 		}
 
-		public static void ResizeSprites(Sprite[] sprites)
-		{
-			if (sprites == null || sprites.Length == 0) return;
-
-			foreach (Sprite spr in sprites)
-			{
-				if (spr.Image == null) continue;
-				if (spr.FrameData.NeedsRepack)
-				{
-					spr.Resize(spr.FrameData.SpriteWidth, spr.FrameData.SpriteHeight);
-				}
-			}
-		}
-
-		public static Bitmap RebuildAtlas(Sprite[] sprites)
+		public static Bitmap RebuildAtlas(IEnumerable<Sprite> sprites)
 		{
 			// Make a new atlas with packed sprites
 			int maxWidth = 0;
@@ -66,8 +52,8 @@ namespace KanimLib.Sprites
 			Bitmap newAtlas = new Bitmap(atlasWidth, atlasHeight, PixelFormat.Format32bppArgb);
 			foreach (PackedSprite packed in packedSprites)
 			{
-				packed.Sprite.FrameData.SetNewSize(packed.BoundingBox, atlasWidth, atlasHeight);
 				packed.Sprite.Image.CopyTo(newAtlas, packed.Position.X, packed.Position.Y);
+				packed.Sprite.FrameData.OnAtlasRebuilt(packed.BoundingBox, atlasWidth, atlasHeight);
 			}
 			
 			return newAtlas;
@@ -133,7 +119,7 @@ namespace KanimLib.Sprites
 			return bmp;
 		}
 
-		public static PackedSprite[] Pack(Sprite[] sprites, out int sheetW, out int sheetH)
+		public static PackedSprite[] Pack(IEnumerable<Sprite> sprites, out int sheetW, out int sheetH)
 		{
 			// Brute force trial-and-error sprite packing.
 			// Double the smaller axis of the sheet each time it fails.
@@ -165,7 +151,7 @@ namespace KanimLib.Sprites
 			return packedSprites;
 		}
 
-		private static PackedSprite[] TryPack(Sprite[] sprites, int sheet_w, int sheet_h)
+		private static PackedSprite[] TryPack(IEnumerable<Sprite> sprites, int sheet_w, int sheet_h)
 		{
 			List<PackedSprite> packedSprites = new List<PackedSprite>();
 

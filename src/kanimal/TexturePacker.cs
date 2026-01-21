@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using NLog;
 using kanimal.MaxRectsBinPack;
+using Microsoft.Extensions.Logging;
 
 namespace kanimal
 {
@@ -43,7 +43,8 @@ namespace kanimal
 
     public class TexturePacker
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public static ILogger Logger
+        { get; set; }
 
         private List<Tuple<SpriteName, Bitmap>> sprites;
         public Bitmap SpriteSheet;
@@ -88,7 +89,7 @@ namespace kanimal
             foreach (var sprite in SpriteAtlas)
                 sprite.Sprite.CopyTo(SpriteSheet, sprite.X, sprite.Y);
 
-            Logger.Info($"Packed {sheetW} x {sheetH}");
+            Logger.LogInformation($"Packed {sheetW} x {sheetH}");
         }
 
         // returns false when the packing failed. 

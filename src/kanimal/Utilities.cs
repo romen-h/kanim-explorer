@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
-using NLog;
+using Microsoft.Extensions.Logging;
 
 namespace kanimal
 {
@@ -16,39 +16,39 @@ namespace kanimal
         public static Regex SpriteNameRegex = new Regex(
             @"^(?<basename>[\w\d.* '+=-]+)_(?<frame>\d+)(?<extension>\.[\w\d]{1,4})?");
 
-        public static void LogDebug(Logger logger, AnimHashTable hashes)
+        public static void LogDebug(ILogger logger, AnimHashTable hashes)
         {
             var builder = new StringBuilder();
             foreach (var entry in hashes) builder.Append($"value {entry.Key} maps onto symbol {entry.Value}\n");
-            logger.Debug(builder.ToString());
+            logger.LogDebug(builder.ToString());
         }
 
-        public static void LogDebug(Logger logger, Dictionary<int, SpriteBaseName> buildHashes)
+        public static void LogDebug(ILogger logger, Dictionary<int, SpriteBaseName> buildHashes)
         {
             var builder = new StringBuilder();
             foreach (var entry in buildHashes) builder.Append($"value {entry.Key} maps onto symbol {entry.Value.Value}\n");
-            logger.Debug(builder.ToString());
+            logger.LogDebug(builder.ToString());
         }
 
-        public static void LogDebug(Logger logger, IToDebugString debuggable)
+        public static void LogDebug(ILogger logger, IToDebugString debuggable)
         {
-            logger.Debug(debuggable.ToDebugString());
+            logger.LogDebug(debuggable.ToDebugString());
         }
 
-        public static void LogDebug(Logger logger, List<KBuild.Row> buildTable)
+        public static void LogDebug(ILogger logger, List<KBuild.Row> buildTable)
         {
             var builder = new StringBuilder();
             foreach (var row in buildTable) builder.Append(row.ToDebugString() + "\n");
 
-            logger.Debug(builder.ToString());
+            logger.LogDebug(builder.ToString());
         }
 
-        public static void LogDebug(Logger logger, Dictionary<string, int> animIdMap)
+        public static void LogDebug(ILogger logger, Dictionary<string, int> animIdMap)
         {
             var builder = new StringBuilder();
             foreach (var entry in animIdMap) builder.Append($"element {entry.Key} maps onto index {entry.Value}\n");
 
-            logger.Debug(builder.ToString());
+            logger.LogDebug(builder.ToString());
         }
 
         public static string GetAnimIdName(string name, int index)
@@ -133,9 +133,9 @@ namespace kanimal
         // As Logger.Debug, but also prints to a special dump stream, if specified
         public static TextWriter Dump = null;
 
-        public static void LogToDump(string str, Logger logger)
+        public static void LogToDump(string str, ILogger logger)
         {
-            logger.Debug(str);
+            logger.LogDebug(str);
             Dump?.WriteLine(str);
         }
 

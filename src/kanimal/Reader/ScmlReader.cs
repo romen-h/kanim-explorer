@@ -8,7 +8,7 @@ using System.Runtime.ExceptionServices;
 using System.Xml;
 using kanimal.KAnim;
 using kanimal.KBuild;
-using NLog;
+using Microsoft.Extensions.Logging;
 using Frame = kanimal.KBuild.Frame;
 
 namespace kanimal
@@ -21,7 +21,8 @@ namespace kanimal
 
     public class ScmlReader : Reader
     {
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        public static ILogger Logger
+        { get; set; }
 
         private XmlDocument scml;
         private Dictionary<SpriteName, XmlElement> projectSprites; // quick lookup for the sprites incl in project
@@ -48,10 +49,10 @@ namespace kanimal
             {
                 scml.Load(scmlpath);
             }
-            catch (ArgumentNullException e)
+            catch (ArgumentNullException ex)
             {
-                Logger.Fatal($"You must specify a path to load the SCML from. Original exception is as follows:");
-                ExceptionDispatchInfo.Capture(e).Throw();
+                Logger.LogCritical(ex, "You must specify a path to load the SCML from. Original exception is as follows:");
+                ExceptionDispatchInfo.Capture(ex).Throw();
             }
             // Due to scml conventions, our input directory is the same as the scml file's
             var inputDir = Path.Combine(scmlpath, "../");
@@ -84,10 +85,10 @@ namespace kanimal
                 {
                     scml = new KeyFrameInterpolateProcessor().Process(scml); // replace the scml with fully keyframed scml
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Logger.Fatal($"Failed to interpolate in-between frames. Original exception is as follows:");
-                    ExceptionDispatchInfo.Capture(e).Throw();
+                    Logger.LogCritical(ex, "Failed to interpolate in-between frames. Original exception is as follows:");
+                    ExceptionDispatchInfo.Capture(ex).Throw();
                 }
             }
             if (Debone)
@@ -96,14 +97,14 @@ namespace kanimal
                 {
                     scml = new DebonerProcessor().Process(scml); // replace the scml with deboned scml
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Logger.Fatal($"Failed to debone the scml document. Original exception is as follows:");
-                    ExceptionDispatchInfo.Capture(e).Throw();
+                    Logger.LogCritical(ex, "Failed to debone the scml document. Original exception is as follows:");
+                    ExceptionDispatchInfo.Capture(ex).Throw();
                 }
             }
 
-            Logger.Info("Reading image files.");
+            Logger.LogInformation("Reading image files.");
             ReadProjectSprites();
 
             // Only use the sprites that are included in the project
@@ -114,14 +115,14 @@ namespace kanimal
             List<string> unusedSprites = allSprites.FindAll(sprite => !usedSprites.Contains(sprite)).Select(sprite => sprite.ToFilename().ToString()).ToList();
             if (unusedSprites.Count > 0)
             {
-                Logger.Warn($"There were unused sprites in the SCML project folder: {unusedSprites.Join()}. Did you forget to included these in the SCML file? You must manually add in files that are part of a symbol_override if they aren't explicitly placed into any animations in the SCML. ");
+                Logger.LogWarning($"There were unused sprites in the SCML project folder: {unusedSprites.Join()}. Did you forget to included these in the SCML file? You must manually add in files that are part of a symbol_override if they aren't explicitly placed into any animations in the SCML. ");
             }
 
             // Also set the output list of sprites
             Sprites = new List<Sprite>();
             Sprites = inputSprites.Select(sprite => new Sprite {Bitmap = sprite.Value, Name = sprite.Key.ToSpriteName()}).ToList();
 
-            Logger.Info("Reading build info.");
+            Logger.LogInformation("Reading build info.");
             textures = new TexturePacker(inputSprites.Select(
                     s => new Tuple<SpriteName, Bitmap>(s.Key.ToSpriteName(), s.Value))
                 .ToList());
@@ -133,7 +134,7 @@ namespace kanimal
             // Once texture is packed. reads the atlas to determine build info
             PackBuild(textures);
 
-            Logger.Info("Calculating animation info.");
+            Logger.LogInformation("Calculating animation info.");
             PackAnim();
         }
 
@@ -246,7 +247,7 @@ namespace kanimal
             {
                 if (animation.Name == "character_map")
                 {
-                    Logger.Debug("Skipping <character_map> child of <entity>");
+                    Logger.LogDebug("Skipping <character_map> child of <entity>");
                     continue;
                 }
                 if (animation.Name != "animation")
@@ -291,7 +292,7 @@ namespace kanimal
             {
                 if (anim.Name == "character_map")
                 {
-                    Logger.Debug("Skipping <character_map> child of <entity>");
+                    Logger.LogDebug("Skipping <character_map> child of <entity>");
                     continue;
                 }
                 animCount++;
@@ -302,7 +303,7 @@ namespace kanimal
                 var bank = new AnimBank();
                 bank.Name = anim.Attributes["name"].Value;
                 bank.Hash = reverseHash[bank.Name];
-                Logger.Debug($"bank.name={bank.Name}\nhashTable={bank.Hash}");
+                Logger.LogDebug($"bank.name={bank.Name}\nhashTable={bank.Hash}");
                 bank.Frames = new List<KAnim.Frame>();
 
                 var interval = -1;
@@ -336,7 +337,7 @@ namespace kanimal
                             // otherwise, verify that the interval is correct
                             if (interval != this_interval)
                             {
-                                Logger.Warn(
+                                Logger.LogWarning(
                                     $"While parsing animation \"{bank.Name}\", found inconsistent interval at keyframe {frameCount}: it is {this_interval} ms from the last frame, when {interval} ms was expected.");
                                 hasInconsistentIntervals = true;
                                 inconsistentAnims.Add(bank.Name);
@@ -416,7 +417,7 @@ namespace kanimal
                         }
                         catch (ProjectParseException)
                         {
-                            Logger.Warn(
+                            Logger.LogWarning(
                                 $"Could not find frame {frameId} in timeline {timeline_id} of anim \"{bank.Name}\"!");
                             continue; // skip this element.
                         }
@@ -447,7 +448,7 @@ namespace kanimal
                                 pivotY = 0;
                                 width = 1;
                                 height = 1;
-                                Logger.Warn(
+                                Logger.LogWarning(
                                     $"Anim \"{animname}\" in \"{bank.Name}\" does not reference any valid sprite.\n" + 
                                     "If this was not intended behaviour, use the -S/--strict flag to enforce checking this error.");
                             }
@@ -580,7 +581,7 @@ namespace kanimal
                  * as just the length of the animation */
                 if (interval == -1)
                 {
-                    Logger.Debug("Encountered an animation with only one keyframe. Interpreting as having an interval between frames equal to the entire duration of the animation.");
+                    Logger.LogDebug("Encountered an animation with only one keyframe. Interpreting as having an interval between frames equal to the entire duration of the animation.");
                     interval = int.Parse(anim.GetAttribute("length"));
                 }
                 bank.Rate = (float) Utilities.MS_PER_S / interval;
@@ -603,7 +604,7 @@ namespace kanimal
                 var anims = pivotAnims.ToList().Join();
                 if (AllowInFramePivots)
                 {
-                    Logger.Warn($"Encountered pivot points specified in timelines in anims {anims}. These pivot point changes will not be respected. Strict-mode is off. Converting anyway.");
+                    Logger.LogWarning($"Encountered pivot points specified in timelines in anims {anims}. These pivot point changes will not be respected. Strict-mode is off. Converting anyway.");
                 }
                 else
                 {
@@ -640,14 +641,14 @@ namespace kanimal
             {
                 if (!(child is XmlElement))
                 {
-                    Logger.Debug("Skipping non-element child of <entity>");
+                    Logger.LogDebug("Skipping non-element child of <entity>");
                     continue;
                 }
 
                 var anim = (XmlElement) child;
                 if (anim.Name == "character_map")
                 {
-                    Logger.Debug("Skipping <character_map> child of <entity>");
+                    Logger.LogDebug("Skipping <character_map> child of <entity>");
                     continue;
                 }
                 if (anim.Name != "animation")
@@ -661,7 +662,7 @@ namespace kanimal
                 {
                     if (!(keyframes[frameIndex] is XmlElement))
                     {
-                        Logger.Debug("Skipping non-element child of <mainline>");
+                        Logger.LogDebug("Skipping non-element child of <mainline>");
                         continue;
                     }
 
@@ -675,7 +676,7 @@ namespace kanimal
                     {
                         if (!(obj is XmlElement))
                         {
-                            Logger.Debug("Skipping non-element child of <key>");
+                            Logger.LogDebug("Skipping non-element child of <key>");
                             continue;
                         }
 

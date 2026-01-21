@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
+using KanimLib.KanimModel;
+
 namespace KanimLib
 {
 	public class KAnimBank
