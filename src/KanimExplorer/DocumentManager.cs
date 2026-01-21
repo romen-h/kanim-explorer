@@ -196,16 +196,18 @@ namespace KanimExplorer
 				if (Data == null) return;
 				
 				var texture = Data.Texture;
-				Data.SetTexture(null);
-				
-				_log.LogTrace("Disposing texture...");
-				texture.Dispose();
 
-				_loadedTextureFile = null;
-				_log.LogInformation("Closed texture.");
+				if (texture != null)
+				{
+					Data.SetTexture(null);
+					_log.LogTrace("Disposing texture...");
+					texture.Dispose();
 
+					_loadedTextureFile = null;
+					_log.LogInformation("Closed texture.");
+				}
+					
 				_log.LogTrace("Invoking PropertyChanged...");
-				
 				InvokeLoadedTextureChanged();
 			}
 		}

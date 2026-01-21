@@ -23,6 +23,8 @@ namespace KanimExplorer.Controls
 	{
 		private readonly ILogger _log = KanimLib.Logging.Factory.CreateLogger("DataTreeControl");
 
+		private bool _rebuilding = false;
+
 		private KanimPackage _data;
 
 		public object SelectedObject
@@ -43,20 +45,20 @@ namespace KanimExplorer.Controls
 
 		public void SetKanim(KanimPackage data)
 		{
-			if (_data != data)
-			{
-				_data = data;
-			}
+			_data = data;
 			RebuildTree();
 		}
 
 		public void RebuildTree()
 		{
+			_rebuilding = true;
+
 			treeView.BeginUpdate();
 			treeView.Nodes.Clear();
 
 			if (_data == null)
 			{
+				_rebuilding = false;
 				treeView.EndUpdate();
 				return;
 			}
@@ -136,6 +138,7 @@ namespace KanimExplorer.Controls
 				treeView.Nodes.Add(animNode);
 			}
 
+			_rebuilding = false;
 			treeView.EndUpdate();
 		}
 
@@ -175,6 +178,8 @@ namespace KanimExplorer.Controls
 
 		private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{
+			if (_rebuilding) return;
+
 			buttonAdd.Visible = false;
 			buttonRemove.Visible = false;
 			buttonRename.Visible = false;
