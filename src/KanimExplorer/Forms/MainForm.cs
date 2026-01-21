@@ -43,11 +43,11 @@ namespace KanimExplorer.Forms
 			kanimDataTreeControl.Dock = DockStyle.Fill;
 			kanimDataTreeControl.SelectedObjectChanged += KanimDataTreeControl_SelectedObjectChanged;
 			splitContainerOuter.Panel1.Controls.Add(kanimDataTreeControl);
-			
+
 			atlasControl = new AtlasControl();
 			atlasControl.Dock = DockStyle.Fill;
 			tabPageAtlas.Controls.Add(atlasControl);
-			
+
 			spriteControl = new SpriteControl();
 			spriteControl.Dock = DockStyle.Fill;
 			spriteControl.FramePivotUpdated += SpriteControl_FramePivotUpdated;
@@ -636,6 +636,11 @@ namespace KanimExplorer.Forms
 			saveAllToolStripMenuItem.Enabled = data != null && (data.HasTexture || data.HasBuild || data.HasAnim);
 			oldAnimationViewerToolStripMenuItem.Enabled = data?.IsComplete ?? false;
 			saveSCMLToolStripMenuItem.Enabled = data != null && data.HasTexture && data.HasBuild;
+		}
+
+		private void tabControl_TabIndexChanged(object sender, EventArgs e)
+		{
+			spriteControl.ResetMouseContext();
 		}
 	}
 }

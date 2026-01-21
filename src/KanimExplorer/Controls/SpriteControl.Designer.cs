@@ -29,17 +29,23 @@
 		private void InitializeComponent()
 		{
 			panel1 = new System.Windows.Forms.Panel();
+			buttonResetPivot = new System.Windows.Forms.Button();
+			buttonApplyPivot = new System.Windows.Forms.Button();
 			checkBoxEditPivot = new System.Windows.Forms.CheckBox();
 			buttonExportSprite = new System.Windows.Forms.Button();
 			buttonZoomInSprite = new System.Windows.Forms.Button();
 			buttonResetZoomSprite = new System.Windows.Forms.Button();
 			buttonZoomOutSprite = new System.Windows.Forms.Button();
 			imageBoxSprite = new Cyotek.Windows.Forms.ImageBox();
+			buttonChangePivotColor = new System.Windows.Forms.Button();
 			panel1.SuspendLayout();
 			SuspendLayout();
 			// 
 			// panel1
 			// 
+			panel1.Controls.Add(buttonChangePivotColor);
+			panel1.Controls.Add(buttonResetPivot);
+			panel1.Controls.Add(buttonApplyPivot);
 			panel1.Controls.Add(checkBoxEditPivot);
 			panel1.Controls.Add(buttonExportSprite);
 			panel1.Controls.Add(buttonZoomInSprite);
@@ -50,6 +56,26 @@
 			panel1.Name = "panel1";
 			panel1.Size = new System.Drawing.Size(912, 42);
 			panel1.TabIndex = 2;
+			// 
+			// buttonResetPivot
+			// 
+			buttonResetPivot.Location = new System.Drawing.Point(316, 6);
+			buttonResetPivot.Name = "buttonResetPivot";
+			buttonResetPivot.Size = new System.Drawing.Size(75, 30);
+			buttonResetPivot.TabIndex = 7;
+			buttonResetPivot.Text = "Reset";
+			buttonResetPivot.UseVisualStyleBackColor = true;
+			buttonResetPivot.Click += buttonResetPivot_Click;
+			// 
+			// buttonApplyPivot
+			// 
+			buttonApplyPivot.Location = new System.Drawing.Point(235, 6);
+			buttonApplyPivot.Name = "buttonApplyPivot";
+			buttonApplyPivot.Size = new System.Drawing.Size(75, 30);
+			buttonApplyPivot.TabIndex = 6;
+			buttonApplyPivot.Text = "Apply";
+			buttonApplyPivot.UseVisualStyleBackColor = true;
+			buttonApplyPivot.Click += buttonApplyPivot_Click;
 			// 
 			// checkBoxEditPivot
 			// 
@@ -115,6 +141,16 @@
 			imageBoxSprite.TextAlign = System.Drawing.ContentAlignment.TopLeft;
 			imageBoxSprite.MouseDown += imageBoxSprite_MouseDown;
 			// 
+			// buttonChangePivotColor
+			// 
+			buttonChangePivotColor.Location = new System.Drawing.Point(397, 6);
+			buttonChangePivotColor.Name = "buttonChangePivotColor";
+			buttonChangePivotColor.Size = new System.Drawing.Size(75, 30);
+			buttonChangePivotColor.TabIndex = 8;
+			buttonChangePivotColor.Text = "Pivot Color";
+			buttonChangePivotColor.UseVisualStyleBackColor = true;
+			buttonChangePivotColor.Click += buttonChangePivotColor_Click;
+			// 
 			// SpriteControl
 			// 
 			AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -136,5 +172,8 @@
 		private System.Windows.Forms.Button buttonZoomOutSprite;
 		private Cyotek.Windows.Forms.ImageBox imageBoxSprite;
 		private System.Windows.Forms.CheckBox checkBoxEditPivot;
+		private System.Windows.Forms.Button buttonApplyPivot;
+		private System.Windows.Forms.Button buttonResetPivot;
+		private System.Windows.Forms.Button buttonChangePivotColor;
 	}
 }

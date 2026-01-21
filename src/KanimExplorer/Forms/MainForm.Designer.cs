@@ -61,8 +61,8 @@
 			tabPageAtlas = new System.Windows.Forms.TabPage();
 			tabPageSprite = new System.Windows.Forms.TabPage();
 			propertyGrid = new System.Windows.Forms.PropertyGrid();
-			imageListIcons = new System.Windows.Forms.ImageList(components);
 			label2 = new System.Windows.Forms.Label();
+			imageListIcons = new System.Windows.Forms.ImageList(components);
 			menuStrip1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)splitContainerOuter).BeginInit();
 			splitContainerOuter.Panel2.SuspendLayout();
@@ -290,12 +290,13 @@
 			tabControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			tabControl.ItemSize = new System.Drawing.Size(100, 22);
 			tabControl.Location = new System.Drawing.Point(0, 0);
-			tabControl.Margin = new System.Windows.Forms.Padding(0, 0, 0, 0);
+			tabControl.Margin = new System.Windows.Forms.Padding(0);
 			tabControl.Name = "tabControl";
 			tabControl.SelectedIndex = 0;
 			tabControl.Size = new System.Drawing.Size(756, 961);
 			tabControl.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
 			tabControl.TabIndex = 1;
+			tabControl.TabIndexChanged += tabControl_TabIndexChanged;
 			// 
 			// tabPageAtlas
 			// 
@@ -310,7 +311,7 @@
 			// 
 			tabPageSprite.Location = new System.Drawing.Point(4, 26);
 			tabPageSprite.Name = "tabPageSprite";
-			tabPageSprite.Size = new System.Drawing.Size(648, 931);
+			tabPageSprite.Size = new System.Drawing.Size(748, 931);
 			tabPageSprite.TabIndex = 2;
 			tabPageSprite.Text = "Sprite";
 			tabPageSprite.UseVisualStyleBackColor = true;
@@ -328,14 +329,6 @@
 			propertyGrid.ToolbarVisible = false;
 			propertyGrid.PropertyValueChanged += propertyGrid_PropertyValueChanged;
 			// 
-			// imageListIcons
-			// 
-			imageListIcons.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-			imageListIcons.ImageStream = (System.Windows.Forms.ImageListStreamer)resources.GetObject("imageListIcons.ImageStream");
-			imageListIcons.TransparentColor = System.Drawing.Color.Transparent;
-			imageListIcons.Images.SetKeyName(0, "build");
-			imageListIcons.Images.SetKeyName(1, "sprite");
-			// 
 			// label2
 			// 
 			label2.Dock = System.Windows.Forms.DockStyle.Top;
@@ -345,6 +338,14 @@
 			label2.TabIndex = 3;
 			label2.Text = "Symbol Inspector:";
 			label2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// imageListIcons
+			// 
+			imageListIcons.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
+			imageListIcons.ImageStream = (System.Windows.Forms.ImageListStreamer)resources.GetObject("imageListIcons.ImageStream");
+			imageListIcons.TransparentColor = System.Drawing.Color.Transparent;
+			imageListIcons.Images.SetKeyName(0, "build");
+			imageListIcons.Images.SetKeyName(1, "sprite");
 			// 
 			// MainForm
 			// 

@@ -25,7 +25,11 @@ namespace KanimExplorer.Controls
 
 		private readonly ILogger _log = KanimLib.Logging.Factory.CreateLogger("SpriteControl");
 
+		private bool _resettingUI = false;
+
 		private SelectionContext _ctx = SelectionContext.None;
+		private float _temporaryPivotX = float.NaN;
+		private float _temporaryPivotY = float.NaN;
 
 		private Color _pivotColor = Color.Yellow;
 		public Color PivotColor
@@ -50,6 +54,9 @@ namespace KanimExplorer.Controls
 				if (_frame != value)
 				{
 					_frame = value;
+					_temporaryPivotX = float.NaN;
+					_temporaryPivotY = float.NaN;
+					ResetMouseContext();
 					OnFrameUpdated();
 				}
 			}
@@ -62,8 +69,17 @@ namespace KanimExplorer.Controls
 			InitializeComponent();
 		}
 
+		public void ResetMouseContext()
+		{
+			_resettingUI = true;
+			_ctx = SelectionContext.None;
+			checkBoxEditPivot.Checked = false;
+			_resettingUI = false;
+		}
+
 		public void OnFrameUpdated()
-		{ if (Frame == null || Frame.Sprite == null)
+		{
+			if (Frame == null || Frame.Sprite == null)
 			{
 				imageBoxSprite.Text = "No sprite selected.";
 				imageBoxSprite.Image = null;
@@ -74,8 +90,16 @@ namespace KanimExplorer.Controls
 
 			Bitmap spriteBmp = Frame.Sprite.Image;
 
-			int pivotX = (int)Math.Round(Frame.SpriterPivotX * spriteBmp.Width);
-			int pivotY = (int)Math.Round(Frame.SpriterPivotY * spriteBmp.Height);
+			float tempPivotX = Frame.SpriterPivotX;
+			float tempPivotY = Frame.SpriterPivotY;
+			if (!float.IsNaN(_temporaryPivotX) && !float.IsNaN(_temporaryPivotY))
+			{
+				tempPivotX = _temporaryPivotX;
+				tempPivotY = _temporaryPivotY;
+			}
+
+			int pivotX = (int)Math.Round(tempPivotX * spriteBmp.Width);
+			int pivotY = (int)Math.Round(tempPivotY * spriteBmp.Height);
 
 			Bitmap bmp = (Bitmap)spriteBmp.Clone();
 			using (Graphics g = Graphics.FromImage(bmp))
@@ -105,13 +129,19 @@ namespace KanimExplorer.Controls
 
 		private void checkBoxEditPivot_CheckedChanged(object sender, EventArgs e)
 		{
+			if (_resettingUI) return;
+
 			if (checkBoxEditPivot.Checked)
 			{
 				_ctx = SelectionContext.SetPivot;
+				OnFrameUpdated();
 			}
 			else
 			{
 				_ctx = SelectionContext.None;
+				_temporaryPivotX = float.NaN;
+				_temporaryPivotY = float.NaN;
+				OnFrameUpdated();
 			}
 		}
 
@@ -128,10 +158,51 @@ namespace KanimExplorer.Controls
 			if (_ctx == SelectionContext.SetPivot)
 			{
 				PointF imagePos = imageBoxSprite.PointToImage(e.Location);
-				Frame.SpriterPivotX = imagePos.X / Frame.SpriteWidth;
-				Frame.SpriterPivotY = imagePos.Y / Frame.SpriteHeight;
-				FramePivotUpdated?.Invoke(this, EventArgs.Empty);
+				_temporaryPivotX = imagePos.X / Frame.SpriteWidth;
+				_temporaryPivotY = imagePos.Y / Frame.SpriteHeight;
+				buttonApplyPivot.Enabled = true;
+				buttonResetPivot.Enabled = true;
 				OnFrameUpdated();
+			}
+		}
+
+		private void buttonApplyPivot_Click(object sender, EventArgs e)
+		{
+			if (Frame == null) return;
+			if (float.IsNaN(_temporaryPivotX)) return;
+			if (float.IsNaN(_temporaryPivotY)) return;
+
+			Frame.SpriterPivotX = _temporaryPivotX;
+			Frame.SpriterPivotY = _temporaryPivotY;
+			FramePivotUpdated?.Invoke(this, EventArgs.Empty);
+			OnFrameUpdated();
+
+			_temporaryPivotX = float.NaN;
+			_temporaryPivotY = float.NaN;
+			buttonApplyPivot.Enabled = false;
+			buttonResetPivot.Enabled = false;
+		}
+
+		private void buttonResetPivot_Click(object sender, EventArgs e)
+		{
+			if (Frame == null) return;
+			_temporaryPivotX = float.NaN;
+			_temporaryPivotY = float.NaN;
+			OnFrameUpdated();
+
+			buttonApplyPivot.Enabled = false;
+			buttonResetPivot.Enabled = false;
+		}
+
+		private void buttonChangePivotColor_Click(object sender, EventArgs e)
+		{
+			ColorDialog dlg = new ColorDialog()
+			{
+				Color = _pivotColor
+			};
+			if (dlg.ShowDialog() == DialogResult.OK)
+			{
+				PivotColor = dlg.Color;
 			}
 		}
 	}
