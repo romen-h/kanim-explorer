@@ -98,8 +98,8 @@ namespace KanimExplorer.Controls
 				tempPivotY = _temporaryPivotY;
 			}
 
-			int pivotX = (int)Math.Round(tempPivotX * spriteBmp.Width);
-			int pivotY = (int)Math.Round(tempPivotY * spriteBmp.Height);
+			int pivotX = (int)(tempPivotX * Frame.SpriteWidth);
+			int pivotY = (int)(tempPivotY * Frame.SpriteHeight);
 
 			Bitmap bmp = (Bitmap)spriteBmp.Clone();
 			using (Graphics g = Graphics.FromImage(bmp))

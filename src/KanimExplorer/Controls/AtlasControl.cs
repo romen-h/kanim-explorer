@@ -95,7 +95,12 @@ namespace KanimExplorer.Controls
 			{
 				imageBoxAtlas.VirtualSize = Size.Empty;
 				imageBoxAtlas.Text = "No texture loaded.";
+				imageBoxAtlas.Invalidate();
 				return;
+			}
+			else
+			{
+				imageBoxAtlas.Text = null;
 			}
 			
 			imageBoxAtlas.VirtualSize = _texture.Size;

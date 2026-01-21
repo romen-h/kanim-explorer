@@ -220,10 +220,10 @@ namespace KanimLib.KanimModel
 				uv_y2 = UV_Y1 + 1.0f / texHeight;
 			}
 
-			int left = Math.Max(0, (int)(UV_X1 * texWidth));
-			int top = Math.Max(0, (int)(UV_Y1 * texHeight));
-			int right = Math.Min(texWidth, (int)(uv_x2 * texWidth));
-			int bottom = Math.Min(texHeight, (int)(uv_y2 * texHeight));
+			int left = Math.Max(0, (int)Math.Floor(UV_X1 * texWidth));
+			int top = Math.Max(0, (int)Math.Floor(UV_Y1 * texHeight));
+			int right = Math.Min(texWidth, (int)Math.Ceiling(uv_x2 * texWidth));
+			int bottom = Math.Min(texHeight, (int)Math.Ceiling(uv_y2 * texHeight));
 
 			return Rectangle.FromLTRB(left, top, right, bottom);
 		}
