@@ -43,7 +43,10 @@ namespace KanimExplorer.Controls
 
 		public void SetKanim(KanimPackage data)
 		{
-			_data = data;
+			if (_data != data)
+			{
+				_data = data;
+			}
 			RebuildTree();
 		}
 
@@ -52,7 +55,11 @@ namespace KanimExplorer.Controls
 			treeView.BeginUpdate();
 			treeView.Nodes.Clear();
 
-			if (_data == null) return;
+			if (_data == null)
+			{
+				treeView.EndUpdate();
+				return;
+			}
 
 			if (_data.Build != null)
 			{

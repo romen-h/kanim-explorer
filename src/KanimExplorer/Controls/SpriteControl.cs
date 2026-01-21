@@ -56,7 +56,7 @@ namespace KanimExplorer.Controls
 					_frame = value;
 					_temporaryPivotX = float.NaN;
 					_temporaryPivotY = float.NaN;
-					ResetMouseContext();
+					ResetPivotEditing();
 					OnFrameUpdated();
 				}
 			}
@@ -69,11 +69,13 @@ namespace KanimExplorer.Controls
 			InitializeComponent();
 		}
 
-		public void ResetMouseContext()
+		public void ResetPivotEditing()
 		{
 			_resettingUI = true;
 			_ctx = SelectionContext.None;
 			checkBoxEditPivot.Checked = false;
+			buttonApplyPivot.Enabled = false;
+			buttonResetPivot.Enabled = false;
 			_resettingUI = false;
 		}
 
@@ -141,6 +143,8 @@ namespace KanimExplorer.Controls
 				_ctx = SelectionContext.None;
 				_temporaryPivotX = float.NaN;
 				_temporaryPivotY = float.NaN;
+				buttonApplyPivot.Enabled = false;
+				buttonResetPivot.Enabled = false;
 				OnFrameUpdated();
 			}
 		}

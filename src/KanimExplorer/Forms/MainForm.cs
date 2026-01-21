@@ -67,7 +67,12 @@ namespace KanimExplorer.Forms
 		/// </summary>
 		private void DocumentManager_LoadedTextureChanged(object sender, EventArgs e)
 		{
-			atlasControl.Texture = DocumentManager.Instance.Data?.Texture;
+			var texture = DocumentManager.Instance.Data?.Texture;
+			atlasControl.Texture = texture;
+			if (texture == null)
+			{
+				spriteControl.Frame = null;
+			}
 			ResolveControls();
 		}
 
@@ -77,7 +82,12 @@ namespace KanimExplorer.Forms
 		private void DocumentManager_LoadedBuildChanged(object sender, EventArgs e)
 		{
 			kanimDataTreeControl.SetKanim(DocumentManager.Instance.Data);
-			atlasControl.Build = DocumentManager.Instance.Data?.Build;
+			var build = DocumentManager.Instance.Data?.Build;
+			atlasControl.Build = build;
+			if (build == null)
+			{
+				spriteControl.Frame = null;
+			}
 			ResolveControls();
 		}
 
@@ -640,7 +650,7 @@ namespace KanimExplorer.Forms
 
 		private void tabControl_TabIndexChanged(object sender, EventArgs e)
 		{
-			spriteControl.ResetMouseContext();
+			spriteControl.ResetPivotEditing();
 		}
 	}
 }
