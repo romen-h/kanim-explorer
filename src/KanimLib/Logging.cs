@@ -27,6 +27,7 @@ namespace KanimLib
 				kanimal.KanimReader.Logger = s_loggerFactory.CreateLogger("Kanimal.KanimReader");
 				kanimal.KanimWriter.Logger = s_loggerFactory.CreateLogger("Kanimal.KanimWriter");
 				kanimal.ScmlReader.Logger = s_loggerFactory.CreateLogger("Kanimal.ScmlReader");
+				kanimal.ScmlWriter.Logger = s_loggerFactory.CreateLogger("Kanimal.ScmlWriter");
 				kanimal.TexturePacker.Logger = s_loggerFactory.CreateLogger("Kanimal.TexturePacker");
 				kanimal.Writer.Logger = s_loggerFactory.CreateLogger("Kanimal.AbstractWriter");
 			}
