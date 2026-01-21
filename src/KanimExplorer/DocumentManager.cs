@@ -193,20 +193,17 @@ namespace KanimExplorer
 		{
 			using (_log.BeginFunction())
 			{
+				_loadedTextureFile = null;
 				if (Data == null) return;
-				
+				if (Data.Texture == null) return;
+
 				var texture = Data.Texture;
+				Data.SetTexture(null);
+				_log.LogTrace("Disposing texture...");
+				texture.Dispose();
 
-				if (texture != null)
-				{
-					Data.SetTexture(null);
-					_log.LogTrace("Disposing texture...");
-					texture.Dispose();
+				_log.LogInformation("Closed texture.");
 
-					_loadedTextureFile = null;
-					_log.LogInformation("Closed texture.");
-				}
-					
 				_log.LogTrace("Invoking PropertyChanged...");
 				InvokeLoadedTextureChanged();
 			}
@@ -247,10 +244,12 @@ namespace KanimExplorer
 		{
 			using (_log.BeginFunction())
 			{
+				_loadedBuildFile = null;
+
 				if (Data == null) return;
+				if (Data.Build == null) return;
 				
 				Data.SetBuild(null);
-				_loadedBuildFile = null;
 				_log.LogInformation("Closed build.");
 
 				_log.LogTrace("Invoking PropertyChanged...");
@@ -295,6 +294,7 @@ namespace KanimExplorer
 			using (_log.BeginFunction())
 			{
 				if (Data == null) return;
+				if (Data.Anim == null) return;
 
 				Data.SetAnim(null);
 				_loadedAnimFile = null;
