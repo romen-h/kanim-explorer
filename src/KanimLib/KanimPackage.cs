@@ -96,7 +96,7 @@ namespace KanimLib
 			_sprites = sprites;
 		}
 		
-		public void SetTexture(Bitmap texture)
+		public void SetTexture(Bitmap texture, bool invoke = true)
 		{
 			Texture = texture;
 
@@ -118,10 +118,14 @@ namespace KanimLib
 					}
 				}
 			}
-			TextureChanged?.Invoke(this, EventArgs.Empty);
+			
+			if (invoke)
+			{
+				TextureChanged?.Invoke(this, EventArgs.Empty);
+			}
 		}
 		
-		public void SetBuild(KBuild build)
+		public void SetBuild(KBuild build, bool invoke = true)
 		{
 			if (Build != null)
 			{
@@ -153,10 +157,14 @@ namespace KanimLib
 					}
 				}
 			}
-			BuildChanged?.Invoke(this, EventArgs.Empty);
+			
+			if (invoke)
+			{
+				BuildChanged?.Invoke(this, EventArgs.Empty);
+			}
 		}
 		
-		public void SetAnim(KAnim anim)
+		public void SetAnim(KAnim anim, bool invoke = true)
 		{
 			if (Anim != null)
 			{
@@ -170,7 +178,10 @@ namespace KanimLib
 				Anim.Parent = this;
 			}
 			
-			AnimChanged?.Invoke(this, EventArgs.Empty);
+			if (invoke)
+			{
+				AnimChanged?.Invoke(this, EventArgs.Empty);
+			}
 		}
 		
 		internal void RebuildAtlas()

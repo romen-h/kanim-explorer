@@ -90,30 +90,28 @@ namespace KanimExplorer
 
 		internal bool OpenConvertedData(KanimPackage data)
 		{
-			using (_log.BeginFunction())
+			using var function = _log.BeginFunction();
+			try
 			{
-				try
-				{
-					if (data == null) throw new ArgumentNullException(nameof(data));
-					if (Data != null) throw new InvalidOperationException("Kanim data is already loaded.");
+				if (data == null) throw new ArgumentNullException(nameof(data));
+				if (Data != null) throw new InvalidOperationException("Kanim data is already loaded.");
 
-					Data = data;
-					_loadedTextureFile = data.HasTexture ? string.Empty : null;
-					_loadedBuildFile = data.HasBuild ? string.Empty : null;
-					_loadedAnimFile = data.HasAnim ? string.Empty : null;
-					_log.LogInformation("Opened kanim data.");
-				}
-				catch (Exception ex)
-				{
-					_log.LogError(ex, "Failed to open kanim data.");
-					return false;
-				}
-
-				InvokeLoadedTextureChanged();
-				InvokeLoadedBuildChanged();
-				InvokeLoadedAnimChanged();
-				return true;
+				Data = data;
+				_loadedTextureFile = data.HasTexture ? string.Empty : null;
+				_loadedBuildFile = data.HasBuild ? string.Empty : null;
+				_loadedAnimFile = data.HasAnim ? string.Empty : null;
+				_log.LogInformation("Opened kanim data.");
 			}
+			catch (Exception ex)
+			{
+				_log.LogError(ex, "Failed to open kanim data.");
+				return false;
+			}
+
+			InvokeLoadedTextureChanged();
+			InvokeLoadedBuildChanged();
+			InvokeLoadedAnimChanged();
+			return true;
 		}
 
 		public static void SelectSupportedFiles(IEnumerable<string> inputFiles, out string textureFile, out string buildFile, out string animFile, out IReadOnlyList<string> invalidFiles)
@@ -158,172 +156,173 @@ namespace KanimExplorer
 
 		public bool OpenTexture(string file)
 		{
-			using (_log.BeginFunction())
-			using (_log.BeginScope(file))
+			using var function = _log.BeginFunction();
+			using var scope = _log.BeginScope(file);
+			try
 			{
-				try
+				if (_loadedTextureFile != null || Data?.Texture != null) throw new InvalidOperationException("A texture is already loaded.");
+				if (string.IsNullOrWhiteSpace(file)) throw new ArgumentNullException(nameof(file));
+				if (!File.Exists(file)) throw new ArgumentException("File does not exist.");
+
+				EnsurePackageCreated();
+
+				_log.LogTrace("Opening texture file...");
+				using (FileStream fs = new FileStream(file, FileMode.Open))
 				{
-					if (_loadedTextureFile != null || Data?.Texture != null) throw new InvalidOperationException("A texture is already loaded.");
-					if (string.IsNullOrWhiteSpace(file)) throw new ArgumentNullException(nameof(file));
-					if (!File.Exists(file)) throw new ArgumentException("File does not exist.");
-
-					EnsurePackageCreated();
-
-					_log.LogTrace("Opening texture file...");
-					using (FileStream fs = new FileStream(file, FileMode.Open))
-					{
-						Bitmap bmp = new Bitmap(fs);
-						Data.SetTexture((Bitmap)bmp.Clone());
-					}
-					_loadedTextureFile = file;
-					_log.LogInformation("Opened texture.");
+					Bitmap bmp = new Bitmap(fs);
+					Data.SetTexture((Bitmap)bmp.Clone(), false);
 				}
-				catch (Exception ex)
-				{
-					_log.LogError(ex, "Failed to open texture file.");
-					return false;
-				}
-
-				InvokeLoadedTextureChanged();
-				return true;
+				_loadedTextureFile = file;
+				_log.LogInformation("Opened texture.");
 			}
+			catch (Exception ex)
+			{
+				_log.LogError(ex, "Failed to open texture file.");
+				return false;
+			}
+
+			InvokeLoadedTextureChanged();
+			return true;
 		}
 		
 		public void CloseTexture()
 		{
-			using (_log.BeginFunction())
-			{
-				_loadedTextureFile = null;
-				if (Data == null) return;
-				if (Data.Texture == null) return;
+			using var function = _log.BeginFunction();
+			_loadedTextureFile = null;
+			if (Data == null) return;
+			if (Data.Texture == null) return;
 
-				var texture = Data.Texture;
-				Data.SetTexture(null);
-				_log.LogTrace("Disposing texture...");
-				texture.Dispose();
+			var texture = Data.Texture;
+			Data.SetTexture(null, false);
+			_log.LogTrace("Disposing texture...");
+			texture.Dispose();
 
-				_log.LogInformation("Closed texture.");
+			_log.LogInformation("Closed texture.");
 
-				_log.LogTrace("Invoking PropertyChanged...");
-				InvokeLoadedTextureChanged();
-			}
+			_log.LogTrace("Invoking PropertyChanged...");
+			InvokeLoadedTextureChanged();
 		}
 		
 		public bool OpenBuild(string file)
 		{
-			using (_log.BeginFunction())
-			using (_log.BeginScope(file))
+			using var function = _log.BeginFunction();
+			using var scope = _log.BeginScope(file);
+			try
 			{
-				try
-				{
-					if (_loadedBuildFile != null || Data?.Build != null) throw new InvalidOperationException("A build is already loaded.");
-					if (string.IsNullOrWhiteSpace(file)) throw new ArgumentNullException(nameof(file));
-					if (!File.Exists(file)) throw new ArgumentException("File does not exist.");
+				if (_loadedBuildFile != null || Data?.Build != null) throw new InvalidOperationException("A build is already loaded.");
+				if (string.IsNullOrWhiteSpace(file)) throw new ArgumentNullException(nameof(file));
+				if (!File.Exists(file)) throw new ArgumentException("File does not exist.");
 					
-					EnsurePackageCreated();
+				EnsurePackageCreated();
 
-					_log.LogTrace("Opening build file...");
-					var build = KanimReader.ReadBuild(file);
-					Data.SetBuild(build);
+				_log.LogTrace("Opening build file...");
+				var build = KanimReader.ReadBuild(file);
+				Data.SetBuild(build, false);
 					
-					_loadedBuildFile = file;
-					_log.LogInformation("Opened build.");
-				}
-				catch (Exception ex)
-				{
-					_log.LogError(ex, $"Failed to open build file: {file}");
-					return false;
-				}
-
-				InvokeLoadedBuildChanged();
-				return true;
+				_loadedBuildFile = file;
+				_log.LogInformation("Opened build.");
 			}
+			catch (Exception ex)
+			{
+				_log.LogError(ex, $"Failed to open build file: {file}");
+				return false;
+			}
+
+			InvokeLoadedBuildChanged();
+			return true;
 		}
 		
 		public void CloseBuild()
 		{
-			using (_log.BeginFunction())
-			{
-				_loadedBuildFile = null;
+			using var function = _log.BeginFunction();
+			_loadedBuildFile = null;
 
-				if (Data == null) return;
-				if (Data.Build == null) return;
+			if (Data == null) return;
+			if (Data.Build == null) return;
 				
-				Data.SetBuild(null);
-				_log.LogInformation("Closed build.");
+			Data.SetBuild(null, false);
+			_log.LogInformation("Closed build.");
 
-				_log.LogTrace("Invoking PropertyChanged...");
+			_log.LogTrace("Invoking PropertyChanged...");
 				
-				InvokeLoadedBuildChanged();
-			}
+			InvokeLoadedBuildChanged();
 		}
 		
 		public bool OpenAnim(string file)
 		{
-			using (_log.BeginFunction())
-			using (_log.BeginScope(file))
+			using var function = _log.BeginFunction();
+			using var scope = _log.BeginScope(file);
+			try
 			{
-				try
-				{
-					if (_loadedAnimFile != null || Data?.Anim != null) throw new InvalidOperationException("An anim bank is already loaded.");
-					if (string.IsNullOrWhiteSpace(file)) throw new ArgumentNullException(nameof(file));
-					if (!File.Exists(file)) throw new ArgumentException("File does not exist.");
+				if (_loadedAnimFile != null || Data?.Anim != null) throw new InvalidOperationException("An anim bank is already loaded.");
+				if (string.IsNullOrWhiteSpace(file)) throw new ArgumentNullException(nameof(file));
+				if (!File.Exists(file)) throw new ArgumentException("File does not exist.");
 
-					EnsurePackageCreated();
+				EnsurePackageCreated();
 
-					_log.LogTrace("Opening anim file...");
-					var anim = KanimReader.ReadAnim(file);
-					Data.SetAnim(anim);
+				_log.LogTrace("Opening anim file...");
+				var anim = KanimReader.ReadAnim(file);
+				Data.SetAnim(anim, false);
 
-					_loadedAnimFile = file;
-					_log.LogInformation("Opened anim bank.");
-				}
-				catch (Exception ex)
-				{
-					_log.LogError(ex, $"Failed to open anim file: {file}");
-					return false;
-				}
-
-				InvokeLoadedAnimChanged();
-				return true;
+				_loadedAnimFile = file;
+				_log.LogInformation("Opened anim bank.");
 			}
+			catch (Exception ex)
+			{
+				_log.LogError(ex, $"Failed to open anim file: {file}");
+				return false;
+			}
+
+			InvokeLoadedAnimChanged();
+			return true;
 		}
 		
 		public void CloseAnim()
 		{
-			using (_log.BeginFunction())
-			{
-				if (Data == null) return;
-				if (Data.Anim == null) return;
+			using var function = _log.BeginFunction();
+			
+			if (Data == null) return;
+			if (Data.Anim == null) return;
 
-				Data.SetAnim(null);
-				_loadedAnimFile = null;
-				_log.LogInformation("Closed anim bank.");
+			Data.SetAnim(null, false);
+			_loadedAnimFile = null;
+			_log.LogInformation("Closed anim bank.");
 				
-				InvokeLoadedAnimChanged();
-			}
+			InvokeLoadedAnimChanged();
 		}
 		
 		public void CloseEverything()
 		{
-			CloseTexture();
-			CloseBuild();
-			CloseAnim();
+			using var function = _log.BeginFunction();
+
+			_loadedTextureFile = null;
+			_loadedBuildFile = null;
+			_loadedAnimFile = null;
+
+			if (Data == null) return;
+			
+			if (Data.Texture != null)
+			{
+				Data.Texture.Dispose();
+			}
+			
 			Data = null;
+			
+			InvokeLoadedTextureChanged();
+			InvokeLoadedBuildChanged();
+			InvokeLoadedAnimChanged();
 		}
 		
 		private void EnsurePackageCreated()
 		{
-			using (_log.BeginFunction())
+			using var function = _log.BeginFunction();
+			if (Data == null)
 			{
-				if (Data == null)
-				{
-					Data = new KanimPackage();
-					_log.LogTrace("Created new KanimPackage because nothing was loaded yet.");
-					Data.TextureChanged += Data_TextureChanged;
-					Data.BuildChanged += Data_BuildChanged;
-					Data.AnimChanged += Data_AnimChanged;
-				}
+				Data = new KanimPackage();
+				_log.LogTrace("Created new KanimPackage because nothing was loaded yet.");
+				Data.TextureChanged += Data_TextureChanged;
+				Data.BuildChanged += Data_BuildChanged;
+				Data.AnimChanged += Data_AnimChanged;
 			}
 		}
 		
