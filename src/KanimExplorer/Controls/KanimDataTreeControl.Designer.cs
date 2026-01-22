@@ -52,6 +52,7 @@
 			treeView.SelectedImageIndex = 0;
 			treeView.Size = new System.Drawing.Size(334, 450);
 			treeView.TabIndex = 0;
+			treeView.BeforeExpand += treeView_BeforeExpand;
 			treeView.AfterSelect += treeView_AfterSelect;
 			// 
 			// imageList

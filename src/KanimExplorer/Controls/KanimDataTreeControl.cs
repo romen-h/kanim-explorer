@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 using KanimExplorer.Forms;
 using KanimExplorer.Logging;
@@ -102,44 +103,90 @@ namespace KanimExplorer.Controls
 				animNode.ImageIndex = 3;
 				animNode.SelectedImageIndex = 3;
 				animNode.Tag = _data.Anim;
-
-				foreach (KAnimBank bank in _data.Anim.Banks)
-				{
-					TreeNode bankNode = new TreeNode(bank.Name);
-					bankNode.ImageIndex = 4;
-					bankNode.SelectedImageIndex = 4;
-					bankNode.Tag = bank;
-
-					for (int i = 0; i < bank.Frames.Count; i++)
-					{
-						KAnimFrame frame = bank.Frames[i];
-						TreeNode frameNode = new TreeNode($"Frame {i}");
-						frameNode.ImageIndex = 5;
-						frameNode.SelectedImageIndex = 5;
-						frameNode.Tag = frame;
-
-						for (int j = 0; j < frame.Elements.Count; j++)
-						{
-							KAnimElement element = frame.Elements[j];
-							TreeNode elementNode = new TreeNode($"Element {j}");
-							elementNode.ImageIndex = 6;
-							elementNode.SelectedImageIndex = 6;
-							elementNode.Tag = element;
-
-							frameNode.Nodes.Add(elementNode);
-						}
-
-						bankNode.Nodes.Add(frameNode);
-					}
-
-					animNode.Nodes.Add(bankNode);
-				}
+				animNode.Nodes.Add(new TreeNode("Placeholder Bank") { Name = "placeholder" });
 
 				treeView.Nodes.Add(animNode);
 			}
 
 			_rebuilding = false;
 			treeView.EndUpdate();
+		}
+
+		private void LazyLoad(TreeNode node)
+		{
+			if (node.Nodes.Count == 0) return;
+			if (node.FirstNode.Name != "placeholder") return;
+
+			treeView.BeginUpdate();
+			node.Nodes.Clear();
+			TreeNode[] children = null;
+			switch (node.Tag)
+			{
+				case KAnim anim:
+					children = MakeChildNodes(anim).ToArray();
+					break;
+
+				case KAnimBank bank:
+					children = MakeChildNodes(bank).ToArray();
+					break;
+
+				case KAnimFrame frame:
+					children = MakeChildNodes(frame).ToArray();
+					break;
+			}
+
+			if (children != null)
+			{
+				node.Nodes.AddRange(children);
+			}
+
+			treeView.EndUpdate();
+		}
+
+		private IEnumerable<TreeNode> MakeChildNodes(KAnim anim)
+		{
+			foreach (KAnimBank bank in anim.Banks)
+			{
+				TreeNode node = new TreeNode(bank.Name)
+				{
+					ImageIndex = 4,
+					SelectedImageIndex = 4,
+					Tag = bank
+				};
+				node.Nodes.Add(new TreeNode("Placeholder Bank") { Name = "placeholder" });
+				yield return node;
+			}
+		}
+
+		private IEnumerable<TreeNode> MakeChildNodes(KAnimBank bank)
+		{
+			for (int i = 0; i < bank.Frames.Count; i++)
+			{
+				KAnimFrame frame = bank.Frames[i];
+				TreeNode node = new TreeNode($"Frame {i}")
+				{
+					ImageIndex = 5,
+					SelectedImageIndex = 5,
+					Tag = frame
+				};
+				node.Nodes.Add(new TreeNode("Placeholder Frame") { Name = "placeholder" });
+				yield return node;
+			}
+		}
+
+		private IEnumerable<TreeNode> MakeChildNodes(KAnimFrame animFrame)
+		{
+			for (int j = 0; j < animFrame.Elements.Count; j++)
+			{
+				KAnimElement element = animFrame.Elements[j];
+				TreeNode node = new TreeNode($"Element {j}")
+				{
+					ImageIndex = 6,
+					SelectedImageIndex = 6,
+					Tag = element
+				};
+				yield return node;
+			}
 		}
 
 		private void SelectNode(string key)
@@ -176,6 +223,14 @@ namespace KanimExplorer.Controls
 			}
 		}
 
+		private void treeView_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+		{
+			if (e.Node == null) return;
+			if (e.Node.Nodes.Count == 0 || e.Node.FirstNode == null) return;
+			
+			LazyLoad(e.Node);
+		}
+
 		private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			if (_rebuilding) return;
@@ -208,11 +263,6 @@ namespace KanimExplorer.Controls
 				case KFrame:
 					//buttonRemove.Visible = true;
 					buttonReplaceSprite.Visible = true;
-					break;
-
-				case KAnim:
-					//buttonRemove.Visible = true;
-					//buttonRename.Visible = true;
 					break;
 			}
 
@@ -360,5 +410,7 @@ namespace KanimExplorer.Controls
 				SelectNode(selectionKey);
 			}
 		}
+
+		
 	}
 }
