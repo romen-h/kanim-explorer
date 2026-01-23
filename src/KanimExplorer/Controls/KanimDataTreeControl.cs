@@ -255,7 +255,7 @@ namespace KanimExplorer.Controls
 
 				case KSymbol:
 					//buttonAdd.Visible = true;
-					//buttonRemove.Visible = true;
+					buttonRemove.Visible = true;
 					buttonRename.Visible = true;
 					buttonDuplicate.Visible = true;
 					break;
@@ -308,6 +308,7 @@ namespace KanimExplorer.Controls
 			{
 				case KSymbol symbol:
 					// TODO: Remove a symbol
+					action = () => ModalTasks.RemoveSymbol(_data, symbol.Name, _log);
 					break;
 
 				case KFrame frame:

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -37,7 +38,7 @@ namespace KanimLib
 		public static void AutoFlagSymbols(KanimPackage pkg)
 		{
 			if (pkg == null) throw new ArgumentNullException(nameof(pkg));
-			if (pkg.Build == null) throw new InvalidOperationException("No build data is loaded yet.");
+			if (pkg.Build == null) throw new InvalidOperationException("No build data is loaded.");
 			
 			using (s_log.BeginFunction());
 			
@@ -62,7 +63,7 @@ namespace KanimLib
 		public static void RenameSymbol(KanimPackage pkg, string oldSymbolName, string newSymbolName)
 		{
 			if (pkg == null) throw new ArgumentNullException(nameof(pkg));
-			if (pkg.Build == null && pkg.Anim == null) throw new InvalidOperationException("No build or animation data is loaded yet.");
+			if (pkg.Build == null && pkg.Anim == null) throw new InvalidOperationException("No build or animation data is loaded.");
 			if (oldSymbolName == null) throw new ArgumentNullException(nameof(oldSymbolName));
 			if (newSymbolName == null) throw new ArgumentNullException(nameof(newSymbolName));
 			
@@ -122,8 +123,8 @@ namespace KanimLib
 		public static void DuplicateSymbols(KanimPackage pkg, IReadOnlyList<string> symbolsToDuplicate, IReadOnlyList<string> targetBanks, string prefix, string suffix, int zOffset, bool invisible)
 		{
 			if (pkg == null) throw new ArgumentNullException(nameof(pkg));
-			if (!pkg.HasBuild) throw new ArgumentException("No build data.", nameof(pkg));
-			if (!pkg.HasAnim) throw new ArgumentException("No animation data.", nameof(pkg));
+			if (!pkg.HasBuild) throw new InvalidOperationException("No build data is loaded.");
+			if (!pkg.HasAnim) throw new InvalidOperationException("No animation data is loaded.");
 
 			if (symbolsToDuplicate == null || symbolsToDuplicate.Count == 0) throw new ArgumentException("No symbols to duplicate.", nameof(symbolsToDuplicate));
 			if (targetBanks == null || targetBanks.Count == 0) throw new ArgumentException("No target animations.", nameof(targetBanks));
@@ -160,6 +161,7 @@ namespace KanimLib
 							var originalFrame = original.Frames[i];
 							var duplicatedFrame = duplicated.Frames[i];
 							duplicatedFrame.Sprite = new Sprite(duplicatedFrame, (Bitmap)originalFrame.Sprite.Image.Clone());
+							pkg.AddSprite(duplicatedFrame.Sprite);
 						}
 					}
 					pkg.Build.InsertSymbolAfter(duplicated, original);
@@ -167,6 +169,8 @@ namespace KanimLib
 					pkg.Anim.SymbolNames[duplicated.Hash] = duplicated.Name;
 				}
 			}
+			
+			pkg.RebuildAtlas();
 
 			foreach (string targetBank in targetBanks)
 			{
@@ -231,13 +235,45 @@ namespace KanimLib
 			}
 		}
 		
+		public static void DeleteSymbol(KanimPackage pkg, string symbolName, bool inBuild, bool inAnims)
+		{
+			ArgumentNullException.ThrowIfNull(pkg);
+			ArgumentNullException.ThrowIfNull(symbolName);
+			if (!inBuild && !inAnims) throw new ArgumentException("inBuild and inAnims arguments are both false.");
+			if (inBuild && pkg.Build == null) throw new InvalidOperationException("No build data is loaded.");
+			if (inAnims && pkg.Anim == null) throw new InvalidOperationException("No anim data is loaded.");
+			
+			if (inBuild)
+			{
+				KSymbol symbolToRemove = pkg.Build.GetSymbol(symbolName);
+				if (symbolToRemove == null) return; // Symbol doesn't exist anyway
+				
+				foreach (var frame in symbolToRemove.Frames)
+				{
+					if (frame.Sprite == null) continue;
+					pkg.RemoveSprite(frame.Sprite);
+				}
+				
+				pkg.Build.Symbols.Remove(symbolToRemove);
+				pkg.Build.SymbolCount = pkg.Build.Symbols.Count;
+				pkg.Build.SymbolNames.Remove(symbolToRemove.Hash);
+				
+				pkg.RebuildAtlas();
+			}
+			
+			if (inAnims)
+			{
+				// TODO
+			}
+		}
+		
 		public static void ReplaceSprite(KanimPackage pkg, KFrame frame, Bitmap newSprite, bool adjustForPadding)
 		{
 			ArgumentNullException.ThrowIfNull(pkg);
 			ArgumentNullException.ThrowIfNull(frame);
 			ArgumentNullException.ThrowIfNull(newSprite);
-			if (pkg.Texture == null) throw new InvalidOperationException("No texture is loaded yet.");
-			if (pkg.Build == null) throw new InvalidOperationException("No build data is loaded yet.");
+			if (pkg.Texture == null) throw new InvalidOperationException("No texture is loaded.");
+			if (pkg.Build == null) throw new InvalidOperationException("No build data is loaded.");
 
 			Debug.Assert(frame.Sprite != null);
 			

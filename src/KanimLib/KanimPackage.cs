@@ -194,5 +194,10 @@ namespace KanimLib
 		{
 			_sprites.Add(sprite);
 		}
+		
+		internal void RemoveSprite(Sprite sprite)
+		{
+			_sprites.Remove(sprite);
+		}
 	}
 }

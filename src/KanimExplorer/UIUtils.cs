@@ -13,8 +13,10 @@ namespace KanimExplorer
 	{
 		internal static bool TryWithErrorMessage(Func<bool> func, string actionContext, ILogger log = null, [CallerMemberName] string callingFunctionName = null)
 		{
-			if (callingFunctionName == null) throw new ArgumentNullException(nameof(callingFunctionName)); // This should never throw
-			
+			ArgumentNullException.ThrowIfNull(func);
+			ArgumentNullException.ThrowIfNull(actionContext);
+			ArgumentNullException.ThrowIfNull(callingFunctionName);
+
 			using (log?.BeginScope(callingFunctionName))
 			{
 				try
