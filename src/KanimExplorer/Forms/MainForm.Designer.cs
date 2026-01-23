@@ -360,6 +360,9 @@
 			Margin = new System.Windows.Forms.Padding(2);
 			Name = "MainForm";
 			Text = "Kanim Explorer";
+			Load += MainForm_Load;
+			ResizeEnd += MainForm_ResizeEnd;
+			LocationChanged += MainForm_LocationChanged;
 			DragDrop += MainForm_DragDrop;
 			DragEnter += MainForm_DragEnter;
 			menuStrip1.ResumeLayout(false);

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using KanimExplorer.Forms;
 using KanimExplorer.Logging;
+using KanimExplorer.Settings;
 using KanimLib;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Debug;
@@ -63,7 +65,7 @@ namespace KanimExplorer
 					}
 				}
 			}
-
+			
 			string programDataFolder = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
 			DataFolder = Path.Combine(programDataFolder, "KanimExplorer");
 			Directory.CreateDirectory(DataFolder);
@@ -100,11 +102,16 @@ namespace KanimExplorer
 				log.LogCritical("Critical Test.");
 			}
 #endif
+			log.LogTrace("Initializing ApplicationSettings...");
+			ApplicationSettings.SettingFilePath = Path.Combine(DataFolder, "Settings.json");
+			ApplicationSettings.Load();
+			Debug.Assert(ApplicationSettings.Instance != null);
+
 			log.LogTrace("Initializing DocumentManager...");
 			var documentManager = DocumentManager.Instance;
+			Debug.Assert(DocumentManager.Instance != null);
 			
 			log.LogTrace("Initializing main window...");
-			
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainForm());

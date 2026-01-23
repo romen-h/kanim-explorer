@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using KanimExplorer.Controls;
+using KanimExplorer.Settings;
 using KanimExplorer.Wizard;
 
 using KanimLib;
@@ -24,6 +25,8 @@ namespace KanimExplorer.Forms
 	public partial class MainForm : Form
 	{
 		private readonly ILogger _log = KanimLib.Logging.Factory.CreateLogger("MainForm");
+		
+		private bool _loaded = false;
 
 		private readonly Controls.KanimDataTreeControl kanimDataTreeControl;
 		private readonly Controls.AtlasControl atlasControl;
@@ -60,6 +63,27 @@ namespace KanimExplorer.Forms
 			DocumentManager.Instance.LoadedAnimChanged += DocumentManager_LoadedAnimChanged;
 
 			ResolveControls();
+		}
+
+		private void MainForm_Load(object sender, EventArgs e)
+		{
+			var windowState = ApplicationSettings.Instance.MainWindow;
+			
+			if (windowState.Maximized ?? false)
+			{
+				WindowState = FormWindowState.Maximized;
+			}
+			else
+			{
+				int left = windowState.Left ?? Left;
+				int top = windowState.Top ?? Top;
+				Location = new Point(left, top);
+
+				Width = windowState.Width ?? Width;
+				Height = windowState.Height ?? Height;
+			}
+			
+			_loaded = true;
 		}
 
 		/// <summary>
@@ -651,6 +675,20 @@ namespace KanimExplorer.Forms
 		private void tabControl_TabIndexChanged(object sender, EventArgs e)
 		{
 			spriteControl.ResetPivotEditing();
+		}
+
+		private void MainForm_ResizeEnd(object sender, EventArgs e)
+		{
+			if (!_loaded) return;
+			ApplicationSettings.Instance.MainWindow.Maximized = WindowState == FormWindowState.Maximized;
+			ApplicationSettings.Instance.SetMainWindowRectangle(Left, Top, Width, Height);
+		}
+
+		private void MainForm_LocationChanged(object sender, EventArgs e)
+		{
+			if (!_loaded) return;
+			ApplicationSettings.Instance.MainWindow.Maximized = WindowState == FormWindowState.Maximized;
+			ApplicationSettings.Instance.SetMainWindowRectangle(Left, Top, Width, Height);
 		}
 	}
 }
