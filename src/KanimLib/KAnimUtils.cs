@@ -35,14 +35,14 @@ namespace KanimLib
 			return anim;
 		}
 
-		public static void AutoFlagSymbols(KanimPackage pkg)
+		public static void AutoFlagSymbols(KanimPackage kanim)
 		{
-			if (pkg == null) throw new ArgumentNullException(nameof(pkg));
-			if (pkg.Build == null) throw new InvalidOperationException("No build data is loaded.");
+			ArgumentNullException.ThrowIfNull(kanim);
+			if (kanim.Build == null) throw new InvalidOperationException("No build data is loaded.");
 			
 			using (s_log.BeginFunction());
 			
-			foreach (var symbol in pkg.Build.Symbols)
+			foreach (var symbol in kanim.Build.Symbols)
 			{
 				string lowerName = symbol.Name.ToLowerInvariant();
 				
@@ -60,42 +60,42 @@ namespace KanimLib
 			}
 		}
 		
-		public static void RenameSymbol(KanimPackage pkg, string oldSymbolName, string newSymbolName)
+		public static void RenameSymbol(KanimPackage kanim, string oldSymbolName, string newSymbolName)
 		{
-			if (pkg == null) throw new ArgumentNullException(nameof(pkg));
-			if (pkg.Build == null && pkg.Anim == null) throw new InvalidOperationException("No build or animation data is loaded.");
-			if (oldSymbolName == null) throw new ArgumentNullException(nameof(oldSymbolName));
-			if (newSymbolName == null) throw new ArgumentNullException(nameof(newSymbolName));
+			ArgumentNullException.ThrowIfNull(kanim);
+			ArgumentNullException.ThrowIfNull(oldSymbolName);
+			ArgumentNullException.ThrowIfNull(newSymbolName);
+			if (kanim.Build == null && kanim.Anim == null) throw new InvalidOperationException("No build or animation data is loaded.");
 			
 			using (s_log.BeginFunction());
 			
 			int oldHash = KleiUtil.HashString(oldSymbolName);
 			int newHash = KleiUtil.HashString(newSymbolName);
 			
-			if (pkg.HasBuild)
+			if (kanim.HasBuild)
 			{
-				if (pkg.Build.SymbolExists(newSymbolName)) throw new InvalidOperationException($"A symbol with the name {newSymbolName} already exists.");
+				if (kanim.Build.SymbolExists(newSymbolName)) throw new InvalidOperationException($"A symbol with the name {newSymbolName} already exists.");
 
 				s_log.LogTrace($"Renaming {oldSymbolName} to {newSymbolName} in build.bytes...");
-				KSymbol symbolToRename = pkg.Build.GetSymbol(oldSymbolName);
+				KSymbol symbolToRename = kanim.Build.GetSymbol(oldSymbolName);
 				
 				symbolToRename.Hash = newHash;
 				
 				s_log.LogTrace("Replacing build hash dictionary entry...");
-				pkg.Build.SymbolNames.Remove(oldHash);
-				pkg.Build.SymbolNames.Add(newHash, newSymbolName);
+				kanim.Build.SymbolNames.Remove(oldHash);
+				kanim.Build.SymbolNames.Add(newHash, newSymbolName);
 			}
 			else
 			{
 				s_log.LogWarning("Current kanim data does not have a build. No changes happening to build.bytes.");
 			}
 			
-			if (pkg.HasAnim)
+			if (kanim.HasAnim)
 			{
 				s_log.LogTrace($"Renaming {oldSymbolName} to {newSymbolName} in anim.bytes...");
-				if (!pkg.HasBuild) s_log.LogWarning("There was no build data to validate symbol name. If the new symbol name already exists then animations could look incorrect.");
+				if (!kanim.HasBuild) s_log.LogWarning("There was no build data to validate symbol name. If the new symbol name already exists then animations could look incorrect.");
 				
-				foreach (var bank in pkg.Anim.Banks)
+				foreach (var bank in kanim.Anim.Banks)
 				{
 					for (int i=0; i<bank.Frames.Count; i++)
 					{
@@ -111,8 +111,8 @@ namespace KanimLib
 				}
 				
 				s_log.LogTrace("Replacing animations hash dictionary entry...");
-				pkg.Anim.SymbolNames.Remove(oldHash);
-				pkg.Anim.SymbolNames.Add(newHash, newSymbolName);
+				kanim.Anim.SymbolNames.Remove(oldHash);
+				kanim.Anim.SymbolNames.Add(newHash, newSymbolName);
 			}
 			else
 			{
@@ -120,11 +120,11 @@ namespace KanimLib
 			}
 		}
 		
-		public static void DuplicateSymbols(KanimPackage pkg, IReadOnlyList<string> symbolsToDuplicate, IReadOnlyList<string> targetBanks, string prefix, string suffix, int zOffset, bool invisible)
+		public static void DuplicateSymbols(KanimPackage kanim, IReadOnlyList<string> symbolsToDuplicate, IReadOnlyList<string> targetBanks, string prefix, string suffix, int zOffset, bool invisible)
 		{
-			if (pkg == null) throw new ArgumentNullException(nameof(pkg));
-			if (!pkg.HasBuild) throw new InvalidOperationException("No build data is loaded.");
-			if (!pkg.HasAnim) throw new InvalidOperationException("No animation data is loaded.");
+			ArgumentNullException.ThrowIfNull(kanim);
+			if (!kanim.HasBuild) throw new InvalidOperationException("No build data is loaded.");
+			if (!kanim.HasAnim) throw new InvalidOperationException("No animation data is loaded.");
 
 			if (symbolsToDuplicate == null || symbolsToDuplicate.Count == 0) throw new ArgumentException("No symbols to duplicate.", nameof(symbolsToDuplicate));
 			if (targetBanks == null || targetBanks.Count == 0) throw new ArgumentException("No target animations.", nameof(targetBanks));
@@ -137,11 +137,11 @@ namespace KanimLib
 
 			foreach (string symbolName in symbolsToDuplicate)
 			{
-				KSymbol original = pkg.Build.GetSymbol(symbolName);
+				KSymbol original = kanim.Build.GetSymbol(symbolName);
 				if (original != null)
 				{
 					string duplicatedName = prefix + symbolName + suffix;
-					if (pkg.Build.SymbolExists(duplicatedName)) throw new Exception($"A symbol with the name {duplicatedName} already exists.");
+					if (kanim.Build.SymbolExists(duplicatedName)) throw new Exception($"A symbol with the name {duplicatedName} already exists.");
 						
 					KSymbol duplicated = KSymbol.Copy(original, duplicatedName);
 					if (invisible)
@@ -161,27 +161,27 @@ namespace KanimLib
 							var originalFrame = original.Frames[i];
 							var duplicatedFrame = duplicated.Frames[i];
 							duplicatedFrame.Sprite = new Sprite(duplicatedFrame, (Bitmap)originalFrame.Sprite.Image.Clone());
-							pkg.AddSprite(duplicatedFrame.Sprite);
+							kanim.AddSprite(duplicatedFrame.Sprite);
 						}
 					}
-					pkg.Build.InsertSymbolAfter(duplicated, original);
+					kanim.Build.InsertSymbolAfter(duplicated, original);
 					originalHashToDupeHash[original.Hash] = duplicated.Hash;
-					pkg.Anim.SymbolNames[duplicated.Hash] = duplicated.Name;
+					kanim.Anim.SymbolNames[duplicated.Hash] = duplicated.Name;
 				}
 			}
 			
-			pkg.RebuildAtlas();
+			kanim.RebuildAtlas();
 
 			foreach (string targetBank in targetBanks)
 			{
-				KAnimBank bank = pkg.Anim.GetBank(targetBank);
+				KAnimBank bank = kanim.Anim.GetBank(targetBank);
 
 				foreach (var animFrame in bank.Frames)
 				{
 					if (animFrame.ElementCount == 0) continue;
 					foreach (string symbolName in symbolsToDuplicate)
 					{
-						KSymbol originalSymbol = pkg.Build.GetSymbol(symbolName);
+						KSymbol originalSymbol = kanim.Build.GetSymbol(symbolName);
 						LinkedList<KAnimElement> tempElements = new LinkedList<KAnimElement>(animFrame.Elements);
 
 						LinkedListNode<KAnimElement> currentElement = tempElements.First;
@@ -235,30 +235,28 @@ namespace KanimLib
 			}
 		}
 		
-		public static void DeleteSymbol(KanimPackage pkg, string symbolName, bool inBuild, bool inAnims)
+		public static void DeleteSymbol(KanimPackage kanim, string symbolName, bool inBuild, bool inAnims)
 		{
-			ArgumentNullException.ThrowIfNull(pkg);
+			ArgumentNullException.ThrowIfNull(kanim);
 			ArgumentNullException.ThrowIfNull(symbolName);
 			if (!inBuild && !inAnims) throw new ArgumentException("inBuild and inAnims arguments are both false.");
-			if (inBuild && pkg.Build == null) throw new InvalidOperationException("No build data is loaded.");
-			if (inAnims && pkg.Anim == null) throw new InvalidOperationException("No anim data is loaded.");
+			if (inBuild && kanim.Build == null) throw new InvalidOperationException("No build data is loaded.");
+			if (inAnims && kanim.Anim == null) throw new InvalidOperationException("No anim data is loaded.");
 			
 			if (inBuild)
 			{
-				KSymbol symbolToRemove = pkg.Build.GetSymbol(symbolName);
+				KSymbol symbolToRemove = kanim.Build.GetSymbol(symbolName);
 				if (symbolToRemove == null) return; // Symbol doesn't exist anyway
 				
 				foreach (var frame in symbolToRemove.Frames)
 				{
 					if (frame.Sprite == null) continue;
-					pkg.RemoveSprite(frame.Sprite);
+					kanim.RemoveSprite(frame.Sprite);
 				}
 				
-				pkg.Build.Symbols.Remove(symbolToRemove);
-				pkg.Build.SymbolCount = pkg.Build.Symbols.Count;
-				pkg.Build.SymbolNames.Remove(symbolToRemove.Hash);
+				kanim.Build.RemoveSymbol(symbolToRemove);
 				
-				pkg.RebuildAtlas();
+				kanim.RebuildAtlas();
 			}
 			
 			if (inAnims)
@@ -267,13 +265,13 @@ namespace KanimLib
 			}
 		}
 		
-		public static void ReplaceSprite(KanimPackage pkg, KFrame frame, Bitmap newSprite, bool adjustForPadding)
+		public static void ReplaceSprite(KanimPackage kanim, KFrame frame, Bitmap newSprite, bool adjustForPadding)
 		{
-			ArgumentNullException.ThrowIfNull(pkg);
+			ArgumentNullException.ThrowIfNull(kanim);
 			ArgumentNullException.ThrowIfNull(frame);
 			ArgumentNullException.ThrowIfNull(newSprite);
-			if (pkg.Texture == null) throw new InvalidOperationException("No texture is loaded.");
-			if (pkg.Build == null) throw new InvalidOperationException("No build data is loaded.");
+			if (kanim.Texture == null) throw new InvalidOperationException("No texture is loaded.");
+			if (kanim.Build == null) throw new InvalidOperationException("No build data is loaded.");
 
 			Debug.Assert(frame.Sprite != null);
 			
@@ -306,19 +304,20 @@ namespace KanimLib
 				frame.SpriterPivotY = originalPivotY;
 			}
 			
-			pkg.RebuildAtlas();
+			kanim.RebuildAtlas();
 		}
 		
-		public static void SplitTextureAtlas(Bitmap texture, KBuild build, string outputDir)
+		public static void SplitTextureAtlas(KanimPackage kanim, string outputDir)
 		{
-			if (texture == null) throw new ArgumentNullException(nameof(texture));
-			if (build == null) throw new ArgumentNullException(nameof(build));
-			if (string.IsNullOrWhiteSpace(outputDir)) throw new ArgumentNullException(nameof(outputDir));
+			ArgumentNullException.ThrowIfNull(kanim);
+			ArgumentNullException.ThrowIfNull(outputDir);
+			if (kanim.Texture == null) throw new InvalidOperationException("No texture is loaded.");
+			if (kanim.Build == null) throw new InvalidOperationException("No build data is loaded.");
 			if (!Directory.Exists(outputDir)) throw new Exception("Output directory does not exist.");
 
 			JsonObject json = new JsonObject();
 
-			List<Sprite> sprites = SpriteUtils.BuildSprites(texture, build);
+			List<Sprite> sprites = SpriteUtils.BuildSprites(kanim.Texture, kanim.Build);
 			foreach (Sprite sprite in sprites)
 			{
 				string frameFileName = $"{sprite.SymbolData.Name}_{sprite.FrameData.Index}.png";
@@ -342,6 +341,30 @@ namespace KanimLib
 			string jsonFile = Path.Combine(outputDir, "pivots.json");
 			
 			File.WriteAllText(jsonFile, jsonStr, Encoding.UTF8);
+		}
+		
+		public static void MoveAnimBankUp(KanimPackage kanim, string animName)
+		{
+			ArgumentNullException.ThrowIfNull(kanim);
+			ArgumentNullException.ThrowIfNull(animName);
+			if (kanim.Anim == null) throw new InvalidOperationException("No anim data is loaded.");
+			
+			KAnimBank bankToMove = kanim.Anim.GetBank(animName);
+			if (bankToMove == null) throw new Exception("Animation does not exist.");
+			
+			kanim.Anim.MoveBankUp(bankToMove);
+		}
+
+		public static void MoveAnimBankDown(KanimPackage kanim, string animName)
+		{
+			ArgumentNullException.ThrowIfNull(kanim);
+			ArgumentNullException.ThrowIfNull(animName);
+			if (kanim.Anim == null) throw new InvalidOperationException("No anim data is loaded.");
+
+			KAnimBank bankToMove = kanim.Anim.GetBank(animName);
+			if (bankToMove == null) throw new Exception("Animation does not exist.");
+
+			kanim.Anim.MoveBankDown(bankToMove);
 		}
 	}
 }

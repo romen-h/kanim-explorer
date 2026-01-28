@@ -7,47 +7,46 @@ using System.Text;
 using KanimLib.KanimModel;
 using KanimLib.Serialization;
 
+using Microsoft.Extensions.Logging;
+
 namespace KanimLib.Converters
 {
 	public static class SCMLExporter
 	{
-		public static void Convert(KanimPackage package, string outputPath)
+		private static readonly ILogger s_log = Logging.Factory.CreateLogger("SCMLExporter");
+
+		public static void Convert(KanimPackage kanim, string outputPath)
 		{
-			if (package == null) throw new ArgumentNullException(nameof(package));
-			if (!package.HasBuild) throw new ArgumentException("KAnimPackge has not build data.");
-			if (!package.HasTexture) throw new ArgumentException("KAnimPackage has no texture data.");
-			if (string.IsNullOrWhiteSpace(outputPath)) throw new ArgumentNullException(nameof(outputPath));
+			ArgumentNullException.ThrowIfNull(kanim);
+			ArgumentNullException.ThrowIfNull(outputPath);
+			if (kanim.Texture == null) throw new ArgumentException("No texture is loaded.");
+			if (kanim.Build == null) throw new ArgumentException("No build data is loaded.");
+
+			if (!kanim.HasAnim)
+			{
+				kanim.SetAnim(KAnimUtils.CreateEmptyAnim());
+			}
 
 			Directory.CreateDirectory(outputPath);
 
-			using (MemoryStream buildStream = new MemoryStream())
-			using (MemoryStream animStream = new MemoryStream())
-			using (MemoryStream textureStream = new MemoryStream())
-			{
-				KanimWriter.WriteBuild(buildStream, package.Build);
-				buildStream.Seek(0, SeekOrigin.Begin);
+			using MemoryStream buildStream = new MemoryStream();
+			using MemoryStream animStream = new MemoryStream();
+			using MemoryStream textureStream = new MemoryStream();
+			
+			KanimWriter.WriteBuild(buildStream, kanim.Build);
+			buildStream.Seek(0, SeekOrigin.Begin);
 
-				if (package.HasAnim)
-				{
-					KanimWriter.WriteAnim(animStream, package.Anim);
-					animStream.Seek(0, SeekOrigin.Begin);
-				}
-				else
-				{
-					KAnim blank = KAnimUtils.CreateEmptyAnim();
-					KanimWriter.WriteAnim(animStream, blank);
-					animStream.Seek(0, SeekOrigin.Begin);
-				}
+			KanimWriter.WriteAnim(animStream, kanim.Anim);
+			animStream.Seek(0, SeekOrigin.Begin);
 
-				package.Texture.Save(textureStream, ImageFormat.Png);
-				textureStream.Seek(0, SeekOrigin.Begin);
+			kanim.Texture.Save(textureStream, ImageFormat.Png);
+			textureStream.Seek(0, SeekOrigin.Begin);
 
-				var reader = new kanimal.KanimReader(buildStream, animStream, textureStream);
-				reader.Read();
+			var reader = new kanimal.KanimReader(buildStream, animStream, textureStream);
+			reader.Read();
 
-				var writer = new kanimal.ScmlWriter(reader);
-				writer.SaveToDir(outputPath);
-			}
+			var writer = new kanimal.ScmlWriter(reader);
+			writer.SaveToDir(outputPath);
 		}
 	}
 }

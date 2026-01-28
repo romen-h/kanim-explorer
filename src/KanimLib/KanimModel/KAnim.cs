@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 
+using kanimal.KBuild;
+
 namespace KanimLib.KanimModel
 {
 	public class KAnim
@@ -66,6 +68,50 @@ namespace KanimLib.KanimModel
 			int hash = bank.Name.KHash();
 			SymbolNames[hash] = bank.Name;
 			BankCount = Banks.Count;
+		}
+
+		internal void MoveBankUp(KAnimBank bank)
+		{
+			int index = Banks.IndexOf(bank);
+			if (index <= 0) return;
+
+			KAnimBank temp = Banks[index - 1];
+			Banks[index - 1] = bank;
+			Banks[index] = temp;
+		}
+
+		internal void MoveBankDown(KAnimBank bank)
+		{
+			int index = Banks.IndexOf(bank);
+			if (index < 0) return;
+			if (index >= Banks.Count - 1) return;
+
+			KAnimBank temp = Banks[index + 1];
+			Banks[index + 1] = bank;
+			Banks[index] = temp;
+		}
+		
+		public bool ValidateUILastOrAbsent()
+		{
+			for (int i=0; i<Banks.Count; i++)
+			{
+				var bank = Banks[i];
+				if (bank.Name == "ui")
+				{
+					if (i != Banks.Count - 1) return false;
+				}
+			}
+			
+			return true;
+		}
+		
+		public void EnsureUILast()
+		{
+			KAnimBank uiBank = GetBank("ui");
+			if (uiBank == null) return;
+			
+			Banks.Remove(uiBank);
+			Banks.Add(uiBank);
 		}
 
 		public void RepairStringsFromBuild(KBuild build)

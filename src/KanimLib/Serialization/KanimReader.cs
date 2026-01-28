@@ -171,6 +171,8 @@ namespace KanimLib.Serialization
 					string str = reader.ReadKString();
 					anim.SymbolNames[hash] = str;
 				}
+				
+				anim.EnsureUILast();
 
 				return anim;
 			}

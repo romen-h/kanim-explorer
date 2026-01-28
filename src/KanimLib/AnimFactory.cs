@@ -57,10 +57,10 @@ namespace KanimLib
 			anim.BankCount = 4;
 			anim.MaxVisSymbols = 1;
 
-			KAnimBank uiAnim = AddBank(anim, "ui", Math.Max(buildingWidth, buildingHeight));
 			KAnimBank placeAnim = AddBank(anim, "place", Math.Max(buildingWidth, buildingHeight));
 			KAnimBank onAnim = AddBank(anim, "on", Math.Max(buildingWidth, buildingHeight));
 			KAnimBank offAnim = AddBank(anim, "off", Math.Max(buildingWidth, buildingHeight));
+			KAnimBank uiAnim = AddBank(anim, "ui", Math.Max(buildingWidth, buildingHeight));
 		}
 
 		public static void MakeSpritePack(string name, string spritesDir, out Bitmap atlas, out KBuild build, out KAnim anim)

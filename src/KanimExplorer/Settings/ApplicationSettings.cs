@@ -92,12 +92,21 @@ namespace KanimExplorer.Settings
 			get => _openExplorerAfterSaving;
 			set => Set(ref _openExplorerAfterSaving, value);
 		}
+		
+		private bool _showSuccessDialogs;
+		[JsonInclude]
+		public bool ShowSuccessDialogs
+		{
+			get => _showSuccessDialogs;
+			set => Set(ref _showSuccessDialogs, value);
+		}
 
 		[JsonConstructor]
 		private ApplicationSettings()
 		{
 			MainWindow = new WindowState();
 			_openExplorerAfterSaving = true;
+			_showSuccessDialogs = true;
 		}
 
 		private void Set<T>(ref T var, T value)

@@ -159,6 +159,17 @@ namespace KanimLib
 			SymbolCount = Symbols.Count;
 		}
 		
+		internal void RemoveSymbol(KSymbol symbol)
+		{
+			if (Symbols.Remove(symbol))
+			{
+				int hash = symbol.Hash;
+				SymbolNames.Remove(hash);
+				symbol.Parent = null;
+				SymbolCount = Symbols.Count;
+			}
+		}
+		
 		internal void InsertSymbolAfter(KSymbol inserted, KSymbol after)
 		{
 			inserted.Parent = this;
@@ -169,6 +180,27 @@ namespace KanimLib
 			int hash = inserted.Name.KHash();
 			SymbolNames[hash] = inserted.Name;
 			SymbolCount = Symbols.Count;
+		}
+		
+		internal void MoveSymbolUp(KSymbol symbol)
+		{
+			int index = Symbols.IndexOf(symbol);
+			if (index <= 0) return;
+			
+			KSymbol temp = Symbols[index - 1];
+			Symbols[index - 1] = symbol;
+			Symbols[index] = temp;
+		}
+		
+		internal void MoveSymbolDown(KSymbol symbol)
+		{
+			int index = Symbols.IndexOf(symbol);
+			if (index < 0) return;
+			if (index >= Symbols.Count - 1) return;
+			
+			KSymbol temp = Symbols[index + 1];
+			Symbols[index + 1] = symbol;
+			Symbols[index] = temp;
 		}
 	}
 }

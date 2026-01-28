@@ -67,6 +67,58 @@ namespace KanimExplorer.Controls
 		public SpriteControl()
 		{
 			InitializeComponent();
+
+			DocumentManager.Instance.LoadedTextureChanged += DocumentManager_LoadedTextureChanged;
+			DocumentManager.Instance.LoadedBuildChanged += DocumentManager_LoadedBuildChanged;
+			DocumentManager.Instance.SelectedObjectChanged += DocumentManager_SelectedObjectChanged;
+		}
+
+		private void DocumentManager_LoadedTextureChanged(object sender, EventArgs e)
+		{
+			var texture = DocumentManager.Instance.Data?.Texture;
+			if (texture == null)
+			{
+				_frame = null;
+				_temporaryPivotX = float.NaN;
+				_temporaryPivotY = float.NaN;
+				ResetPivotEditing();
+				OnFrameUpdated();
+			}
+		}
+
+		private void DocumentManager_LoadedBuildChanged(object sender, EventArgs e)
+		{
+			var build = DocumentManager.Instance.Data?.Build;
+			if (build == null)
+			{
+				_frame = null;
+				_temporaryPivotX = float.NaN;
+				_temporaryPivotY = float.NaN;
+				ResetPivotEditing();
+				OnFrameUpdated();
+			}
+		}
+
+		private void DocumentManager_SelectedObjectChanged(object sender, SelectedObjectChangedEventArgs e)
+		{
+			switch (e.Object)
+			{
+				case KSymbol symbol:
+					_frame = symbol.Frames.FirstOrDefault();
+					break;
+				
+				case KFrame frame:
+					_frame = frame;
+					break;
+				
+				default:
+					return;
+			}
+
+			_temporaryPivotX = float.NaN;
+			_temporaryPivotY = float.NaN;
+			ResetPivotEditing();
+			OnFrameUpdated();
 		}
 
 		public void ResetPivotEditing()

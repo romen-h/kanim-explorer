@@ -38,7 +38,16 @@ namespace KanimExplorer
 		private string _loadedBuildFile = null;
 		private string _loadedAnimFile = null;
 		
+		public string TextureFilePath => _loadedTextureFile;
+		
+		public string BuildFilePath => _loadedBuildFile;
+		
+		public string AnimFilePath => _loadedAnimFile;
+		
 		public KanimPackage Data
+		{ get; private set; }
+		
+		public object SelectedObject
 		{ get; private set; }
 
 		public bool FilesAreOpen => Data?.HasAnyData ?? false;
@@ -46,7 +55,6 @@ namespace KanimExplorer
 		public event EventHandler LoadedTextureChanged;
 		private void InvokeLoadedTextureChanged()
 		{
-			_log.LogTrace("Invoking LoadedTextureChanged...");
 			try
 			{
 				LoadedTextureChanged?.Invoke(this, EventArgs.Empty);
@@ -60,7 +68,6 @@ namespace KanimExplorer
 		public event EventHandler LoadedBuildChanged;
 		private void InvokeLoadedBuildChanged()
 		{
-			_log.LogTrace("Invoking LoadedBuildChanged...");
 			try
 			{
 				LoadedBuildChanged?.Invoke(this, EventArgs.Empty);
@@ -74,7 +81,6 @@ namespace KanimExplorer
 		public event EventHandler LoadedAnimChanged;
 		private void InvokeLoadedAnimChanged()
 		{
-			_log.LogTrace("Invoking LoadedAnimChanged...");
 			try
 			{
 				LoadedAnimChanged?.Invoke(this, EventArgs.Empty);
@@ -82,6 +88,19 @@ namespace KanimExplorer
 			catch (Exception ex)
 			{
 				_log.LogError(ex, "Error in LoadedAnimChanged handler.");
+			}
+		}
+		
+		public event EventHandler<SelectedObjectChangedEventArgs> SelectedObjectChanged;
+		private void InvokeSelectedObjectChanged()
+		{
+			try
+			{
+				SelectedObjectChanged?.Invoke(this, new SelectedObjectChangedEventArgs(SelectedObject));
+			}
+			catch (Exception ex)
+			{
+				_log.LogError(ex, "Error in SelectedItemChanged handler.");
 			}
 		}
 
@@ -114,7 +133,7 @@ namespace KanimExplorer
 			return true;
 		}
 
-		public static void SelectSupportedFiles(IEnumerable<string> inputFiles, out string textureFile, out string buildFile, out string animFile, out IReadOnlyList<string> invalidFiles)
+		public static void GetSupportedFiles(IEnumerable<string> inputFiles, out string textureFile, out string buildFile, out string animFile, out IReadOnlyList<string> invalidFiles)
 		{
 			textureFile = null;
 			buildFile = null;
@@ -311,6 +330,15 @@ namespace KanimExplorer
 			InvokeLoadedTextureChanged();
 			InvokeLoadedBuildChanged();
 			InvokeLoadedAnimChanged();
+		}
+		
+		public void SelectObject(object selection)
+		{
+			if (SelectedObject != selection)
+			{
+				SelectedObject = selection;
+				InvokeSelectedObjectChanged();
+			}
 		}
 		
 		private void EnsurePackageCreated()

@@ -11,11 +11,17 @@ using KanimLib;
 using KanimLib.KanimModel;
 using Microsoft.Extensions.Logging;
 
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace KanimExplorer.Controls
 {
 	public partial class AtlasControl : UserControl
 	{
 		private readonly ILogger _log = KanimLib.Logging.Factory.CreateLogger("AtlasControl");
+
+		private Bitmap _texture = null;
+		private KBuild _build = null;
+		private IEnumerable<KFrame> _selectedFrames = null;
 
 		private Color _boundsColor = Color.Red;
 		public Color BoundsColor
@@ -45,48 +51,84 @@ namespace KanimExplorer.Controls
 			}
 		}
 
-		private Bitmap _texture;
-		public Bitmap Texture
+		public AtlasControl()
 		{
-			get => _texture;
-			set
+			InitializeComponent();
+
+			DocumentManager.Instance.LoadedTextureChanged += DocumentManager_LoadedTextureChanged;
+			DocumentManager.Instance.LoadedBuildChanged += DocumentManager_LoadedBuildChanged;
+			DocumentManager.Instance.SelectedObjectChanged += DocumentManager_SelectedObjectChanged;
+		}
+
+		private void DocumentManager_LoadedTextureChanged(object sender, EventArgs e)
+		{
+			var texture = DocumentManager.Instance.Data?.Texture;
+			if (_texture != texture)
 			{
-				if (_texture != value)
-				{
-					_texture = value;
-					OnTextureUpdated();
-				}
+				_texture = texture;
+				OnTextureUpdated();
 			}
 		}
 
-		private KBuild _build;
-		public KBuild Build
+		private void DocumentManager_LoadedBuildChanged(object sender, EventArgs e)
 		{
-			get => _build;
-			set
+			var build = DocumentManager.Instance.Data?.Build;
+			if (_build != build)
 			{
-				if (_build != value)
-				{
-					_build = value;
-					OnBuildUpdated();
-				}
-			}
-		}
-		
-		private IEnumerable<KFrame> _selectedFrames;
-		public IEnumerable<KFrame> SelectedFrames
-		{
-			get => _selectedFrames;
-			set
-			{
-				_selectedFrames = value;
+				_build = build;
 				OnBuildUpdated();
 			}
 		}
 
-		public AtlasControl()
+		private void DocumentManager_SelectedObjectChanged(object sender, SelectedObjectChangedEventArgs e)
 		{
-			InitializeComponent();
+			if (_texture == null || _build == null) return;
+			
+			switch (e.Object)
+			{
+				case KSymbol symbol:
+					_selectedFrames = symbol.Frames;
+					break;
+				
+				case KFrame frame:
+					_selectedFrames = [frame];
+					break;
+
+				case KAnimFrame animFrame:
+					List<KFrame> framesInAnim = new List<KFrame>();
+					foreach (KAnimElement element in animFrame.Elements)
+					{
+						KSymbol symbol2 = _build.GetSymbol(element.SymbolHash);
+						if (symbol2 != null)
+						{
+							if (symbol2.FrameCount > element.FrameNumber)
+							{
+								KFrame frame = symbol2.Frames[element.FrameNumber];
+								framesInAnim.Add(frame);
+							}
+						}
+					}
+					_selectedFrames = framesInAnim;
+					break;
+
+				case KAnimElement element:
+					KFrame frameInElement = null;
+					KSymbol symbol3 = _build.GetSymbol(element.SymbolHash);
+					if (symbol3 != null)
+					{
+						if (symbol3.FrameCount > element.FrameNumber)
+						{
+							frameInElement = symbol3.Frames[element.FrameNumber];
+						}
+					}
+					_selectedFrames = [frameInElement];
+					break;
+
+				default:
+					return;
+			}
+			
+			OnBuildUpdated();
 		}
 
 		public void OnTextureUpdated()

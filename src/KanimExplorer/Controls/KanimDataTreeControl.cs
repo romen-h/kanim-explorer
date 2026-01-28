@@ -27,11 +27,8 @@ namespace KanimExplorer.Controls
 		private bool _rebuilding = false;
 
 		private KanimPackage _data;
-
-		public object SelectedObject
-		{ get; private set; }
-
-		public event EventHandler SelectedObjectChanged;
+		
+		private object SelectedObject => treeView.SelectedNode?.Tag;
 
 		public KanimDataTreeControl()
 		{
@@ -42,6 +39,19 @@ namespace KanimExplorer.Controls
 			buttonRename.Visible = false;
 			buttonDuplicate.Visible = false;
 			buttonReplaceSprite.Visible = false;
+
+			DocumentManager.Instance.LoadedBuildChanged += DocumentManager_LoadedBuildChanged;
+			DocumentManager.Instance.LoadedAnimChanged += DocumentManager_LoadedAnimChanged;
+		}
+
+		private void DocumentManager_LoadedBuildChanged(object sender, EventArgs e)
+		{
+			SetKanim(DocumentManager.Instance.Data);
+		}
+
+		private void DocumentManager_LoadedAnimChanged(object sender, EventArgs e)
+		{
+			SetKanim(DocumentManager.Instance.Data);
 		}
 
 		public void SetKanim(KanimPackage data)
@@ -235,19 +245,21 @@ namespace KanimExplorer.Controls
 		{
 			if (_rebuilding) return;
 
+			var obj = e.Node?.Tag;
+			
 			buttonAdd.Visible = false;
 			buttonRemove.Visible = false;
 			buttonRename.Visible = false;
 			buttonDuplicate.Visible = false;
 			buttonReplaceSprite.Visible = false;
 
+			DocumentManager.Instance.SelectObject(obj);
+
 			// Is this needed?
 			TreeView tree = sender as TreeView;
 			if (tree == null) return;
 
-			SelectedObject = e.Node?.Tag;
-
-			switch (SelectedObject)
+			switch (obj)
 			{
 				case KBuild:
 					//buttonAdd.Visible = true;
@@ -265,8 +277,6 @@ namespace KanimExplorer.Controls
 					buttonReplaceSprite.Visible = true;
 					break;
 			}
-
-			SelectedObjectChanged?.Invoke(this, EventArgs.Empty);
 		}
 
 		private void buttonAdd_Click(object sender, EventArgs e)

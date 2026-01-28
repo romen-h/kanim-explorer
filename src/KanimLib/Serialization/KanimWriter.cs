@@ -90,95 +90,76 @@ namespace KanimLib.Serialization
 			}
 		}
 
-		public static bool WriteAnim(string animFile, KAnim anim)
+		public static void WriteAnim(string animFile, KAnim anim)
 		{
-			try
-			{
-				using (FileStream file = new FileStream(animFile, FileMode.Create))
-				{
-					return WriteAnim(file, anim);
-				}
-			}
-			catch
-			{
-				return false;
-			}
+			using FileStream file = new FileStream(animFile, FileMode.Create);
+			WriteAnim(file, anim);
 		}
 
-		public static bool WriteAnim(Stream stream, KAnim anim)
+		public static void WriteAnim(Stream stream, KAnim anim)
 		{
-			try
+			using BinaryWriter writer = new BinaryWriter(stream);
+			
+			writer.Write(Encoding.ASCII.GetBytes(KAnim.ANIM_HEADER));
+
+			writer.Write(anim.Version);
+			writer.Write(anim.FrameCount);
+			writer.Write(anim.ElementCount);
+			writer.Write(anim.BankCount);
+
+			for (int b = 0; b < anim.BankCount; b++)
 			{
-				BinaryWriter writer = new BinaryWriter(stream);
+				KAnimBank bank = anim.Banks[b];
+
+				writer.WriteKString(bank.Name);
+				writer.Write(bank.Hash);
+				writer.Write(bank.Rate);
+				writer.Write(bank.FrameCount);
+
+				for (int f = 0; f < bank.FrameCount; f++)
 				{
-					writer.Write(Encoding.ASCII.GetBytes(KAnim.ANIM_HEADER));
+					KAnimFrame frame = bank.Frames[f];
 
-					writer.Write(anim.Version);
-					writer.Write(anim.FrameCount);
-					writer.Write(anim.ElementCount);
-					writer.Write(anim.BankCount);
+					writer.Write(frame.X);
+					writer.Write(frame.Y);
+					writer.Write(frame.Width);
+					writer.Write(frame.Height);
+					writer.Write(frame.ElementCount);
 
-					for (int b = 0; b < anim.BankCount; b++)
+					for (int e = 0; e < frame.ElementCount; e++)
 					{
-						KAnimBank bank = anim.Banks[b];
+						KAnimElement element = frame.Elements[e];
 
-						writer.WriteKString(bank.Name);
-						writer.Write(bank.Hash);
-						writer.Write(bank.Rate);
-						writer.Write(bank.FrameCount);
-
-						for (int f = 0; f < bank.FrameCount; f++)
-						{
-							KAnimFrame frame = bank.Frames[f];
-
-							writer.Write(frame.X);
-							writer.Write(frame.Y);
-							writer.Write(frame.Width);
-							writer.Write(frame.Height);
-							writer.Write(frame.ElementCount);
-
-							for (int e = 0; e < frame.ElementCount; e++)
-							{
-								KAnimElement element = frame.Elements[e];
-
-								writer.Write(element.SymbolHash);
-								writer.Write(element.FrameNumber);
-								writer.Write(element.FolderHash);
-								writer.Write(element.Flags);
-								writer.Write(element.Alpha);
-								writer.Write(element.Blue);
-								writer.Write(element.Green);
-								writer.Write(element.Red);
-								writer.Write(element.M00);
-								writer.Write(element.M10);
-								writer.Write(element.M01);
-								writer.Write(element.M11);
-								writer.Write(element.M02);
-								writer.Write(element.M12);
-								writer.Write(element.Unused);
-							}
-						}
+						writer.Write(element.SymbolHash);
+						writer.Write(element.FrameNumber);
+						writer.Write(element.FolderHash);
+						writer.Write(element.Flags);
+						writer.Write(element.Alpha);
+						writer.Write(element.Blue);
+						writer.Write(element.Green);
+						writer.Write(element.Red);
+						writer.Write(element.M00);
+						writer.Write(element.M10);
+						writer.Write(element.M01);
+						writer.Write(element.M11);
+						writer.Write(element.M02);
+						writer.Write(element.M12);
+						writer.Write(element.Unused);
 					}
-
-					writer.Write(anim.MaxVisSymbols);
-
-					int numHashes = anim.SymbolNames.Count;
-					writer.Write(numHashes);
-					foreach (KeyValuePair<int, string> kvp in anim.SymbolNames)
-					{
-						writer.Write(kvp.Key);
-						writer.WriteKString(kvp.Value);
-					}
-
-					writer.Flush();
 				}
+			}
 
-				return true;
-			}
-			catch
+			writer.Write(anim.MaxVisSymbols);
+
+			int numHashes = anim.SymbolNames.Count;
+			writer.Write(numHashes);
+			foreach (KeyValuePair<int, string> kvp in anim.SymbolNames)
 			{
-				return false;
+				writer.Write(kvp.Key);
+				writer.WriteKString(kvp.Value);
 			}
+
+			writer.Flush();
 		}
 	}
 }
