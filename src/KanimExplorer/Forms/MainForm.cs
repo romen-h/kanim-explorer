@@ -405,7 +405,7 @@ namespace KanimExplorer.Forms
 			openMultipleToolStripMenuItem.Enabled = true;
 			openSCMLToolStripMenuItem.Enabled = true;
 
-			saveAllToolStripMenuItem.Enabled = data != null && (data.HasTexture || data.HasBuild || data.HasAnim);
+			//saveAllToolStripMenuItem.Enabled = data != null && (data.HasTexture || data.HasBuild || data.HasAnim);
 			saveTextureAtlasAsToolStripMenuItem.Enabled = data?.HasTexture ?? false;
 			saveBuildAsToolStripMenuItem.Enabled = data?.HasBuild ?? false;
 			saveAnimAsToolStripMenuItem.Enabled = data?.HasAnim ?? false;
