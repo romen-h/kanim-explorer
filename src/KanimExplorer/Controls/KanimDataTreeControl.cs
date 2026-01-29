@@ -40,8 +40,14 @@ namespace KanimExplorer.Controls
 			buttonDuplicate.Visible = false;
 			buttonReplaceSprite.Visible = false;
 
+			DocumentManager.Instance.LoadedTextureChanged += DocumentManager_LoadedTextureChanged;
 			DocumentManager.Instance.LoadedBuildChanged += DocumentManager_LoadedBuildChanged;
 			DocumentManager.Instance.LoadedAnimChanged += DocumentManager_LoadedAnimChanged;
+		}
+
+		private void DocumentManager_LoadedTextureChanged(object sender, EventArgs e)
+		{
+			SetKanim(DocumentManager.Instance.Data);
 		}
 
 		private void DocumentManager_LoadedBuildChanged(object sender, EventArgs e)
@@ -74,9 +80,20 @@ namespace KanimExplorer.Controls
 				return;
 			}
 
+			if (_data.Texture != null)
+			{
+				TreeNode textureNode = new TreeNode("Texture");
+				textureNode.Name = "texture";
+				textureNode.ImageIndex = 0;
+				textureNode.SelectedImageIndex = 0;
+				textureNode.Tag = _data.Texture;
+				
+				treeView.Nodes.Add(textureNode);
+			}
+			
 			if (_data.Build != null)
 			{
-				TreeNode buildNode = new TreeNode("Texture Atlas (Build)");
+				TreeNode buildNode = new TreeNode("Build");
 				buildNode.Name = "build";
 				buildNode.ImageIndex = 0;
 				buildNode.SelectedImageIndex = 0;
@@ -421,7 +438,5 @@ namespace KanimExplorer.Controls
 				SelectNode(selectionKey);
 			}
 		}
-
-		
 	}
 }

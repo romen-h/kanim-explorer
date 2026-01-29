@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-
+using System.Reflection.Metadata.Ecma335;
 using KanimLib.KanimModel;
 using KanimLib.Sprites;
 
@@ -12,7 +12,11 @@ namespace KanimLib
 	/// </summary>
 	public class KanimPackage
 	{
-		private List<Sprite> _sprites;
+		private readonly List<Bitmap> _textures = new List<Bitmap>();
+		private readonly List<KBuild> _builds = new List<KBuild>();
+		private readonly List<KAnim> _anims = new List<KAnim>();
+		private readonly List<Sprite> _sprites = new List<Sprite>();
+		private readonly Dictionary<string, List<Sprite>> _spriteAtlases = new Dictionary<string, List<Sprite>>();
 		
 		/// <summary>
 		/// The texture data.
@@ -29,6 +33,15 @@ namespace KanimLib
 		/// </summary>
 		public KAnim Anim
 		{ get; private set; }
+		
+		public IReadOnlyList<Bitmap> Textures => _textures;
+		
+		public IReadOnlyList<KBuild> Builds => _builds;
+		
+		public IReadOnlyList<KAnim> Anims => _anims;
+		
+		public IReadOnlyDictionary<string,IReadOnlyList<Sprite>> SpriteAtlases => (IReadOnlyDictionary<string, IReadOnlyList<Sprite>>)_spriteAtlases;
+		
 		/// <summary>
 		/// The sprite instances that exist in the current build + texture data.
 		/// </summary>
@@ -100,13 +113,14 @@ namespace KanimLib
 		{
 			Texture = texture;
 
+			_sprites.Clear();
+			
 			if (IsValidAtlas)
 			{
-				_sprites = SpriteUtils.BuildSprites(Texture, Build);
+				_sprites.AddRange(SpriteUtils.BuildSprites(Texture, Build));
 			}
 			else
 			{
-				_sprites = [];
 				if (Build != null)
 				{
 					foreach (var symbol in Build.Symbols)
@@ -138,14 +152,15 @@ namespace KanimLib
 			{
 				Build.Parent = this;
 			}
-			
+
+			_sprites.Clear();
+
 			if (IsValidAtlas)
 			{
-				_sprites = SpriteUtils.BuildSprites(Texture, Build);
+				_sprites.AddRange(SpriteUtils.BuildSprites(Texture, Build));
 			}
 			else
 			{
-				_sprites = [];
 				if (Build != null)
 				{
 					foreach (var symbol in Build.Symbols)

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using KanimExplorer.Logging;
 
 using KanimLib;
+using KanimLib.KanimModel;
 using KanimLib.Serialization;
 
 using Microsoft.Extensions.Logging;
@@ -116,9 +117,9 @@ namespace KanimExplorer
 				if (Data != null) throw new InvalidOperationException("Kanim data is already loaded.");
 
 				Data = data;
-				_loadedTextureFile = data.HasTexture ? string.Empty : null;
-				_loadedBuildFile = data.HasBuild ? string.Empty : null;
-				_loadedAnimFile = data.HasAnim ? string.Empty : null;
+				_loadedTextureFile = null;
+				_loadedBuildFile = null;
+				_loadedAnimFile = null;
 				_log.LogInformation("Opened kanim data.");
 			}
 			catch (Exception ex)
@@ -133,36 +134,27 @@ namespace KanimExplorer
 			return true;
 		}
 
-		public static void GetSupportedFiles(IEnumerable<string> inputFiles, out string textureFile, out string buildFile, out string animFile, out IReadOnlyList<string> invalidFiles)
+		public static void GetSupportedFiles(IEnumerable<string> inputFiles, out IReadOnlyList<string> textureFiles, out IReadOnlyList<string> buildFiles, out IReadOnlyList<string> animFiles, out IReadOnlyList<string> invalidFiles)
 		{
-			textureFile = null;
-			buildFile = null;
-			animFile = null;
-
+			List<string> textures = new List<string>();
+			List<string> builds = new List<string>();
+			List<string> anims = new List<string>();
 			List<string> invalid = new List<string>();
 
 			foreach (string file in inputFiles)
 			{
-				if (file.EndsWith(".png"))
+				string fileName = Path.GetFileName(file).ToLowerInvariant();
+				if (fileName.EndsWith(".png"))
 				{
-					if (textureFile == null)
-					{
-						textureFile = file;
-					}
+					textures.Add(file);
 				}
-				else if (file.EndsWith("build.bytes") || file.EndsWith("build.txt") || file.EndsWith("build.prefab"))
+				else if (fileName.EndsWith("build.bytes") || fileName.EndsWith("build.txt") || fileName.EndsWith("build.prefab"))
 				{
-					if (buildFile == null)
-					{
-						buildFile = file;
-					}
+					builds.Add(file);
 				}
-				else if (file.EndsWith("anim.bytes") || file.EndsWith("anim.txt") || file.EndsWith("anim.prefab"))
+				else if (fileName.EndsWith("anim.bytes") || fileName.EndsWith("anim.txt") || fileName.EndsWith("anim.prefab"))
 				{
-					if (animFile == null)
-					{
-						animFile = file;
-					}
+					anims.Add(file);
 				}
 				else
 				{
@@ -170,6 +162,9 @@ namespace KanimExplorer
 				}
 			}
 
+			textureFiles = textures;
+			buildFiles = builds;
+			animFiles = anims;
 			invalidFiles = invalid;
 		}
 
@@ -377,6 +372,73 @@ namespace KanimExplorer
 		private void Data_AnimChanged(object sender, EventArgs e)
 		{
 			LoadedAnimChanged?.Invoke(this, EventArgs.Empty);
+		}
+		
+		public Bitmap GetSelectedTexture()
+		{
+			if (Data == null) return null;
+			if (!IsTexture(SelectedObject)) return null;
+			
+			return Data.Texture;
+		}
+		
+		public KBuild GetSelectedBuild()
+		{
+			if (Data == null) return null;
+			if (!IsPartOfBuild(SelectedObject)) return null;
+			
+			return Data.Build;
+		}
+		
+		public KAnim GetSelectedAnim()
+		{
+			if (Data == null) return null;
+			if (!IsPartOfAnim(SelectedObject)) return null;
+			
+			return Data.Anim;
+		}
+		
+		public static bool IsTexture(object obj)
+		{
+			switch (obj)
+			{
+				case Bitmap:
+					return true;
+				
+				default:
+					return false;
+			}
+		}
+
+		public static bool IsPartOfBuild(object obj)
+		{
+			switch (obj)
+			{
+				case KBuild:
+				case KSymbol:
+				case KFrame:
+					return true;
+
+				default:
+					return false;
+			}
+		}
+
+		public bool IsSelectedObjectPartOfAnim => IsPartOfAnim(SelectedObject);
+		
+		public static bool IsPartOfAnim(object obj)
+		{
+			switch (obj)
+			{
+				case KAnim:
+				case KAnimBank:
+				case KAnimFrame:
+				case KAnimElement:
+					return true;
+
+				default:
+					return false;
+			}
 		}
 	}
 }

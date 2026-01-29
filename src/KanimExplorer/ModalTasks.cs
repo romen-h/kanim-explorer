@@ -5,10 +5,11 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using kanimal.KBuild;
 using KanimExplorer.Forms;
 using KanimExplorer.Logging;
 using KanimExplorer.OpenGL.Objects;
@@ -29,7 +30,10 @@ namespace KanimExplorer
 	/// </summary>
 	internal static class ModalTasks
 	{
-		internal static bool OpenTexture(ILogger log = null)
+		/// <summary>
+		/// Prompts the user to select a texture file and opens it in the DocumentManager.
+		/// </summary>
+		internal static bool OpenTexture(ILogger? log = null)
 		{
 			using var function = log?.BeginFunction();
 
@@ -43,7 +47,10 @@ namespace KanimExplorer
 			return OpenFilesImpl(dlg.FileNames, "Opening Texture", log);
 		}
 		
-		internal static bool OpenBuild(ILogger log = null)
+		/// <summary>
+		/// Prompts the user to select a build.bytes file and opens it in the DocumentManager.
+		/// </summary>
+		internal static bool OpenBuild(ILogger? log = null)
 		{
 			using var function = log?.BeginFunction();
 
@@ -57,7 +64,10 @@ namespace KanimExplorer
 			return OpenFilesImpl(dlg.FileNames, "Opening Build", log);
 		}
 
-		internal static bool OpenAnim(ILogger log = null)
+		/// <summary>
+		/// Prompts the user to select an anim.bytes file and opens it in the DocumentManager.
+		/// </summary>
+		internal static bool OpenAnim(ILogger? log = null)
 		{
 			using var function = log?.BeginFunction();
 
@@ -71,7 +81,10 @@ namespace KanimExplorer
 			return OpenFilesImpl(dlg.FileNames, "Opening Anim", log);
 		}
 
-		internal static bool OpenMultiple(ILogger log = null)
+		/// <summary>
+		/// Prompts the user to select multiple files and opens them all in the DocumentManager.
+		/// </summary>
+		internal static bool OpenMultiple(ILogger? log = null)
 		{
 			using var function = log?.BeginFunction();
 			
@@ -79,7 +92,7 @@ namespace KanimExplorer
 			{
 				Title = "Opening Kanim Files...",
 				Multiselect = true,
-				Filter = "Kanim files|*.png;*.bytes;*.prefab;*.txt"
+				Filter = "Kanim Files|*.png;*.bytes;*.prefab;*.txt|All Files|*.*"
 			};
 			if (dlg.ShowDialog() != DialogResult.OK) return false;
 
@@ -92,10 +105,20 @@ namespace KanimExplorer
 			return OpenFilesImpl(dlg.FileNames, "Opening Files", log);
 		}
 
-		public static bool OpenFilesImpl(IEnumerable<string> files, string messageBoxContext, ILogger log = null)
+		/// <summary>
+		/// Opens a list of files in the DocumentManager with prompts when specific cases are encountered.
+		/// </summary>
+		public static bool OpenFilesImpl(IEnumerable<string> files, string messageBoxContext, ILogger? log = null)
 		{
-			DocumentManager.GetSupportedFiles(files, out string textureFile, out string buildFile, out string animFile, out var invalidFiles);
+			ArgumentNullException.ThrowIfNull(files);
+			ArgumentNullException.ThrowIfNull(messageBoxContext);
+			
+			DocumentManager.GetSupportedFiles(files, out var textureFiles, out var buildFiles, out var animFiles, out var invalidFiles);
 
+			var textureFile = textureFiles.FirstOrDefault();
+			var buildFile = buildFiles.FirstOrDefault();
+			var animFile = animFiles.FirstOrDefault();
+			
 			bool anythingSupported = textureFile != null || buildFile != null || animFile != null;
 			if (!anythingSupported)
 			{
@@ -196,29 +219,24 @@ namespace KanimExplorer
 			return anythingOpened;
 		}
 		
-		internal static bool OpenSCML(ILogger log = null)
+		internal static bool SaveTexture(ILogger log = null)
 		{
 			using var function = log?.BeginFunction();
+			
+			var texture = DocumentManager.Instance.GetSelectedTexture();
+			if (texture == null) throw new InvalidOperationException("No texture is selected.");
 
-			OpenFileDialog scmlDlg = new OpenFileDialog()
-			{
-				Title = "Select a Spriter Project...",
-				Filter = "Spriter Projects (*.scml)|*.scml"
-			};
-			if (scmlDlg.ShowDialog() != DialogResult.OK) return false;
-
-			DocumentManager.Instance.CloseEverything();
-			var pkg = SCMLImporter.Convert(scmlDlg.FileName);
-			DocumentManager.Instance.OpenConvertedData(pkg);
-			return true;
+			string filePath = DocumentManager.Instance.TextureFilePath;
+			return SaveTextureImpl(texture, filePath, log);
 		}
 
-		internal static bool SaveTexture(Bitmap texture, ILogger log = null)
+		internal static bool SaveTextureAs(ILogger log = null)
 		{
-			ArgumentNullException.ThrowIfNull(texture);
-
 			using var function = log?.BeginFunction();
-
+			
+			var texture = DocumentManager.Instance.GetSelectedTexture();
+			if (texture == null) throw new InvalidOperationException("No texture is selected.");
+			
 			SaveFileDialog dlg = new SaveFileDialog()
 			{
 				Title = "Saving Texture...",
@@ -237,11 +255,23 @@ namespace KanimExplorer
 			return true;
 		}
 		
-		internal static bool SaveBuild(KBuild build, ILogger log = null)
+		internal static bool SaveBuild(ILogger log = null)
 		{
-			ArgumentNullException.ThrowIfNull(build);
-
 			using var function = log?.BeginFunction();
+
+			var build = DocumentManager.Instance.GetSelectedBuild();
+			if (build == null) throw new InvalidOperationException("No build is selected.");
+
+			string filePath = DocumentManager.Instance.BuildFilePath;
+			return SaveBuildImpl(build, filePath, log);
+		}
+		
+		internal static bool SaveBuildAs(ILogger log = null)
+		{
+			using var function = log?.BeginFunction();
+			
+			var build = DocumentManager.Instance.GetSelectedBuild();
+			if (build == null) throw new InvalidOperationException("No build is selected.");
 
 			SaveFileDialog dlg = new SaveFileDialog()
 			{
@@ -254,9 +284,7 @@ namespace KanimExplorer
 			string fileName = Path.GetFileName(dlg.FileName).ToLowerInvariant();
 			if (!fileName.EndsWith("build.bytes")) throw new Exception("Build data must be saved with a file name that ends in \"build.bytes\".");
 
-			using var path = log?.BeginScope(dlg.FileName);
-			KanimWriter.WriteBuild(dlg.FileName, build);
-			return true;
+			return SaveBuildImpl(build, dlg.FileName, log);
 		}
 		
 		private static bool SaveBuildImpl(KBuild build, string filePath, ILogger log = null)
@@ -266,11 +294,23 @@ namespace KanimExplorer
 			return true;
 		}
 
-		internal static bool SaveAnim(KAnim anim, ILogger log = null)
+		internal static bool SaveAnim(ILogger log = null)
 		{
-			ArgumentNullException.ThrowIfNull(anim);
-			
 			using var function = log?.BeginFunction();
+
+			var anim = DocumentManager.Instance.GetSelectedAnim();
+			if (anim == null) throw new InvalidOperationException("No anim selected.");
+
+			string filePath = DocumentManager.Instance.AnimFilePath;
+			return SaveAnimImpl(anim, filePath, log);
+		}
+
+		internal static bool SaveAnimAs(ILogger log = null)
+		{
+			using var function = log?.BeginFunction();
+			
+			var anim = DocumentManager.Instance.GetSelectedAnim();
+			if (anim == null) throw new InvalidOperationException("No anim selected.");
 
 			SaveFileDialog dlg = new SaveFileDialog()
 			{
@@ -320,7 +360,16 @@ namespace KanimExplorer
 			using var function = log?.BeginFunction();
 
 			KAnim anim = KAnimUtils.CreateEmptyAnim();
-			return SaveAnim(anim, log);
+
+			SaveFileDialog dlg = new SaveFileDialog()
+			{
+				Title = "Saving anim.bytes...",
+				AddExtension = true,
+				DefaultExt = "bytes"
+			};
+			if (dlg.ShowDialog() != DialogResult.OK) return false;
+
+			return SaveAnimImpl(anim, dlg.FileName, log);
 		}
 		
 		internal static bool SaveAll(KanimPackage kanim, ILogger log)
@@ -393,7 +442,38 @@ namespace KanimExplorer
 			
 			return savedAnything;
 		}
-		
+
+		internal static bool ImportSCML(ILogger log = null)
+		{
+			using var function = log?.BeginFunction();
+
+			OpenFileDialog scmlDlg = new OpenFileDialog()
+			{
+				Title = "Select a Spriter Project...",
+				Filter = "Spriter Projects (*.scml)|*.scml"
+			};
+			if (scmlDlg.ShowDialog() != DialogResult.OK) return false;
+
+			DocumentManager.Instance.CloseEverything();
+			var pkg = SCMLImporter.Convert(scmlDlg.FileName);
+			DocumentManager.Instance.OpenConvertedData(pkg);
+			return true;
+		}
+
+		internal static bool ExportSCML(ILogger log = null)
+		{
+			using var function = log?.BeginFunction();
+
+			FolderBrowserDialog dlg = new FolderBrowserDialog()
+			{
+				ShowNewFolderButton = true
+			};
+			if (dlg.ShowDialog() != DialogResult.OK) return false;
+				
+			SCMLExporter.Convert(DocumentManager.Instance.Data, dlg.SelectedPath);
+			return true;
+		}
+
 		/// <summary>
 		/// Shows a dialog prompting for a string to rename the given symbol.
 		/// </summary>

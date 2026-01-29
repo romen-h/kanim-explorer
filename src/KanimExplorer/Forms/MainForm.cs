@@ -62,6 +62,8 @@ namespace KanimExplorer.Forms
 			DocumentManager.Instance.LoadedBuildChanged += DocumentManager_LoadedDocumentsChanged;
 			DocumentManager.Instance.LoadedAnimChanged += DocumentManager_LoadedDocumentsChanged;
 			DocumentManager.Instance.SelectedObjectChanged += DocumentManager_SelectedObjectChanged;
+
+			ResolveControls();
 		}
 
 		/// <summary>
@@ -145,12 +147,12 @@ namespace KanimExplorer.Forms
 			propertyGrid.Refresh();
 		}
 
-		private void tabControl_TabIndexChanged(object sender, EventArgs e)
+		private void TabControl_TabIndexChanged(object sender, EventArgs e)
 		{
 			spriteControl.ResetPivotEditing();
 		}
 
-		private void propertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+		private void PropertyGrid_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
 		{
 			string? propertyName = e.ChangedItem?.PropertyDescriptor.Name;
 
@@ -175,32 +177,12 @@ namespace KanimExplorer.Forms
 
 		/* File Menu */
 
-		private void openTextureToolStripMenuItem_Click(object sender, EventArgs e)
+		private void openToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			UIUtils.TryWithErrorMessage(() => ModalTasks.OpenTexture(_log), "Opening Texture", _log);
+			UIUtils.TryWithErrorMessage(() => ModalTasks.OpenMultiple(_log), "Opening Files", _log);
 		}
 
-		private void openBuildToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			UIUtils.TryWithErrorMessage(() => ModalTasks.OpenBuild(_log), "Opening Build", _log);
-		}
-
-		private void openAnimToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			UIUtils.TryWithErrorMessage(() => ModalTasks.OpenAnim(_log), "Opening Anim", _log);
-		}
-
-		private void openMultipleToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			UIUtils.TryWithErrorMessage(() => ModalTasks.OpenMultiple(_log), "Opening Multiple Files", _log);
-		}
-
-		private void openSCMLToolStripMenuItem_Click_1(object sender, EventArgs e)
-		{
-			UIUtils.TryWithErrorMessage(() => ModalTasks.OpenSCML(_log), "Opening SCML", _log);
-		}
-
-		private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
+		private void SaveAllToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveAll(DocumentManager.Instance.Data, _log), "Saving All", _log))
 			{
@@ -211,9 +193,42 @@ namespace KanimExplorer.Forms
 			}
 		}
 
+		private void saveTextureToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveTexture(_log), "Saving Texture", _log))
+			{
+				if (ApplicationSettings.Instance.ShowSuccessDialogs)
+				{
+					MessageBox.Show("Texture file saved successfully.", "Saving Texture", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+			}
+		}
+
+		private void saveBuildToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveBuild(_log), "Saving build.bytes", _log))
+			{
+				if (ApplicationSettings.Instance.ShowSuccessDialogs)
+				{
+					MessageBox.Show("Build file saved successfully.", "Saving build.bytes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+			}
+		}
+
+		private void saveAnimToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveAnim(_log), "Saving anim.bytes", _log))
+			{
+				if (ApplicationSettings.Instance.ShowSuccessDialogs)
+				{
+					MessageBox.Show("Anim file saved successfully.", "Saving anim.bytes", MessageBoxButtons.OK, MessageBoxIcon.Information);
+				}
+			}
+		}
+
 		private void SaveTextureAtlasAsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveTexture(DocumentManager.Instance.Data?.Texture, _log), "Saving Texture", _log))
+			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveTextureAs(_log), "Saving Texture", _log))
 			{
 				if (ApplicationSettings.Instance.ShowSuccessDialogs)
 				{
@@ -224,7 +239,7 @@ namespace KanimExplorer.Forms
 
 		private void SaveBuildAsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveBuild(DocumentManager.Instance.Data?.Build, _log), "Saving build.bytes", _log))
+			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveBuildAs(_log), "Saving build.bytes", _log))
 			{
 				if (ApplicationSettings.Instance.ShowSuccessDialogs)
 				{
@@ -235,7 +250,7 @@ namespace KanimExplorer.Forms
 
 		private void SaveAnimAsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveAnim(DocumentManager.Instance.Data?.Anim, _log), "Saving anim.bytes", _log))
+			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveAnimAs(_log), "Saving anim.bytes", _log))
 			{
 				if (ApplicationSettings.Instance.ShowSuccessDialogs)
 				{
@@ -244,7 +259,7 @@ namespace KanimExplorer.Forms
 			}
 		}
 
-		private void saveAllAsToolStripMenuItem_Click(object sender, EventArgs e)
+		private void SaveAllAsToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveAllAs(DocumentManager.Instance.Data, _log), "Saving All Files", _log))
 			{
@@ -255,30 +270,23 @@ namespace KanimExplorer.Forms
 			}
 		}
 
-		private void exportSCMLToolStripMenuItem_Click(object sender, EventArgs e)
+		private void ImportSCMLToolStripMenuItem_Click_1(object sender, EventArgs e)
 		{
-			_log.LogTrace("Save SCML menu item clicked.");
+			UIUtils.TryWithErrorMessage(() => ModalTasks.ImportSCML(_log), "Importing SCML Project", _log);
+		}
 
-			if (!DocumentManager.Instance.FilesAreOpen) return;
-
-			try
+		private void ExportSCMLToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			if (UIUtils.TryWithErrorMessage(() => ModalTasks.ExportSCML(_log), "Exporting SCML Project", _log))
 			{
-				FolderBrowserDialog dlg = new FolderBrowserDialog();
-				dlg.ShowNewFolderButton = true;
-				if (dlg.ShowDialog() == DialogResult.OK)
+				if (ApplicationSettings.Instance.ShowSuccessDialogs)
 				{
-					SCMLExporter.Convert(DocumentManager.Instance.Data, dlg.SelectedPath);
-					MessageBox.Show(this, "SCML project saved successfully.", "Save Success", MessageBoxButtons.OK);
+					MessageBox.Show(this, "SCML project exported successfully.", "Exporting SCML Project", MessageBoxButtons.OK);
 				}
-			}
-			catch (Exception ex)
-			{
-				_log.LogError(ex, "Failed to export SCML.");
-				MessageBox.Show("Failed to export SCML", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 		}
 
-		private void exportEmptyAnimbytesToolStripMenuItem_Click(object sender, EventArgs e)
+		private void ExportEmptyAnimbytesToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (UIUtils.TryWithErrorMessage(() => ModalTasks.SaveEmptyAnim(_log), "Saving Empty anim.bytes", _log))
 			{
@@ -373,7 +381,7 @@ namespace KanimExplorer.Forms
 			WizardForm f = new WizardForm();
 			f.ShowDialog(this);
 		}
-		
+
 		/* Window Menu */
 
 		private void logToolStripMenuItem_Click(object sender, EventArgs e)
@@ -390,7 +398,7 @@ namespace KanimExplorer.Forms
 		{
 			var data = DocumentManager.Instance.Data;
 			if (data == null || !data.IsComplete) return;
-			
+
 			AnimationForm animForm = new AnimationForm(data);
 			animForm.Show(this);
 		}
@@ -398,18 +406,20 @@ namespace KanimExplorer.Forms
 		private void ResolveControls()
 		{
 			var data = DocumentManager.Instance.Data;
+			var selectedObj = DocumentManager.Instance.SelectedObject;
 
-			openTextureToolStripMenuItem.Enabled = true;
-			openBuildToolStripMenuItem.Enabled = true;
-			openAnimToolStripMenuItem.Enabled = true;
-			openMultipleToolStripMenuItem.Enabled = true;
-			openSCMLToolStripMenuItem.Enabled = true;
+			openToolStripMenuItem.Enabled = true;
 
-			saveAllToolStripMenuItem.Enabled = data != null && (data.HasTexture || data.HasBuild || data.HasAnim);
-			saveTextureAtlasAsToolStripMenuItem.Enabled = data?.HasTexture ?? false;
-			saveBuildAsToolStripMenuItem.Enabled = data?.HasBuild ?? false;
-			saveAnimAsToolStripMenuItem.Enabled = data?.HasAnim ?? false;
-			saveAllAsToolStripMenuItem.Enabled = data != null && (data.HasTexture || data.HasBuild || data.HasAnim);
+			saveAllToolStripMenuItem.Enabled = DocumentManager.Instance.FilesAreOpen;
+			saveAllAsToolStripMenuItem.Enabled = DocumentManager.Instance.FilesAreOpen;
+			saveTextureToolStripMenuItem.Visible = DocumentManager.Instance.GetSelectedTexture() != null;
+			saveTextureAtlasAsToolStripMenuItem.Visible = DocumentManager.Instance.GetSelectedTexture() != null;
+			saveBuildToolStripMenuItem.Visible = DocumentManager.Instance.GetSelectedBuild() != null;
+			saveBuildAsToolStripMenuItem.Visible = DocumentManager.Instance.GetSelectedBuild() != null;
+			saveAnimToolStripMenuItem.Visible = DocumentManager.Instance.GetSelectedAnim() != null;
+			saveAnimAsToolStripMenuItem.Visible = DocumentManager.Instance.GetSelectedAnim() != null;
+
+			importSCMLtoolStripMenuItem.Enabled = true;
 
 			exportSCMLToolStripMenuItem.Enabled = data != null && (data.HasTexture && data.HasBuild);
 			exportTextureAtlasSpritesToolStripMenuItem.Enabled = data?.IsValidAtlas ?? false;
@@ -419,7 +429,7 @@ namespace KanimExplorer.Forms
 
 			autoFlagToolStripMenuItem.Enabled = data?.HasBuild ?? false;
 			duplicateSymbolsToolStripMenuItem.Enabled = data?.HasBuild ?? false;
-			
+
 			oldAnimationViewerToolStripMenuItem.Enabled = data?.IsComplete ?? false;
 		}
 	}
