@@ -19,7 +19,7 @@ namespace KanimLib.Converters
 {
 	public static class SCMLImporter
 	{
-		public static KanimPackage Convert(string scmlPath)
+		public static bool Convert(string scmlPath, out TextureAtlas atlas, out KAnim animations)
 		{
 			if (!File.Exists(scmlPath)) throw new Exception("Could not find scml file.");
 
@@ -28,10 +28,10 @@ namespace KanimLib.Converters
 			string fileContent = File.ReadAllText(scmlPath);
 
 			Spriter spriterData = SpriterReader.Default.Read(fileContent);
-			return Convert(directory, spriterData);
+			return Convert(directory, spriterData, out atlas, out animations);
 		}
 
-		private static KanimPackage Convert(string directory, Spriter spriterData)
+		private static bool Convert(string directory, Spriter spriterData, out TextureAtlas atlas, out KAnim animations)
 		{
 			Debug.Assert(Directory.Exists(directory), "Path to scml file does not exist.");
 			Debug.Assert(spriterData != null, "Spriter data is null");
@@ -44,67 +44,73 @@ namespace KanimLib.Converters
 
 			// Sprite Atlas + Build File
 
-			KBuild build = new KBuild();
-			build.Name = kanimName;
-			build.Version = KBuild.CURRENT_BUILD_VERSION;
-
 			SpriterFolder folder = spriterData.Folders[0];
-			Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
 
-			Dictionary<string, KSymbol> symbols = new Dictionary<string, KSymbol>();
-			Dictionary<int, KSymbol> symbolsById = new Dictionary<int, KSymbol>();
-			Dictionary<int, KFrame> framesById = new Dictionary<int, KFrame>();
+			Dictionary<string, Symbol> symbols = new Dictionary<string, Symbol>();
+			Dictionary<string, Dictionary<int,Sprite>> spritesForSymbol = new Dictionary<string, Dictionary<int, Sprite>>();
+			Dictionary<int, Symbol> symbolForFileId = new Dictionary<int, Symbol>();
+			Dictionary<int, Sprite> spritesForFileId = new Dictionary<int, Sprite>();
 
 			foreach (var file in folder.Files)
 			{
 				string spriteFile = Path.Combine(directory, file.Name);
-				if (File.Exists(spriteFile))
+				if (!File.Exists(spriteFile)) continue;
+				
+				string frameName = Path.GetFileNameWithoutExtension(file.Name);
+				string[] frameNameCmps = frameName.Split('_');
+				string[] symbolNameCmps = frameNameCmps.Take(frameNameCmps.Length - 1).ToArray();
+				string frameIndexStr = frameNameCmps.Last();
+				int frameIndex = int.Parse(frameIndexStr);
+				string symbolName = string.Join("_", symbolNameCmps);
+
+				if (!symbols.TryGetValue(symbolName, out Symbol symbol))
 				{
-					string frameName = Path.GetFileNameWithoutExtension(file.Name);
-					string[] frameNameCmps = frameName.Split('_');
-					string[] symbolNameCmps = frameNameCmps.Take(frameNameCmps.Length - 1).ToArray();
-					string frameIndexStr = frameNameCmps.Last();
-					int frameIndex = int.Parse(frameIndexStr);
-					string symbolName = string.Join("_", symbolNameCmps);
+					symbol = Symbol.MakeStandalone(symbolName);
+					symbols[symbolName] = symbol;
+				}
+				symbolForFileId[file.Id] = symbol;
+				
+				if (!spritesForSymbol.TryGetValue(symbolName, out var sprites))
+				{
+					sprites = new Dictionary<int, Sprite>();
+					spritesForSymbol[symbolName] = sprites;
+				}
 
-					KSymbol symbol;
-					if (!symbols.TryGetValue(symbolName, out symbol))
+				Bitmap bmp = (Bitmap)(new Bitmap(spriteFile)).Clone();
+				Sprite sprite = Sprite.MakeStandalone(bmp, file.PivotX, 1.0f - file.PivotY);
+				sprites[frameIndex] = sprite;
+				spritesForFileId[file.Id] = sprite;
+			}
+			
+			foreach (var symbol in symbols.Values)
+			{
+				var sprites = spritesForSymbol[symbol.Name];
+				
+				int count = sprites.Keys.Max() + 1;
+
+				Sprite[] sortedSprites = new Sprite[count];
+				foreach (var sprite in sprites.Values)
+				{
+					sortedSprites[sprite.Index] = sprite;
+				}
+				
+				for (int i=0; i<count; i++)
+				{
+					Sprite sprite = sortedSprites[i];
+					if (sprite == null)
 					{
-						symbol = new KSymbol(symbolName);
-						symbols[symbolName] = symbol;
-						build.AddSymbol(symbol);
+						sprite = Sprite.MakeStandalone(null, 0.5f, 0.5f);
 					}
-					symbolsById[file.Id] = symbol;
-
-					KFrame frame = new KFrame
-					{
-						Index = frameIndex,
-						Duration = 1,
-						ImageIndex = 0,
-						Time = 0,
-						SpriteWidth = file.Width,
-						SpriteHeight = file.Height,
-						SpriterPivotX = file.PivotX,
-						SpriterPivotY = 1.0f - file.PivotY
-					};
-
-					symbol.AddFrame(frame);
-					framesById[file.Id] = frame;
-					build.FrameCount++;
-
-					Bitmap bmp = (Bitmap)Bitmap.FromFile(spriteFile);
-
-					Sprite sprite = new Sprite(frame, bmp);
-					sprites.Add(file.Id, sprite);
+					
+					symbol.AddSprite(sprite, false, true);
 				}
 			}
-
-			var spritesArr = sprites.Values.ToList();
-			Bitmap texture = SpriteUtils.RebuildAtlas(spritesArr);
+			
+			atlas = TextureAtlas.MakeFromStandalone(kanimName, symbols.Values);
 
 			// Anim File
 
-			KAnim anim = KAnimUtils.CreateEmptyAnim();
+			animations = AnimFactory.CreateEmptyAnim();
 
 			int maxElements = 0;
 
@@ -123,7 +129,7 @@ namespace KanimLib.Converters
 			{
 				string bankName = kvp.Key;
 				KAnimBank bank = new KAnimBank(bankName);
-				anim.AddBank(bank);
+				animations.AddBank(bank);
 
 				foreach (var frameData in kvp.Value)
 				{
@@ -142,12 +148,12 @@ namespace KanimLib.Converters
 
 						KAnimElement element = new KAnimElement();
 						frame.AddElement(element);
-						anim.ElementCount++;
+						animations.ElementCount++;
 
-						element.SymbolHash = symbolsById[spriteData.FileId].Hash;
+						element.SymbolHash = symbolForFileId[spriteData.FileId].Hash;
 						element.FolderHash = element.SymbolHash;
-						KFrame symbolFrame = framesById[spriteData.FileId];
-						element.FrameNumber = symbolFrame.Index;
+						Sprite sprite = spritesForFileId[spriteData.FileId];
+						element.FrameNumber = sprite.Index;
 
 						PointF pivot = new PointF(spriteData.PivotX, spriteData.PivotY);
 
@@ -176,15 +182,14 @@ namespace KanimLib.Converters
 
 						element.Alpha = spriteData.Alpha;
 
-						anim.SymbolNames[element.SymbolHash] = build.GetSymbolName(element.SymbolHash);
+						animations.SymbolNames[element.SymbolHash] = atlas.GetSymbolName(element.SymbolHash);
 					}
 				}
 			}
 
-			anim.MaxVisSymbols = maxElements;
-
-			KanimPackage pkg = new KanimPackage(texture, build, anim, spritesArr);
-			return pkg;
+			animations.MaxVisSymbols = maxElements;
+			
+			return true;
 		}
 	}
 }

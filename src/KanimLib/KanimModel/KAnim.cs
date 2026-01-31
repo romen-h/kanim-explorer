@@ -3,19 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 
-using kanimal.KBuild;
-
 namespace KanimLib.KanimModel
 {
-	public class KAnim
+	public class KAnim : INotifyPropertyChanged
 	{
 		public const string ANIM_HEADER = @"ANIM";
 
 		public const int CURRENT_ANIM_VERSION = 5;
 
-		public KanimPackage Parent
-		{ get; internal set; }
-		
 		[ReadOnly(true)]
 		public int Version
 		{ get; set; }
@@ -51,6 +46,12 @@ namespace KanimLib.KanimModel
 
 		public readonly Dictionary<int, string> SymbolNames = new Dictionary<int, string>();
 
+		public event PropertyChangedEventHandler PropertyChanged;
+		private void InvokePropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+		
 		public KAnimBank GetBank(string name)
 		{
 			foreach (var bank in Banks)
@@ -114,11 +115,11 @@ namespace KanimLib.KanimModel
 			Banks.Add(uiBank);
 		}
 
-		public void RepairStringsFromBuild(KBuild build)
+		public void RepairStringsFromBuild(TextureAtlas build)
 		{
-			foreach (var kvp in build.SymbolNames)
+			foreach (var symbol in build.Symbols)
 			{
-				SymbolNames[kvp.Key] = kvp.Value;
+				SymbolNames[symbol.Hash] = symbol.Name;
 			}
 		}
 	}

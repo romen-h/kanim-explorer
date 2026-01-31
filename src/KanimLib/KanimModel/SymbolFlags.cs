@@ -1,10 +1,11 @@
 ﻿using System;
 
-namespace KanimLib
+namespace KanimLib.KanimModel
 {
 	[Flags]
 	public enum SymbolFlags : int
 	{
+		None = 0,
 		/// <summary>
 		/// A flag that determines whether the symbol will be rendered with a bloom shader.
 		/// </summary>

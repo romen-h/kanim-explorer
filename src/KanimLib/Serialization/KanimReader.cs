@@ -15,6 +15,7 @@ namespace KanimLib.Serialization
 	{
 		private static readonly ILogger s_log = Logging.Factory.CreateLogger("KanimReader");
 
+#if false
 		public static KBuild ReadBuild(string buildFile)
 		{
 			if (!File.Exists(buildFile)) throw new ArgumentException("The given file does not exist.");
@@ -86,6 +87,7 @@ namespace KanimLib.Serialization
 				return build;
 			}
 		}
+#endif
 
 		public static KAnim ReadAnim(string animFile)
 		{

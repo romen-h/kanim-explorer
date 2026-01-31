@@ -1,9 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-using KanimLib.KanimModel;
-
-namespace KanimLib
+namespace KanimLib.KanimModel
 {
 	public class KAnimElement
 	{

@@ -19,36 +19,43 @@ namespace KanimLib
 
 		private static readonly Font fnt = new Font(FontFamily.GenericSansSerif, 16f);
 
-		public static void MakePlaceholderBuilding(string name, int cellWidth, int cellHeight, out Bitmap atlas, out KBuild build, out KAnim anim)
+		public static KAnim CreateEmptyAnim()
 		{
+			KAnim anim = new KAnim
+			{
+				Version = KAnim.CURRENT_ANIM_VERSION,
+				FrameCount = 0,
+				ElementCount = 0,
+				BankCount = 0,
+				MaxVisSymbols = 0
+			};
+			return anim;
+		}
+
+		public static void MakePlaceholderBuilding(string name, int cellWidth, int cellHeight, out TextureAtlas textureAtlas, out KAnim anim)
+		{
+			ArgumentNullException.ThrowIfNullOrWhiteSpace(name);
+			
 			int buildingWidth = cellWidth * CELL_SIZE;
 			int buildingHeight = cellHeight * CELL_SIZE;
 
-			build = new KBuild();
-			build.Name = name;
-			build.Version = KBuild.CURRENT_BUILD_VERSION;
-			build.SymbolCount = 4;
-			build.FrameCount = 4;
-
-			KSymbol ui = AddSymbol(build, "ui", UI_IMG_WIDTH, UI_IMG_HEIGHT);
 			Bitmap uiBmp = MakePlaceholderUIBitmap((int)UI_IMG_WIDTH, Color.Blue);
-			Sprite uiSpr = new Sprite(ui.Frames[0], uiBmp);
+			Sprite uiSprite = Sprite.MakeStandalone(uiBmp, 0.5f, 1.0f);
+			Symbol uiSymbol = Symbol.MakeStandalone("ui", [uiSprite]);
 
-			KSymbol place = AddSymbol(build, "place", buildingWidth, buildingHeight);
 			Bitmap placeBmp = MakePlaceholderPlaceBitmap(name, buildingWidth, buildingHeight);
-			Sprite placeSpr = new Sprite(place.Frames[0], placeBmp);
-
-			KSymbol off = AddSymbol(build, "off", buildingWidth, buildingHeight);
+			Sprite placeSprite = Sprite.MakeStandalone(placeBmp, 0.5f, 1f);
+			Symbol placeSymbol = Symbol.MakeStandalone("place", [placeSprite]);
+			
 			Bitmap offBmp = MakePlaceholderBitmap(name, buildingWidth, buildingHeight, Color.Red);
-			Sprite offSpr = new Sprite(off.Frames[0], offBmp);
+			Sprite offSprite = Sprite.MakeStandalone(offBmp, 0.5f, 1f);
+			Symbol offSymbol = Symbol.MakeStandalone("off", [offSprite]);
 
-			KSymbol on = AddSymbol(build, "on", buildingWidth, buildingHeight);
 			Bitmap onBmp = MakePlaceholderBitmap(name, buildingWidth, buildingHeight, Color.Green);
-			Sprite onSpr = new Sprite(on.Frames[0], onBmp);
+			Sprite onSprite = Sprite.MakeStandalone(onBmp, 0.5f, 1f);
+			Symbol onSymbol = Symbol.MakeStandalone("on", [onSprite]);
 
-			build.SymbolCount = build.Symbols.Count;
-
-			atlas = SpriteUtils.RebuildAtlas(new Sprite[] { uiSpr, placeSpr, offSpr, onSpr });
+			textureAtlas = TextureAtlas.MakeFromStandalone(name, [uiSymbol, placeSymbol, offSymbol, onSymbol]);
 
 			anim = new KAnim();
 			anim.Version = KAnim.CURRENT_ANIM_VERSION;
@@ -61,127 +68,6 @@ namespace KanimLib
 			KAnimBank onAnim = AddBank(anim, "on", Math.Max(buildingWidth, buildingHeight));
 			KAnimBank offAnim = AddBank(anim, "off", Math.Max(buildingWidth, buildingHeight));
 			KAnimBank uiAnim = AddBank(anim, "ui", Math.Max(buildingWidth, buildingHeight));
-		}
-
-		public static void MakeSpritePack(string name, string spritesDir, out Bitmap atlas, out KBuild build, out KAnim anim)
-		{
-			build = new KBuild();
-			build.Name = name;
-			build.Version = KBuild.CURRENT_BUILD_VERSION;
-			build.SymbolCount = 0;
-			build.FrameCount = 0;
-
-			anim = KAnimUtils.CreateEmptyAnim();
-
-			string[] imageFiles = Directory.GetFiles(spritesDir, "*.png");
-			List<Sprite> sprites = new List<Sprite>();
-
-			foreach (string imageFile in imageFiles)
-			{
-				try
-				{
-					Bitmap img = new Bitmap(imageFile);
-
-					string fileName = Path.GetFileNameWithoutExtension(imageFile);
-
-					int lastUnderscore = fileName.LastIndexOf('_');
-					string symbolName = fileName.Substring(0, lastUnderscore);
-					string indexStr = fileName.Substring(lastUnderscore + 1);
-
-					int symbolHash = symbolName.KHash();
-					int index = int.Parse(indexStr);
-
-					KSymbol symbol = build.GetSymbol(symbolHash);
-					if (symbol == null)
-					{
-						symbol = new KSymbol(build);
-						symbol.Hash = symbolHash;
-						symbol.Path = symbolHash;
-						symbol.Color = Color.FromArgb(0);
-						symbol.Flags = 0;
-						symbol.FrameCount = 0;
-
-						build.Symbols.Add(symbol);
-						build.SymbolNames[symbolHash] = symbolName;
-						build.SymbolCount++;
-					}
-
-					KFrame frame = new KFrame(symbol);
-					frame.Index = index;
-					frame.Duration = 1;
-					frame.ImageIndex = 0;
-					frame.PivotX = 0;
-					frame.PivotY = -img.Height;
-					frame.PivotWidth = 2 * img.Width;
-					frame.PivotHeight = 2 * img.Height;
-					frame.UV_X1 = 0f;
-					frame.UV_Y1 = 0f;
-					frame.UV_X2 = 0f;
-					frame.UV_Y2 = 0f;
-					frame.Time = 0;
-
-					symbol.Frames.Add(frame);
-					symbol.FrameCount++;
-					build.FrameCount++;
-
-					Sprite spr = new Sprite(frame, img);
-					sprites.Add(spr);
-				}
-				catch (Exception ex)
-				{
-					Debug.WriteLine("Failed to make sprite.");
-					Debug.WriteLine(ex.ToString());
-				}
-			}
-
-			try
-			{
-				atlas = SpriteUtils.RebuildAtlas(sprites.ToArray());
-			}
-			catch (Exception ex)
-			{
-				atlas = null;
-				Debug.WriteLine("Failed to pack atlas.");
-				Debug.WriteLine(ex.ToString());
-			}
-		}
-
-		private static KSymbol AddSymbol(KBuild parent, string name, float width, float height)
-		{
-			int hash = name.KHash();
-			parent.SymbolNames[hash] = name;
-
-			KSymbol symbol = new KSymbol(parent);
-			symbol.Hash = hash;
-			symbol.Path = hash;
-			symbol.Color = Color.FromArgb(0);
-			symbol.Flags = 0;
-
-			AddFrame(symbol, width, height);
-			symbol.FrameCount = symbol.Frames.Count;
-
-			parent.Symbols.Add(symbol);
-			return symbol;
-		}
-
-		private static KFrame AddFrame(KSymbol parent, float width, float height)
-		{
-			KFrame frame = new KFrame(parent);
-			frame.Index = 0;
-			frame.Duration = 1;
-			frame.ImageIndex = 0;
-			frame.PivotX = 0;
-			frame.PivotY = -height;
-			frame.PivotWidth = 2 * width;
-			frame.PivotHeight = 2 * height;
-			frame.UV_X1 = 0f;
-			frame.UV_Y1 = 0f;
-			frame.UV_X2 = 0f;
-			frame.UV_Y2 = 0f;
-			frame.Time = 0;
-
-			parent.Frames.Add(frame);
-			return frame;
 		}
 
 		private static Bitmap MakePlaceholderBitmap(string name, int width, int height, Color fill)

@@ -1,6 +1,7 @@
 ﻿using System.Drawing;
 using System.IO;
 using System.Text;
+using KanimLib.KanimModel;
 
 namespace KanimLib
 {

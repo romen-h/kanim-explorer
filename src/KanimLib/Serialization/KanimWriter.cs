@@ -15,7 +15,8 @@ namespace KanimLib.Serialization
 	{
 		private static readonly ILogger s_log = Logging.Factory.CreateLogger("KanimWriter");
 
-		public static bool WriteBuild(string buildFile, KBuild build)
+#if false
+		public static bool WriteBuild(string buildFile, TextureAtlas build)
 		{
 			try
 			{
@@ -30,13 +31,13 @@ namespace KanimLib.Serialization
 			}
 		}
 
-		public static bool WriteBuild(Stream stream, KBuild build)
+		public static bool WriteBuild(Stream stream, TextureAtlas build)
 		{
 			try
 			{
 				BinaryWriter writer = new BinaryWriter(stream);
 				{
-					writer.Write(Encoding.ASCII.GetBytes(KBuild.BUILD_HEADER));
+					writer.Write(Encoding.ASCII.GetBytes(TextureAtlas.BUILD_HEADER));
 
 					writer.Write(build.Version);
 					writer.Write(build.SymbolCount);
@@ -45,7 +46,7 @@ namespace KanimLib.Serialization
 
 					for (int s = 0; s < build.SymbolCount; s++)
 					{
-						KSymbol symbol = build.Symbols[s];
+						Symbol symbol = build.Symbols[s];
 
 						writer.Write(symbol.Hash);
 						if (build.Version > 9) writer.Write(symbol.Path);
@@ -55,7 +56,7 @@ namespace KanimLib.Serialization
 
 						for (int f = 0; f < symbol.FrameCount; f++)
 						{
-							KFrame frame = symbol.Frames[f];
+							Sprite frame = symbol.Sprites[f];
 
 							writer.Write(frame.Index);
 							writer.Write(frame.Duration);
@@ -89,6 +90,7 @@ namespace KanimLib.Serialization
 				return false;
 			}
 		}
+#endif
 
 		public static void WriteAnim(string animFile, KAnim anim)
 		{

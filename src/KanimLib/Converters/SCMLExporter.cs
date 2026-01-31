@@ -15,38 +15,39 @@ namespace KanimLib.Converters
 	{
 		private static readonly ILogger s_log = Logging.Factory.CreateLogger("SCMLExporter");
 
-		public static void Convert(KanimPackage kanim, string outputPath)
+		public static bool Convert(TextureAtlas atlas, KAnim anim, string outputPath)
 		{
-			ArgumentNullException.ThrowIfNull(kanim);
-			ArgumentNullException.ThrowIfNull(outputPath);
-			if (kanim.Texture == null) throw new ArgumentException("No texture is loaded.");
-			if (kanim.Build == null) throw new ArgumentException("No build data is loaded.");
-
-			if (!kanim.HasAnim)
-			{
-				kanim.SetAnim(KAnimUtils.CreateEmptyAnim());
-			}
+			ArgumentNullException.ThrowIfNull(atlas);
+			ArgumentNullException.ThrowIfNull(anim);
+			ArgumentNullException.ThrowIfNullOrWhiteSpace(outputPath);
+			if (atlas.Texture == null) throw new ArgumentException("No texture is loaded.");
 
 			Directory.CreateDirectory(outputPath);
 
+			if (anim == null)
+			{
+				anim = AnimFactory.CreateEmptyAnim();
+			}
+
 			using MemoryStream buildStream = new MemoryStream();
-			using MemoryStream animStream = new MemoryStream();
 			using MemoryStream textureStream = new MemoryStream();
+			using MemoryStream animStream = new MemoryStream();
 			
-			KanimWriter.WriteBuild(buildStream, kanim.Build);
+			atlas.WriteToKleiBuildBytes(buildStream);
 			buildStream.Seek(0, SeekOrigin.Begin);
 
-			KanimWriter.WriteAnim(animStream, kanim.Anim);
-			animStream.Seek(0, SeekOrigin.Begin);
-
-			kanim.Texture.Save(textureStream, ImageFormat.Png);
+			atlas.Texture.Save(textureStream, ImageFormat.Png);
 			textureStream.Seek(0, SeekOrigin.Begin);
+
+			KanimWriter.WriteAnim(animStream, anim);
+			animStream.Seek(0, SeekOrigin.Begin);
 
 			var reader = new kanimal.KanimReader(buildStream, animStream, textureStream);
 			reader.Read();
 
 			var writer = new kanimal.ScmlWriter(reader);
 			writer.SaveToDir(outputPath);
+			return true;
 		}
 	}
 }
