@@ -34,7 +34,7 @@ namespace KanimLib.Serialization
 		{
 			try
 			{
-				BinaryWriter writer = new BinaryWriter(stream);
+				BinaryWriter writer = new BinaryWriter(stream, Encoding.ASCII, true);
 				{
 					writer.Write(Encoding.ASCII.GetBytes(KBuild.BUILD_HEADER));
 
@@ -98,7 +98,7 @@ namespace KanimLib.Serialization
 
 		public static void WriteAnim(Stream stream, KAnim anim)
 		{
-			using BinaryWriter writer = new BinaryWriter(stream);
+			using BinaryWriter writer = new BinaryWriter(stream, Encoding.ASCII, true);
 			
 			writer.Write(Encoding.ASCII.GetBytes(KAnim.ANIM_HEADER));
 
