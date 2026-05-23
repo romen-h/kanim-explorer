@@ -20,7 +20,11 @@ namespace KanimLib
 		/// <summary>
 		/// A flag that determines whether the symbol will be drawn on a foreground layer (in front of dupes).
 		/// </summary>
-		Foreground = 8
+		Foreground = 8,
+		/// <summary>
+		/// A flag that determines whether the symbol will be drawn on the shine layer
+		/// </summary>
+		ShineMask = 0x10,
 	}
 
 	public static class SymbolFlagsExtensions

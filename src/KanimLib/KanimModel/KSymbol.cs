@@ -125,6 +125,13 @@ namespace KanimLib
 			set { Flags = Flags.SetFlag(SymbolFlags.Foreground, value); }
 		}
 
+		[RefreshProperties(RefreshProperties.All)]
+		public bool ShineMask
+		{
+			get { return Flags.HasFlag(SymbolFlags.ShineMask); }
+			set { Flags = Flags.SetFlag(SymbolFlags.ShineMask, value); }
+		}
+
 		[ReadOnly(true)]
 		public int FrameCount
 		{ get; set; } = 0;

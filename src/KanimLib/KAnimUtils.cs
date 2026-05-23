@@ -57,6 +57,12 @@ namespace KanimLib
 					s_log.LogTrace($"Enabling foreground flag on {symbol.Name}.");
 					symbol.Flags = symbol.Flags.SetFlag(SymbolFlags.Foreground, true);
 				}
+
+				if (lowerName.Contains("_sh"))
+				{
+					s_log.LogTrace($"Enabling shine mask flag on {symbol.Name}.");
+					symbol.Flags = symbol.Flags.SetFlag(SymbolFlags.ShineMask, true);
+				}
 			}
 		}
 		
