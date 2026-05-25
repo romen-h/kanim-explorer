@@ -22,9 +22,9 @@ namespace KanimLib
 		/// </summary>
 		Foreground = 8,
 		/// <summary>
-		/// A flag that determines whether the symbol will be drawn on the shine layer
+		/// A flag that determines whether the symbol will be drawn on the shine mask layer
 		/// </summary>
-		ShineMask = 0x10,
+		ShineMask = 16,
 	}
 
 	public static class SymbolFlagsExtensions
